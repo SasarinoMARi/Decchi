@@ -1,12 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.InteropServices;
-using System.Text;
+﻿using System.Collections.Generic;
 using System.Windows.Forms;
 using ParsingModule;
 using PublishingModule.Twitter;
-using Utilities;
 
 namespace Decchi
 {
@@ -23,11 +18,7 @@ namespace Decchi
         {
             get
             {
-                if (_instance == null)
-                {
-                    _instance = new DecchiCore();
-                }
-                return _instance;
+                return _instance ?? (_instance = new DecchiCore());
             }
         }
         private DecchiCore()

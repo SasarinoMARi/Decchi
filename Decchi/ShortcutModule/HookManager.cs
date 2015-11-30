@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Windows.Forms;
 using Utilities;
-using System.Windows.Forms;
 
 namespace ShortcutModule
 {
@@ -14,11 +10,7 @@ namespace ShortcutModule
 		{
 			get
 			{
-				if ( _instance == null )
-				{
-					_instance = new HookManager( );
-				}
-				return _instance;
+				return _instance ?? (_instance = new HookManager( ));
 			}
 		}
 		private HookManager( )

@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Runtime.InteropServices;
-using ParsingModule;
-using PublishingModule.Twitter;
 using System.Windows.Forms;
 
 namespace Decchi
