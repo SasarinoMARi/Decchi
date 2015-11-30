@@ -1,11 +1,9 @@
 ﻿// http://www.codeproject.com/Tips/714342/Getting-Currently-Playing-Song-in-Windows-Media-Pl
 
-using Decchi;
 using System;
 using System.Collections.Generic;
-using System.Runtime.InteropServices;
-using System.Threading;
 using System.Windows.Automation;
+using Decchi;
 
 namespace ParsingModule
 {

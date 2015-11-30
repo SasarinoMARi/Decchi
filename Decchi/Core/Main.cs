@@ -1,12 +1,8 @@
 ﻿using System;
-using System.Runtime.InteropServices;
-using ParsingModule;
-using PublishingModule.Twitter;
-using ShortcutModule;
-using System.Windows.Forms;
-using Utilities;
-using System.Threading.Tasks;
 using System.Drawing;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+using PublishingModule.Twitter;
 
 namespace Decchi
 {
@@ -25,7 +21,8 @@ namespace Decchi
 
                 Task.Factory.StartNew( delegate // <-- 륜님 이거 줮나 편하네요 ㅇ.<
                 {
-                    picbox_profileImage.BackgroundImage = Globals.GetImageFromUrl(me.ProfileImageUrl.Replace("_normal", ""));
+                    var img = Globals.GetImageFromUrl(me.ProfileImageUrl.Replace("_normal", ""));
+					this.Invoke(new Action(delegate { picbox_profileImage.BackgroundImage = img }));
                 });
                 var nameStr = me.Name;
 

@@ -1,6 +1,4 @@
-﻿using System;
-using System.Diagnostics;
-using System.Threading;
+﻿using System.Diagnostics;
 
 namespace ParsingModule
 {
@@ -22,7 +20,7 @@ namespace ParsingModule
 			var procs = Process.GetProcesses();
 			for ( int i = 0; i < procs.Length; i++ )
 			{
-					var str = procs[i].MainWindowTitle;
+				var str = procs[i].MainWindowTitle;
 				if ( procs[i].MainWindowTitle.Contains( "곰오디오" ))
 				{
 					var splt = str.Split('-');

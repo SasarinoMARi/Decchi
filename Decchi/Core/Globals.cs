@@ -6,23 +6,17 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Runtime.InteropServices;
-using System.Text;
 
 
 namespace Decchi
 {
-    public class Globals
+	/// <summary>
+	/// 이 클래스는 인스턴스를 만들 수 없습니다.
+	/// </summary>
+    public static class Globals
     {
         private static Dictionary<string, string> settings = new Dictionary<string, string>(); // 설정 뭉텅이
         private const string SettingFilePath = "publish.ini"; // 설정 파일 주소
-
-        /// <summary>
-        /// 이 클래스는 인스턴스를 만들 수 없습니다.
-        /// </summary>
-        private Globals()
-        {
-
-        }
 
         /// <summary>
         /// 프로퍼티 뭉텅이를 저장합니다. 설정이 바뀌거나 프로그램이 종료되기 직전에 호출해주세요.
@@ -36,7 +30,7 @@ namespace Decchi
                     var list = new List<string>(settings.Keys);
                     for (int i = 0; i < list.Count; i++)
                     {
-                        writer.WriteLine(string.Format("{0}={1}", list[i], settings[list[i]]));
+                        writer.WriteLine("{0}={1}", list[i], settings[list[i]]);
                     }
                 }
             }
@@ -55,7 +49,7 @@ namespace Decchi
                     while (true)
                     {
                         var line = reader.ReadLine();
-                        if (string.IsNullOrEmpty(line)) break;
+                        if (line == null) break;
 
                         var splitedLine = line.Split('=');
                         settings[splitedLine[0]] = splitedLine[1];
@@ -97,17 +91,12 @@ namespace Decchi
         /// <param name="url">열고자 하는 주소</param>
         public static void OpenWebSite(string url)
         {
-            Process myProcess = new Process();
             try
             {
-                myProcess.StartInfo.UseShellExecute = true;
-                myProcess.StartInfo.FileName = url;
-                myProcess.Start();
+				Process.Start(new ProcessStartInfo { UseShellExecute = true, FileName = url });
             }
-            catch (Exception e)
-            {
-                throw e;
-            }
+            catch
+            { }
         }
 
         /// <summary>
@@ -118,9 +107,9 @@ namespace Decchi
         public static Image GetImageFromUrl(string Url)
         {
             HttpWebRequest httpWebRequest = (HttpWebRequest)HttpWebRequest.Create(Url);
-            HttpWebResponse httpWebReponse = (HttpWebResponse)httpWebRequest.GetResponse();
-            Stream stream = httpWebReponse.GetResponseStream();
-            return Image.FromStream(stream);
+            using (HttpWebResponse httpWebReponse = (HttpWebResponse)httpWebRequest.GetResponse())
+				using (Stream stream = httpWebReponse.GetResponseStream())
+					return Image.FromStream(stream);
         }
 
 
