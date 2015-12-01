@@ -1,4 +1,5 @@
-﻿using Decchi;
+﻿using System.Threading.Tasks;
+using Decchi;
 using Tweetinvi;
 using Tweetinvi.Core.Credentials;
 
@@ -20,18 +21,14 @@ namespace PublishingModule.Twitter
         {
             get
             {
-                if (_instance == null)
-                {
-                    _instance = new TwitterCommunicator();
+				return _instance ?? (_instance = new TwitterCommunicator());
                 }
-                return _instance;
             }
-        }
 
         private TwitterCommunicator()
         {
 			// 이 곳에 컨슈머 정보 입력.
-			SetConsumer( ); // 커밋 분엔 포함 안되어있으니 알아서 정의하세염
+			SetConsumer(); // 커밋 분엔 포함 안되어있으니 알아서 정의하세염
         }
 
         public bool Login()
@@ -103,10 +100,7 @@ namespace PublishingModule.Twitter
         /// <returns>트윗 성공 여부</returns>
         public bool Publish(string text)
         {
-            if (string.IsNullOrEmpty(text)) return false;
-            var tweet = Tweet.PublishTweet(text);
-            if (tweet == null) return false;
-            return true;
+			return !string.IsNullOrEmpty(text) && Tweet.PublishTweet(text) != null;
         }
 
         private Tweetinvi.Core.Interfaces.ILoggedUser me;
@@ -119,13 +113,9 @@ namespace PublishingModule.Twitter
         {
             get
             {
-                if (me == null)
-                {
-                    me = User.GetLoggedUser();
+				return me ?? (me = User.GetLoggedUser());
                 }
-                return me;
             }
-        }
 
         /// <summary>
         /// 로그인된 유저 정보를 갱신하고, Me 객체를 반환합니다.

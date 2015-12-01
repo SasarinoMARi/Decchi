@@ -1,5 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using ParsingModule;
 using PublishingModule.Twitter;
@@ -57,21 +60,21 @@ namespace Decchi
         public void Run()
         {
             var nowPlayings = new Dictionary<string, SongInfo>();
+			var playingCount = 0;
 
-            var wmpNP = WMPSongInfo.GetCurrentPlayingSong();
-            var gomNP = GomAudioSongInfo.GetCurrentPlayingSong( );
+			List<SongInfo> songs = new List<SongInfo>();
+			songs.Add(new WMPSongInfo());
+			songs.Add(new GomAudioSongInfo());
+			songs.Add(new iTunesSongInfo());
 
-            if (!SongInfo.IsEmpty(wmpNP)) nowPlayings[wmpNP.Client] = wmpNP;
-            if (!SongInfo.IsEmpty(gomNP)) nowPlayings[gomNP.Client] = gomNP;
+			Parallel.ForEach(songs, e => { e.GetCurrentPlayingSong(); if (e.Loaded) Interlocked.Increment(ref playingCount); } );
 
-            var keys = new List<string>(nowPlayings.Keys);
-
-            if(nowPlayings.Count >= 2)
+			if (playingCount >= 2)
             {
                 // 두 개 이상의 곡이 재생중인 경우
 
             }
-            else if(nowPlayings.Count == 0)
+			else if (playingCount == 0)
             {
                 // 재생중인 곡이 없는 경우
 
@@ -79,7 +82,7 @@ namespace Decchi
             else
             {
                 // 하나의 곡이 재생중인 경우
-                TwitterCommunicator.Instance.Publish(nowPlayings[keys[0]].ToString());   
+				TwitterCommunicator.Instance.Publish(songs.First(e => e.Loaded).ToString());   
             }
         }
 		public void Run(Action callback)
