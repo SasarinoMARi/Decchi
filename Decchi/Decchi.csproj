@@ -14,7 +14,7 @@
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <TargetFrameworkProfile>
     </TargetFrameworkProfile>
-    <AssemblyVersion>1.0.0.60</AssemblyVersion>
+    <AssemblyVersion>1.0.0.61</AssemblyVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -80,7 +80,6 @@
     <Compile Include="PublishingModule\Twitter\TweeterCommunicator.cs" />
     <Compile Include="ShortcutModule\globalKeyboardHook.cs" />
     <Compile Include="ShortcutModule\HookManager.cs" />
-    <Compile Include="Uncommit\TwitterToken.cs" />
     <EmbeddedResource Include="Core\Main.resx">
       <DependentUpon>Main.cs</DependentUpon>
     </EmbeddedResource>

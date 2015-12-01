@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using Decchi;
 using Tweetinvi;
 using Tweetinvi.Core.Credentials;
@@ -28,7 +29,9 @@ namespace PublishingModule.Twitter
         private TwitterCommunicator()
         {
 			// 이 곳에 컨슈머 정보 입력.
-			SetConsumer(); // 커밋 분엔 포함 안되어있으니 알아서 정의하세염
+			throw new NotImplementedException();
+			Consumer_Key = "";
+			Consumer_Secret = "";
         }
 
         public bool Login()
