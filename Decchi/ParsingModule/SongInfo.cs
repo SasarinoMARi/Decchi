@@ -15,6 +15,16 @@
             empty = true;
 		}
 
+		/// <summary>
+		///  빈 SongInfo객체. Empty 대신 사용하세요.
+		/// </summary>
+		/// <param name="player"></param>
+		public SongInfo(string player)
+		{
+			empty = true;
+			Client = player;
+		}
+
 		public SongInfo( string player, string name, string album, string artist )
 		{
             empty = false;
@@ -24,7 +34,11 @@
 			Artist = artist;
 		}
 
+		/// <summary>
+		/// SongInfo.Empty 대신 new SongInfo(string 클라이언트_이름)을 사용해주세요.
+		/// </summary>
 		public static SongInfo Empty { get { return new SongInfo( ); } }
+
         public static bool IsEmpty(SongInfo info)
         {
             return info.empty;

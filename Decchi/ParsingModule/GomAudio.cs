@@ -6,7 +6,12 @@ namespace ParsingModule
 	{
 		public const string clientName = "곰오디오";
 
-		public SongInfo GetCurrentPlayingSong( )
+		private GomAudioSongInfo()
+		{
+
+		}
+
+		public static SongInfo GetCurrentPlayingSong( )
 		{
 			// Checking Thread Apartment State
 			//ApartmentState state = Thread.CurrentThread.GetApartmentState();
@@ -15,7 +20,7 @@ namespace ParsingModule
 			//	( "You cannot be in Single Thread Apartment (STA) State." );
 
 			// Finding the GomAudio window
-			var info = SongInfo.Empty;
+			var info = new SongInfo( clientName );
 
 			var procs = Process.GetProcesses();
 			for ( int i = 0; i < procs.Length; i++ )

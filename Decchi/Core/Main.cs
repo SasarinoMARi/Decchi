@@ -22,7 +22,7 @@ namespace Decchi
                 Task.Factory.StartNew( delegate // <-- 륜님 이거 줮나 편하네요 ㅇ.<
                 {
                     var img = Globals.GetImageFromUrl(me.ProfileImageUrl.Replace("_normal", ""));
-					this.Invoke(new Action(delegate { picbox_profileImage.BackgroundImage = img }));
+					this.Invoke(new Action(delegate { picbox_profileImage.BackgroundImage = img; }));
                 });
                 var nameStr = me.Name;
 

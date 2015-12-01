@@ -31,9 +31,9 @@ namespace PublishingModule.Twitter
         private TwitterCommunicator()
         {
 			// 이 곳에 컨슈머 정보 입력.
-            Consumer_Key = "";
-            Consumer_Secret = "";
-        }
+			Consumer_Key = "";
+			Consumer_Secret = "";
+		}
 
         public bool Login()
         {
@@ -44,10 +44,18 @@ namespace PublishingModule.Twitter
                 if (string.IsNullOrEmpty(accessToken) || string.IsNullOrEmpty(accessTokenSecret))
                 {
                     var user = NewAuth();
-                    accessToken = user.AccessToken;
-                    accessTokenSecret = user.AccessTokenSecret;
-                    Globals.SetValue("AccessToken", accessToken);
-                    Globals.SetValue("AccessTokenSecret", accessTokenSecret);
+					if(user != null)
+					{
+						accessToken = user.AccessToken;
+						accessTokenSecret = user.AccessTokenSecret;
+						Globals.SetValue("AccessToken", accessToken);
+						Globals.SetValue("AccessTokenSecret", accessTokenSecret);
+					}
+					else
+					{
+						//트위터 인증 실패
+						return false;
+					}
                 }
                 Auth.SetUserCredentials(Consumer_Key, Consumer_Secret, accessToken, accessTokenSecret);
                 return true;
@@ -69,14 +77,21 @@ namespace PublishingModule.Twitter
 
             var form = new InputCaptcha(url);
             form.ShowDialog();
-            var captcha = form.Captcha;
+			var isOkButtonPressed = form.SafeExit;
+			var captcha = form.Captcha;
+			
+			// 사용자에 의한 인증 취소
+			if(isOkButtonPressed == false)
+			{
+				return null;
+			}
 
-            var newCredentials = CredentialsCreator.GetCredentialsFromVerifierCode(captcha, applicationCredentials);
+			var newCredentials = CredentialsCreator.GetCredentialsFromVerifierCode(captcha, applicationCredentials);
 
             // 인증 실패
             if (newCredentials == null)
             {
-
+				return null;
             }
 
             return newCredentials;

@@ -56,11 +56,11 @@ namespace Decchi
         {
             var nowPlayings = new Dictionary<string, SongInfo>();
 
-            var wmpNP = new WMPSongInfo().GetCurrentPlayingSong();
-            var gomNP = new GomAudioSongInfo( ).GetCurrentPlayingSong( );
+            var wmpNP = WMPSongInfo.GetCurrentPlayingSong();
+            var gomNP = GomAudioSongInfo.GetCurrentPlayingSong( );
 
-            if (SongInfo.IsEmpty(wmpNP)) nowPlayings[wmpNP.Client] = wmpNP;
-            if (SongInfo.IsEmpty(gomNP)) nowPlayings[gomNP.Client] = gomNP;
+            if (!SongInfo.IsEmpty(wmpNP)) nowPlayings[wmpNP.Client] = wmpNP;
+            if (!SongInfo.IsEmpty(gomNP)) nowPlayings[gomNP.Client] = gomNP;
 
             var keys = new List<string>(nowPlayings.Keys);
 

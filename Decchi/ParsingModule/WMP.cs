@@ -11,11 +11,11 @@ namespace ParsingModule
 	{
 		public const string clientName = "Windows Media Player";
 
-		public SongInfo GetCurrentPlayingSong( )
+		public static SongInfo GetCurrentPlayingSong( )
 		{
 			// Finding the WMP window
 			IntPtr handle = Globals.FindWindow("WMPlayerApp", "Windows Media Player");
-			if ( handle == IntPtr.Zero ) return SongInfo.Empty;
+			if ( handle == IntPtr.Zero ) return new SongInfo( clientName );
 
 			TreeWalker walker = TreeWalker.ControlViewWalker;
 			// Whole WMP window
@@ -71,7 +71,7 @@ namespace ParsingModule
 		}
 
 		// Returns all child AutomationElement nodes in "element" node
-		private List<AutomationElement> GetChildren( AutomationElement element )
+		private static List<AutomationElement> GetChildren( AutomationElement element )
 		{
 			List<AutomationElement> result = new List<AutomationElement>();
 			TreeWalker walker = TreeWalker.ControlViewWalker;
@@ -85,6 +85,11 @@ namespace ParsingModule
 			}
 
 			return result;
+		}
+		
+		private WMPSongInfo()
+		{
+
 		}
 	}
 

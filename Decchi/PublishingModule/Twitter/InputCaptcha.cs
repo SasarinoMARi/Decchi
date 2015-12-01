@@ -7,7 +7,9 @@ namespace PublishingModule.Twitter
 	public partial class InputCaptcha : Form
 	{
 		private string _captcha = string.Empty;
-		public string Captcha { get { return _captcha; } }
+		private bool _safeExit = false;
+        public string Captcha { get { return _captcha; } }
+		public bool SafeExit { get { return _safeExit; } }
 
 		public InputCaptcha(string url)
 		{
@@ -18,7 +20,8 @@ namespace PublishingModule.Twitter
 		private void btn_summit_Click( object sender, EventArgs e )
 		{
 			_captcha = textBox_captcha.Text;
-			this.Close( );
+			_safeExit = true;
+            this.Close( );
 		}
 
 		private void textBox_captcha_KeyPress( object sender, KeyPressEventArgs e )
