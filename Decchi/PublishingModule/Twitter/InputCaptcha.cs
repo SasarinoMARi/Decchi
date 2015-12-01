@@ -11,30 +11,30 @@ namespace PublishingModule.Twitter
 
 		public InputCaptcha(string url)
 		{
-			InitializeComponent( );
-			Globals.OpenWebSite( url );
+			InitializeComponent();
+			Globals.OpenWebSite(url);
 		}
 
-		private void btn_summit_Click( object sender, EventArgs e )
+		private void btn_summit_Click(object sender, EventArgs e)
 		{
 			_captcha = textBox_captcha.Text;
-			this.Close( );
+			this.Close();
 		}
 
-		private void textBox_captcha_KeyPress( object sender, KeyPressEventArgs e )
+		private void textBox_captcha_KeyPress(object sender, KeyPressEventArgs e)
 		{
-			if ( !( Char.IsDigit( e.KeyChar ) ) && e.KeyChar != ( int ) Keys.Back )
+			if ((!Char.IsDigit(e.KeyChar)) && e.KeyChar != (int)Keys.Back)
 			{
 				e.Handled = true;
 			}
 		}
 
-		private void textBox_captcha_KeyDown( object sender, KeyEventArgs e )
+		private void textBox_captcha_KeyDown(object sender, KeyEventArgs e)
 		{
-			if(e.KeyData == Keys.Enter)
+			if (e.KeyData == Keys.Enter)
 			{
 				_captcha = textBox_captcha.Text;
-				this.Close( );
+				this.Close();
 			}
 		}
 	}

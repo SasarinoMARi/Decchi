@@ -11,13 +11,13 @@
 		/// Clean up any resources being used.
 		/// </summary>
 		/// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
-		protected override void Dispose( bool disposing )
+		protected override void Dispose(bool disposing)
 		{
-			if ( disposing && ( components != null ) )
+			if (disposing && (components != null))
 			{
-				components.Dispose( );
+				components.Dispose();
 			}
-			base.Dispose( disposing );
+			base.Dispose(disposing);
 		}
 
 		#region Windows Form Designer generated code
@@ -26,7 +26,7 @@
 		/// Required method for Designer support - do not modify
 		/// the contents of this method with the code editor.
 		/// </summary>
-		private void InitializeComponent( )
+		private void InitializeComponent()
 		{
 			this.textBox_captcha = new System.Windows.Forms.TextBox();
 			this.btn_summit = new System.Windows.Forms.Button();
@@ -35,8 +35,8 @@
 			// textBox_captcha
 			// 
 			this.textBox_captcha.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+			| System.Windows.Forms.AnchorStyles.Left) 
+			| System.Windows.Forms.AnchorStyles.Right)));
 			this.textBox_captcha.Font = new System.Drawing.Font("Malgun Gothic", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
 			this.textBox_captcha.Location = new System.Drawing.Point(12, 12);
 			this.textBox_captcha.Name = "textBox_captcha";
