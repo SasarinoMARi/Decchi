@@ -28,6 +28,7 @@
 		/// </summary>
 		private void InitializeComponent( )
 		{
+			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(InputCaptcha));
 			this.textBox_captcha = new System.Windows.Forms.TextBox();
 			this.btn_summit = new System.Windows.Forms.Button();
 			this.SuspendLayout();
@@ -64,6 +65,7 @@
 			this.Controls.Add(this.btn_summit);
 			this.Controls.Add(this.textBox_captcha);
 			this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
+			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.MaximizeBox = false;
 			this.Name = "InputCaptcha";
 			this.ShowIcon = false;

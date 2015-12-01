@@ -68,7 +68,14 @@ namespace Decchi
 
 		private void btn_post_Click(object sender, EventArgs e)
 		{
-			DecchiCore.Instance.Run();
+			btn_post.Enabled = false;
+			DecchiCore.Instance.Run( delegate
+			{
+				this.Invoke( new MethodInvoker( delegate
+				{
+					btn_post.Enabled = true;
+				} ) );
+			} );
 		}
 
 		#endregion

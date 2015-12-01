@@ -39,6 +39,9 @@
   <PropertyGroup>
     <StartupObject>Decchi.Program</StartupObject>
   </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>iconSample.ico</ApplicationIcon>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -81,6 +84,7 @@
     <Compile Include="PublishingModule\Twitter\TweeterCommunicator.cs" />
     <Compile Include="ShortcutModule\globalKeyboardHook.cs" />
     <Compile Include="ShortcutModule\HookManager.cs" />
+    <Compile Include="Uncommit\TwitterToken.cs" />
     <EmbeddedResource Include="Core\Main.resx">
       <DependentUpon>Main.cs</DependentUpon>
     </EmbeddedResource>
@@ -112,6 +116,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="ExternalLibrarys\Tweetinvi\TweetinviAPI.dll" />
+    <Content Include="iconSample.ico" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

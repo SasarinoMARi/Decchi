@@ -9,7 +9,7 @@ namespace PublishingModule.Twitter
     /// 이 클래스는 싱글턴 패턴으로 설계되었습니다. DecchiCore.Instance를 통해 인스턴스에 접근할 수 있습니다.
     /// IDecchiPublisher 인터페이스를 상속받은 퍼블리셔 클래스입니다.
     /// </summary>
-    public class TwitterCommunicator : IDecchiPublisher
+    public partial class TwitterCommunicator : IDecchiPublisher
     {
         private static TwitterCommunicator _instance = null;
 		string Consumer_Key { get; set; }
@@ -31,16 +31,15 @@ namespace PublishingModule.Twitter
         private TwitterCommunicator()
         {
 			// 이 곳에 컨슈머 정보 입력.
-			Consumer_Key = "";
-			Consumer_Secret = "";
-		}
+			SetConsumer( ); // 커밋 분엔 포함 안되어있으니 알아서 정의하세염
+        }
 
         public bool Login()
         {
             try
             {
-                var accessToken = Globals.GetValue("AccessToken");
-                var accessTokenSecret = Globals.GetValue("AccessTokenSecret");
+                var accessToken = Globals.GetValue("TwitterAccessToken");
+                var accessTokenSecret = Globals.GetValue("TwitterAccessTokenSecret");
                 if (string.IsNullOrEmpty(accessToken) || string.IsNullOrEmpty(accessTokenSecret))
                 {
                     var user = NewAuth();
@@ -48,8 +47,8 @@ namespace PublishingModule.Twitter
 					{
 						accessToken = user.AccessToken;
 						accessTokenSecret = user.AccessTokenSecret;
-						Globals.SetValue("AccessToken", accessToken);
-						Globals.SetValue("AccessTokenSecret", accessTokenSecret);
+						Globals.SetValue("TwitterAccessToken", accessToken);
+						Globals.SetValue( "TwitterAccessTokenSecret", accessTokenSecret);
 					}
 					else
 					{

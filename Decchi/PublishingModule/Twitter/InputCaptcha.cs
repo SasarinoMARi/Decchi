@@ -1,6 +1,6 @@
-﻿using Decchi;
-using System;
+﻿using System;
 using System.Windows.Forms;
+using Decchi;
 
 namespace PublishingModule.Twitter
 {

@@ -28,22 +28,16 @@
 		/// </summary>
 		private void InitializeComponent( )
 		{
-			this.picbox_profileImage = new RoundedPicturebox();
+			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Main));
 			this.label_UserName = new System.Windows.Forms.Label();
 			this.label_ScreenName = new System.Windows.Forms.Label();
 			this.btn_post = new System.Windows.Forms.Button();
+			this.picbox_profileImage = new RoundedPicturebox();
+			this.label1 = new System.Windows.Forms.Label();
+			this.label2 = new System.Windows.Forms.Label();
+			this.label3 = new System.Windows.Forms.Label();
 			((System.ComponentModel.ISupportInitialize)(this.picbox_profileImage)).BeginInit();
 			this.SuspendLayout();
-			// 
-			// picbox_profileImage
-			// 
-			this.picbox_profileImage.BackColor = System.Drawing.Color.Transparent;
-			this.picbox_profileImage.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-			this.picbox_profileImage.Location = new System.Drawing.Point(113, 55);
-			this.picbox_profileImage.Name = "picbox_profileImage";
-			this.picbox_profileImage.Size = new System.Drawing.Size(200, 200);
-			this.picbox_profileImage.TabIndex = 0;
-			this.picbox_profileImage.TabStop = false;
 			// 
 			// label_UserName
 			// 
@@ -77,17 +71,59 @@
 			this.btn_post.UseVisualStyleBackColor = true;
 			this.btn_post.Click += new System.EventHandler(this.btn_post_Click);
 			// 
+			// picbox_profileImage
+			// 
+			this.picbox_profileImage.BackColor = System.Drawing.Color.Transparent;
+			this.picbox_profileImage.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+			this.picbox_profileImage.Location = new System.Drawing.Point(113, 55);
+			this.picbox_profileImage.Name = "picbox_profileImage";
+			this.picbox_profileImage.Size = new System.Drawing.Size(200, 200);
+			this.picbox_profileImage.TabIndex = 0;
+			this.picbox_profileImage.TabStop = false;
+			// 
+			// label1
+			// 
+			this.label1.AutoSize = true;
+			this.label1.ForeColor = System.Drawing.Color.Red;
+			this.label1.Location = new System.Drawing.Point(48, 527);
+			this.label1.Name = "label1";
+			this.label1.Size = new System.Drawing.Size(227, 12);
+			this.label1.TabIndex = 4;
+			this.label1.Text = "Ctrl + Q 누르면 어디서나 즉시 트윗 가능!";
+			// 
+			// label2
+			// 
+			this.label2.AutoSize = true;
+			this.label2.Location = new System.Drawing.Point(179, 566);
+			this.label2.Name = "label2";
+			this.label2.Size = new System.Drawing.Size(133, 12);
+			this.label2.TabIndex = 5;
+			this.label2.Text = ">> 디자이너 구해요 <<";
+			// 
+			// label3
+			// 
+			this.label3.AutoSize = true;
+			this.label3.Location = new System.Drawing.Point(321, 590);
+			this.label3.Name = "label3";
+			this.label3.Size = new System.Drawing.Size(101, 12);
+			this.label3.TabIndex = 6;
+			this.label3.Text = "@Sasarino MARi";
+			// 
 			// Main
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 12F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.BackColor = System.Drawing.Color.White;
 			this.ClientSize = new System.Drawing.Size(434, 611);
+			this.Controls.Add(this.label3);
+			this.Controls.Add(this.label2);
+			this.Controls.Add(this.label1);
 			this.Controls.Add(this.btn_post);
 			this.Controls.Add(this.label_ScreenName);
 			this.Controls.Add(this.label_UserName);
 			this.Controls.Add(this.picbox_profileImage);
 			this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
+			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.MaximizeBox = false;
 			this.Name = "Main";
 			this.Text = "뎃찌NP";
@@ -104,6 +140,9 @@
         private System.Windows.Forms.Label label_UserName;
         private System.Windows.Forms.Label label_ScreenName;
 		private System.Windows.Forms.Button btn_post;
+		private System.Windows.Forms.Label label1;
+		private System.Windows.Forms.Label label2;
+		private System.Windows.Forms.Label label3;
 	}
 }
 

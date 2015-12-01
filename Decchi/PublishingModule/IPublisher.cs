@@ -1,5 +1,4 @@
-﻿
-namespace PublishingModule
+﻿namespace PublishingModule
 {
     internal interface IDecchiPublisher
     {

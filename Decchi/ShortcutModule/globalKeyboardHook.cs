@@ -55,11 +55,15 @@ namespace Utilities
 		#endregion
 
 		#region Constructors and Destructors
+
+		keyboardHookProc khp;
+
 		/// <summary>
 		/// Initializes a new instance of the <see cref="globalKeyboardHook"/> class and installs the keyboard hook.
 		/// </summary>
 		public globalKeyboardHook( )
 		{
+			khp = new keyboardHookProc( hookProc );
 			hook( );
 		}
 
@@ -80,7 +84,7 @@ namespace Utilities
 		public void hook( )
 		{
 			IntPtr hInstance = LoadLibrary("User32");
-			hhook = SetWindowsHookEx( WH_KEYBOARD_LL, hookProc, hInstance, 0 );
+			hhook = SetWindowsHookEx( WH_KEYBOARD_LL, khp, hInstance, 0 );
 		}
 
 		/// <summary>

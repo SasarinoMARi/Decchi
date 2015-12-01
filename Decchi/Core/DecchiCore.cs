@@ -1,7 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Windows.Forms;
 using ParsingModule;
 using PublishingModule.Twitter;
+using Utilities;
 
 namespace Decchi
 {
@@ -12,9 +14,9 @@ namespace Decchi
     public class DecchiCore
     {
         private static DecchiCore _instance = null;
-        //globalKeyboardHook manager = new globalKeyboardHook();
+		globalKeyboardHook manager = new globalKeyboardHook();
 
-        public static DecchiCore Instance
+		public static DecchiCore Instance
         {
             get
             {
@@ -23,10 +25,10 @@ namespace Decchi
         }
         private DecchiCore()
         {
-            // 전역 키보드 후킹 이벤트를 초기화합니다, 만 잘 되지 않네요.
-            //manager.HookedKeys.Add(Keys.Q);
-            //manager.KeyDown += HookManager_KeyDown;
-        }
+			// 전역 키보드 후킹 이벤트를 초기화합니다,.
+			manager.HookedKeys.Add( Keys.Q );
+			manager.KeyDown += HookManager_KeyDown;
+		}
 
         /// <summary>
         /// 전역 키보드 이벤트 정의부
@@ -35,7 +37,7 @@ namespace Decchi
         /// <param name="e">키 이벤트</param>
         void HookManager_KeyDown(object sender, KeyEventArgs e)
         {
-            if (e.Modifiers == Keys.Control)
+            if (Control.ModifierKeys == Keys.Control)
             {
                 DecchiCore.Instance.Run();
             }
@@ -80,5 +82,10 @@ namespace Decchi
                 TwitterCommunicator.Instance.Publish(nowPlayings[keys[0]].ToString());   
             }
         }
+		public void Run(Action callback)
+		{
+			Run( );
+			callback( );
+		}
     }
 }

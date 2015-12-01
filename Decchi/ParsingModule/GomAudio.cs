@@ -30,6 +30,8 @@ namespace ParsingModule
 				{
 					var splt = str.Split('-');
 
+					// 곡 태그에 - 끼어있으면 에로사항이 꽃핌.
+					// 고급스런 방법을 쓰던가 뭔가 수를 마련해야 함.
 					var SongName = splt[1].Trim();
 					var SongArtist = splt[0].Trim();
 					info = new SongInfo( clientName, SongName, string.Empty, SongArtist );
@@ -39,6 +41,4 @@ namespace ParsingModule
 			return info;
 		}
 	}
-
-
 }
