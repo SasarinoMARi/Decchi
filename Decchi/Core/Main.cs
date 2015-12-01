@@ -8,30 +8,30 @@ using Tweetinvi.Core.Interfaces;
 
 namespace Decchi
 {
-    /// <summary>
-    /// 뎃찌의 메인 폼을 정의합니다.
-    /// </summary>
-    public partial class Main : Form
-    {
-        public Main()
-        {
+	/// <summary>
+	/// 뎃찌의 메인 폼을 정의합니다.
+	/// </summary>
+	public partial class Main : Form
+	{
+		public Main()
+		{
 			InitializeComponent();
 			PlaceControls();
 		}
 
 		private async void Main_Load(object sender, EventArgs e)
 		{
-            // 폼에 트위터 유저 정보 매핑
+			// 폼에 트위터 유저 정보 매핑
 			var me = await Task.Run(new Func<ILoggedUser>(() => TwitterCommunicator.Instance.Me));
-            if (me != null)
-            {
+			if (me != null)
+			{
 				Task.Factory.StartNew(delegate // <-- 륜님 이거 줮나 편하네요 ㅇ.<
 				{
 					Image imgOrig;
 					Image imgRounded;
 
 					try
-                {
+					{
 						imgOrig = Globals.GetImageFromUrl(me.ProfileImageUrl.Replace("_normal", ""));
 					}
 					catch
@@ -48,10 +48,10 @@ namespace Decchi
 							using (var imgOrigResized = new Bitmap(imgOrig, 200, 200))
 							using (var brs = new TextureBrush(imgOrigResized))
 							{
-								g.SmoothingMode = SmoothingMode.AntiAlias;
-								g.CompositingQuality = CompositingQuality.HighQuality;
-								g.PixelOffsetMode = PixelOffsetMode.HighQuality;
-								g.InterpolationMode = InterpolationMode.HighQualityBicubic;
+								g.SmoothingMode			= SmoothingMode.AntiAlias;
+								g.CompositingQuality	= CompositingQuality.HighQuality;
+								g.PixelOffsetMode		= PixelOffsetMode.HighQuality;
+								g.InterpolationMode		= InterpolationMode.HighQualityBicubic;
 
 								using (var path = new GraphicsPath())
 								{
@@ -65,62 +65,57 @@ namespace Decchi
 
 
 					this.Invoke(new Action(() => picbox_profileImage.BackgroundImage = imgRounded));
-                });
-                var nameStr = me.Name;
+				});
 
-                // 이름 사이에 한칸씩 여백을 주면 멋지지 않을까 해서 만들어 봤는데,
-                // 적용시켜보니 생각보다 별로라 지울까 했지만,
-                // 왠지 지우자니 아까워서 여기에 남기다.
-                //var sourceLength = nameStr.Length;
-                //for (int i = sourceLength - 1; i >= 0; i--)
-                //{
-                //    nameStr = nameStr.Insert(i, " ");
-                //}
+				var nameStr = me.Name;
+				
+				// 이름 사이에 한칸씩 여백을 주면 멋지지 않을까 해서 만들어 봤는데,
+				// 적용시켜보니 생각보다 별로라 지울까 했지만,
+				// 왠지 지우자니 아까워서 여기에 남기다.
+				//var sourceLength = nameStr.Length;
+				//for (int i = sourceLength - 1; i >= 0; i--)
+				//{
+				//	nameStr = nameStr.Insert(i, " ");
+				//}
+				
+				label_UserName.Text = nameStr;
+				label_ScreenName.Text = me.ScreenName;
+				
+				PlaceControls();
+			}
+			else
+			{
+				MessageBox.Show("유저 정보를 받아오는데 실패했습니다.", "네트워크 오류");
+				this.Close();
+			}
+		}
 
-                label_UserName.Text = nameStr;
-                label_ScreenName.Text = me.ScreenName;
-
-                PlaceControls();
-            }
-            else
-            {
-                MessageBox.Show("유저 정보를 받아오는데 실패했습니다.", "네트워크 오류");
-                this.Close();
-            }
-        }
-
-        /// <summary>
-        /// 중앙을 기준으로 컨트롤을 배치합니다.
-        /// </summary>
-        public void PlaceControls()
-        {
-            var center = new Point(this.Width / 2, this.Height / 2);
+		/// <summary>
+		/// 중앙을 기준으로 컨트롤을 배치합니다.
+		/// </summary>
+		public void PlaceControls()
+		{
+			var center = new Point(this.Width / 2, this.Height / 2);
 			picbox_profileImage.Location = Point.Subtract(center, new Size(picbox_profileImage.Width / 2, picbox_profileImage.Height / 2 + 180));
 			label_UserName.Location = Point.Subtract(center, new Size(label_UserName.Width / 2, label_UserName.Height / 2 + 50));
-            label_ScreenName.Location = Point.Subtract(center, new Size(label_ScreenName.Width / 2, label_ScreenName.Height / 2 + 5));
+			label_ScreenName.Location = Point.Subtract(center, new Size(label_ScreenName.Width / 2, label_ScreenName.Height / 2 + 5));
 			btn_post.Location = Point.Subtract(center, new Size(btn_post.Width / 2, btn_post.Height / 2 - 150));
 		}
 
-        #region 폼 이벤트
+		#region 폼 이벤트
+		private void Main_Resize(object sender, EventArgs e)
+		{
+			PlaceControls();
+		}
 
-        private void Main_Resize(object sender, EventArgs e)
-        {
-            PlaceControls();
-        }
-
-		private void btn_post_Click(object sender, EventArgs e)
+		// 트윗을 한번에 여러개 쓸 필요 없다
+		private async void btn_post_Click(object sender, EventArgs e)
 		{
 			btn_post.Enabled = false;
-			DecchiCore.Instance.Run( delegate
-			{
-				this.Invoke( new MethodInvoker( delegate
-				{
-					btn_post.Enabled = true;
-				} ) );
-			} );
+			await Task.Run(new Action(DecchiCore.Run));
+			btn_post.Enabled = true;
 		}
 
 		#endregion
-
 	}
 }

@@ -38,7 +38,7 @@ namespace Decchi
 			Globals.ReadSettings();
 			Application.EnableVisualStyles();
 			Application.SetCompatibleTextRenderingDefault(false);
-			DecchiCore.Instance.Login();
+			DecchiCore.Login();
 			Globals.SaveSettings();
 
 			Application.Run(new Main());

@@ -139,8 +139,8 @@
 		#endregion
 
 		private System.Windows.Forms.PictureBox picbox_profileImage;
-        private System.Windows.Forms.Label label_UserName;
-        private System.Windows.Forms.Label label_ScreenName;
+		private System.Windows.Forms.Label label_UserName;
+		private System.Windows.Forms.Label label_ScreenName;
 		private System.Windows.Forms.Button btn_post;
 		private System.Windows.Forms.Label label1;
 		private System.Windows.Forms.Label label2;

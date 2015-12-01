@@ -9,16 +9,9 @@
 		public string	Title	{ get; protected set; }
 		public string	Album	{ get; protected set; }
 		public string	Artist	{ get; protected set; }
-		public bool		Loaded	{ get; protected set; } 
+		public bool		Loaded	{ get; protected set; }
 
-		public SongInfo()
-		{
-		}
-
-		public virtual bool GetCurrentPlayingSong()
-        {
-			return false;
-        }
+		public abstract bool GetCurrentPlayingSong();
 
 		private const string defaultFormat = "/artist/의 /title/을 듣고 있어요! /via/ - /client/";
 		public override string ToString()
