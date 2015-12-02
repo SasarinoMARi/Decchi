@@ -14,7 +14,7 @@
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <TargetFrameworkProfile>
     </TargetFrameworkProfile>
-    <AssemblyVersion>1.0.0.92</AssemblyVersion>
+    <AssemblyVersion>1.0.0.118</AssemblyVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -44,6 +44,11 @@
     <ApplicationIcon>iconSample.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Interop.iTunesLib">
+      <HintPath>.\Interop.iTunesLib.dll</HintPath>
+      <EmbedInteropTypes>False</EmbedInteropTypes>
+      <Private>False</Private>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
@@ -63,6 +68,7 @@
     <Compile Include="Core\Main.Designer.cs">
       <DependentUpon>Main.cs</DependentUpon>
     </Compile>
+    <Compile Include="NativeMethods.cs" />
     <Compile Include="ParsingModule\GomAudioSongInfo.cs" />
     <Compile Include="ParsingModule\iTunes.cs" />
     <Compile Include="ParsingModule\SongInfo.cs" />
@@ -96,20 +102,9 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="ExternalLibrarys\Tweetinvi\TweetinviAPI.dll" />
-    <None Include="Interop.iTunesLib.dll" />
-    <EmbeddedResource Include="obj\Debug\Interop.iTunesLib.dll" />
+    <EmbeddedResource Include="Interop.iTunesLib.dll" />
   </ItemGroup>
   <ItemGroup>
-    <COMReference Include="iTunesLib">
-      <Guid>{9E93C96F-CF0D-43F6-8BA8-B807A3370712}</Guid>
-      <VersionMajor>1</VersionMajor>
-      <VersionMinor>13</VersionMinor>
-      <Lcid>0</Lcid>
-      <WrapperTool>tlbimp</WrapperTool>
-      <Isolated>False</Isolated>
-      <EmbedInteropTypes>False</EmbedInteropTypes>
-      <Private>False</Private>
-    </COMReference>
     <Content Include="iconSample.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

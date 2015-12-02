@@ -1,11 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Net;
-using System.Runtime.InteropServices;
 
 namespace Decchi
 {
@@ -22,15 +20,13 @@ namespace Decchi
 		/// </summary>
 		public static void SaveSettings()
 		{
-			using (var writeStream = new FileStream(SettingFilePath, FileMode.Create))
+			// SIMPLE IS GOOD
+			using (var writer = new StreamWriter(SettingFilePath))
 			{
-				using (var writer = new StreamWriter(writeStream))
+				var list = new List<string>(settings.Keys);
+				for (int i = 0; i < list.Count; i++)
 				{
-					var list = new List<string>(settings.Keys);
-					for (int i = 0; i < list.Count; i++)
-					{
-						writer.WriteLine("{0}={1}", list[i], settings[list[i]]);
-					}
+					writer.WriteLine("{0}={1}", list[i], settings[list[i]]);
 				}
 			}
 		}
@@ -41,18 +37,15 @@ namespace Decchi
 		/// </summary>
 		public static void ReadSettings()
 		{
-			using (var readStream = new FileStream(SettingFilePath, FileMode.OpenOrCreate))
+			using (var reader = new StreamReader(SettingFilePath))
 			{
-				using (var reader = new StreamReader(readStream))
-				{
-					while (true)
-					{
-						var line = reader.ReadLine();
-						if (line == null) break;
+				string line;
+				string[] splitedLine;
 
-						var splitedLine = line.Split('=');
-						settings[splitedLine[0]] = splitedLine[1];
-					}
+				while ((line = reader.ReadLine()) != null)
+				{
+					splitedLine = line.Split('=');
+					settings[splitedLine[0]] = splitedLine[1];
 				}
 			}
 		}
@@ -64,7 +57,8 @@ namespace Decchi
 		/// <param name="Value">PropertyName에 대응하는 값</param>
 		public static void SetValue(string PropertyName, string Value)
 		{
-			settings[PropertyName] = Value;
+			lock (settings)
+				settings[PropertyName] = Value;
 		}
 
 		/// <summary>
@@ -74,13 +68,16 @@ namespace Decchi
 		/// <returns>ProtertyName에 대응하는 값</returns>
 		public static string GetValue(string PropertyName)
 		{
-			if (settings.Keys.Contains(PropertyName))
+			lock (settings)
 			{
-				return settings[PropertyName];
-			}
-			else
-			{
-				return string.Empty;
+				if (settings.Keys.Contains(PropertyName))
+				{
+					return settings[PropertyName];
+				}
+				else
+				{
+					return string.Empty;
+				}
 			}
 		}
 
@@ -110,15 +107,5 @@ namespace Decchi
 				using (Stream stream = httpWebReponse.GetResponseStream())
 					return Image.FromStream(stream);
 		}
-
-
-		/// <summary>
-		/// 클래스 이름과 타이틀로 윈도우 핸들 값을 얻어옵니다
-		/// </summary>
-		/// <param name="strClassName">찾을 윈도우의 클래스 네임</param>
-		/// <param name="strWindowName">찾을 윈도우의 타이틀</param>
-		/// <returns>윈도우 핸들 값</returns>
-		[DllImport("User32.dll")]
-		public static extern IntPtr FindWindow(string strClassName, string strWindowName);
 	}
 }

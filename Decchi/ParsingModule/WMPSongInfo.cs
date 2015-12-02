@@ -14,7 +14,7 @@ namespace ParsingModule
 		public override bool GetCurrentPlayingSong()
 		{
 			// Finding the WMP window
-			IntPtr handle = Globals.FindWindow("WMPlayerApp", "Windows Media Player");
+			IntPtr handle = NativeMethods.FindWindow("WMPlayerApp", "Windows Media Player");
 			if (handle == IntPtr.Zero) return false;
 			
 			var walker			= TreeWalker.ControlViewWalker;
