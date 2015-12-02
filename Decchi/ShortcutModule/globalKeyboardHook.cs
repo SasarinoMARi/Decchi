@@ -8,13 +8,13 @@ namespace Utilities
 	/// <summary>
 	/// A class that manages a global low level keyboard hook
 	/// </summary>
-	public class globalKeyboardHook
+	public class globalKeyboardHook : IDisposable
 	{
 		#region Constant, Structure and Delegate Definitions
 		/// <summary>
 		/// defines the callback type for the hook
 		/// </summary>
-		public delegate int keyboardHookProc(int code, int wParam, ref keyboardHookStruct lParam);
+		public delegate IntPtr keyboardHookProc(int code, IntPtr wParam, ref keyboardHookStruct lParam);
 
 		public struct keyboardHookStruct
 		{
@@ -67,13 +67,29 @@ namespace Utilities
 			hook();
 		}
 
+		private bool m_disposed = false;
+		public void Dispose()
+		{
+			this.Dispose(true);
+			GC.SuppressFinalize(this);
+		}
+		protected virtual void Dispose(bool disposing)
+		{
+			if (this.m_disposed) return;
+			this.m_disposed = true;
+
+			if (disposing)
+			{
+			}
+		}
+
 		/// <summary>
 		/// Releases unmanaged resources and performs other cleanup operations before the
 		/// <see cref="globalKeyboardHook"/> is reclaimed by garbage collection and uninstalls the keyboard hook.
 		/// </summary>
 		~globalKeyboardHook()
 		{
-			unhook();
+			this.Dispose(false);
 		}
 		#endregion
 
@@ -83,8 +99,8 @@ namespace Utilities
 		/// </summary>
 		public void hook()
 		{
-			IntPtr hInstance = LoadLibrary("User32");
-			hhook = SetWindowsHookEx(WH_KEYBOARD_LL, khp, hInstance, 0);
+			IntPtr hInstance = NativeMethods.LoadLibrary("User32");
+			hhook = NativeMethods.SetWindowsHookEx(WH_KEYBOARD_LL, khp, hInstance, 0);
 		}
 
 		/// <summary>
@@ -92,7 +108,7 @@ namespace Utilities
 		/// </summary>
 		public void unhook()
 		{
-			UnhookWindowsHookEx(hhook);
+			NativeMethods.UnhookWindowsHookEx(hhook);
 		}
 
 		/// <summary>
@@ -102,68 +118,73 @@ namespace Utilities
 		/// <param name="wParam">The event type</param>
 		/// <param name="lParam">The keyhook event information</param>
 		/// <returns></returns>
-		public int hookProc(int code, int wParam, ref keyboardHookStruct lParam)
+		public IntPtr hookProc(int code, IntPtr wParam, ref keyboardHookStruct lParam)
 		{
 			if (code >= 0)
 			{
 				Keys key = (Keys)lParam.vkCode;
 				if (HookedKeys.Contains(key))
 				{
+					var wparam = wParam.ToInt64();
+
 					KeyEventArgs kea = new KeyEventArgs(key);
-					if ((wParam == WM_KEYDOWN || wParam == WM_SYSKEYDOWN) && (KeyDown != null))
+					if ((wparam == WM_KEYDOWN || wparam == WM_SYSKEYDOWN) && (KeyDown != null))
 					{
 						KeyDown(this, kea);
 					}
-					else if ((wParam == WM_KEYUP || wParam == WM_SYSKEYUP) && (KeyUp != null))
+					else if ((wparam == WM_KEYUP || wparam == WM_SYSKEYUP) && (KeyUp != null))
 					{
 						KeyUp(this, kea);
 					}
 					if (kea.Handled)
-						return 1;
+						return new IntPtr(1);
 				}
 			}
-			return CallNextHookEx(hhook, code, wParam, ref lParam);
+			return NativeMethods.CallNextHookEx(hhook, code, wParam, ref lParam);
 		}
 		#endregion
 
-		#region DLL imports
-		/// <summary>
-		/// Sets the windows hook, do the desired event, one of hInstance or threadId must be non-null
-		/// </summary>
-		/// <param name="idHook">The id of the event you want to hook</param>
-		/// <param name="callback">The callback.</param>
-		/// <param name="hInstance">The handle you want to attach the event to, can be null</param>
-		/// <param name="threadId">The thread you want to attach the event to, can be null</param>
-		/// <returns>a handle to the desired hook</returns>
-		[DllImport("user32.dll")]
-		static extern IntPtr SetWindowsHookEx(int idHook, keyboardHookProc callback, IntPtr hInstance, uint threadId);
+		private static class NativeMethods
+		{
+			#region DLL imports
+			/// <summary>
+			/// Sets the windows hook, do the desired event, one of hInstance or threadId must be non-null
+			/// </summary>
+			/// <param name="idHook">The id of the event you want to hook</param>
+			/// <param name="callback">The callback.</param>
+			/// <param name="hInstance">The handle you want to attach the event to, can be null</param>
+			/// <param name="threadId">The thread you want to attach the event to, can be null</param>
+			/// <returns>a handle to the desired hook</returns>
+			[DllImport("user32.dll")]
+			public static extern IntPtr SetWindowsHookEx(int idHook, keyboardHookProc callback, IntPtr hInstance, uint threadId);
 
-		/// <summary>
-		/// Unhooks the windows hook.
-		/// </summary>
-		/// <param name="hInstance">The hook handle that was returned from SetWindowsHookEx</param>
-		/// <returns>True if successful, false otherwise</returns>
-		[DllImport("user32.dll")]
-		static extern bool UnhookWindowsHookEx(IntPtr hInstance);
+			/// <summary>
+			/// Unhooks the windows hook.
+			/// </summary>
+			/// <param name="hInstance">The hook handle that was returned from SetWindowsHookEx</param>
+			/// <returns>True if successful, false otherwise</returns>
+			[DllImport("user32.dll")]
+			public static extern bool UnhookWindowsHookEx(IntPtr hInstance);
 
-		/// <summary>
-		/// Calls the next hook.
-		/// </summary>
-		/// <param name="idHook">The hook id</param>
-		/// <param name="nCode">The hook code</param>
-		/// <param name="wParam">The wparam.</param>
-		/// <param name="lParam">The lparam.</param>
-		/// <returns></returns>
-		[DllImport("user32.dll")]
-		static extern int CallNextHookEx(IntPtr idHook, int nCode, int wParam, ref keyboardHookStruct lParam);
+			/// <summary>
+			/// Calls the next hook.
+			/// </summary>
+			/// <param name="idHook">The hook id</param>
+			/// <param name="nCode">The hook code</param>
+			/// <param name="wParam">The wparam.</param>
+			/// <param name="lParam">The lparam.</param>
+			/// <returns></returns>
+			[DllImport("user32.dll")]
+			public static extern IntPtr CallNextHookEx(IntPtr idHook, int nCode, IntPtr wParam, ref keyboardHookStruct lParam);
 
-		/// <summary>
-		/// Loads the library.
-		/// </summary>
-		/// <param name="lpFileName">Name of the library</param>
-		/// <returns>A handle to the library</returns>
-		[DllImport("kernel32.dll")]
-		static extern IntPtr LoadLibrary(string lpFileName);
-		#endregion
+			/// <summary>
+			/// Loads the library.
+			/// </summary>
+			/// <param name="lpFileName">Name of the library</param>
+			/// <returns>A handle to the library</returns>
+			[DllImport("kernel32.dll", CharSet = CharSet.Unicode)]
+			public static extern IntPtr LoadLibrary(string lpFileName);
+			#endregion
+		}
 	}
 }

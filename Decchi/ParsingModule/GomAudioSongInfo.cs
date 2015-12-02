@@ -22,8 +22,9 @@ namespace ParsingModule
 				if (procs[i].MainWindowTitle.Contains("곰오디오"))
 				{
 					var sep = str.IndexOf('-');
+					var sep2 = str.LastIndexOf('-');
 					
-					this.Title	= str.Substring(sep + 1).Trim();
+					this.Title	= str.Substring(sep + 1, sep2 - sep).Trim();
 					this.Album	= null;
 					this.Artist	= str.Substring(0, sep).Trim();
 
