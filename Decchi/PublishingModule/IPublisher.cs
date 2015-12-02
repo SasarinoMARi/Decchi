@@ -1,9 +1,9 @@
 ﻿namespace PublishingModule
 {
-    internal interface IDecchiPublisher
-    {
-        bool Login();
+	internal interface IDecchiPublisher
+	{
+		bool Login();
 
-        bool Publish(string text);
-    }
+		bool Publish(string text);
+	}
 }

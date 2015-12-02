@@ -11,13 +11,13 @@
 		/// Clean up any resources being used.
 		/// </summary>
 		/// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
-		protected override void Dispose( bool disposing )
+		protected override void Dispose(bool disposing)
 		{
-			if ( disposing && ( components != null ) )
+			if (disposing && (components != null))
 			{
-				components.Dispose( );
+				components.Dispose();
 			}
-			base.Dispose( disposing );
+			base.Dispose(disposing);
 		}
 
 		#region Windows Form Designer generated code
@@ -26,7 +26,7 @@
 		/// Required method for Designer support - do not modify
 		/// the contents of this method with the code editor.
 		/// </summary>
-		private void InitializeComponent( )
+		private void InitializeComponent()
 		{
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(InputCaptcha));
 			this.textBox_captcha = new System.Windows.Forms.TextBox();
@@ -38,7 +38,7 @@
 			this.textBox_captcha.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-			this.textBox_captcha.Font = new System.Drawing.Font("Malgun Gothic", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
+			this.textBox_captcha.Font = new System.Drawing.Font("맑은 고딕", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
 			this.textBox_captcha.Location = new System.Drawing.Point(12, 12);
 			this.textBox_captcha.Name = "textBox_captcha";
 			this.textBox_captcha.Size = new System.Drawing.Size(125, 29);
@@ -48,7 +48,7 @@
 			// 
 			// btn_summit
 			// 
-			this.btn_summit.Font = new System.Drawing.Font("Malgun Gothic", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
+			this.btn_summit.Font = new System.Drawing.Font("맑은 고딕", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
 			this.btn_summit.Location = new System.Drawing.Point(143, 12);
 			this.btn_summit.Name = "btn_summit";
 			this.btn_summit.Size = new System.Drawing.Size(79, 29);
@@ -69,7 +69,9 @@
 			this.MaximizeBox = false;
 			this.Name = "InputCaptcha";
 			this.ShowIcon = false;
+			this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
 			this.Text = "인증";
+			this.Load += new System.EventHandler(this.InputCaptcha_Load);
 			this.ResumeLayout(false);
 			this.PerformLayout();
 
@@ -77,7 +79,7 @@
 
 		#endregion
 
-		private System.Windows.Forms.TextBox textBox_captcha;
 		private System.Windows.Forms.Button btn_summit;
+		private System.Windows.Forms.TextBox textBox_captcha;
 	}
 }

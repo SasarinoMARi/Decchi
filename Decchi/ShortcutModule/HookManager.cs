@@ -10,32 +10,32 @@ namespace ShortcutModule
 		{
 			get
 			{
-				return _instance ?? (_instance = new HookManager( ));
+				return _instance ?? (_instance = new HookManager());
 			}
 		}
-		private HookManager( )
+		private HookManager()
 		{
-			hookManager = new globalKeyboardHook( );
+			hookManager = new globalKeyboardHook();
 		}
 
 		private globalKeyboardHook hookManager;
 
-		public void AddKeyDownListner( Keys HookedKey, KeyEventHandler callback )
+		public void AddKeyDownListner(Keys HookedKey, KeyEventHandler callback)
 		{
-			hookManager.HookedKeys.Add( HookedKey );
+			hookManager.HookedKeys.Add(HookedKey);
 			hookManager.KeyDown += callback;
 		}
-		public void RemoveKeyDownListner( KeyEventHandler callback )
+		public void RemoveKeyDownListner(KeyEventHandler callback)
 		{
 			hookManager.KeyDown -= callback;
 		}
 
-		public void AddKeyUpListner( Keys HookedKey, KeyEventHandler callback )
+		public void AddKeyUpListner(Keys HookedKey, KeyEventHandler callback)
 		{
-			hookManager.HookedKeys.Remove( HookedKey );
+			hookManager.HookedKeys.Remove(HookedKey);
 			hookManager.KeyUp += callback;
 		}
-		public void RemoveKeyUpListner( KeyEventHandler callback )
+		public void RemoveKeyUpListner(KeyEventHandler callback)
 		{
 			hookManager.KeyUp -= callback;
 		}

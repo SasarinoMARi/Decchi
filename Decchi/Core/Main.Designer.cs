@@ -11,13 +11,13 @@
 		/// Clean up any resources being used.
 		/// </summary>
 		/// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
-		protected override void Dispose( bool disposing )
+		protected override void Dispose(bool disposing)
 		{
-			if ( disposing && ( components != null ) )
+			if (disposing && (components != null))
 			{
-				components.Dispose( );
+				components.Dispose();
 			}
-			base.Dispose( disposing );
+			base.Dispose(disposing);
 		}
 
 		#region Windows Form Designer generated code
@@ -26,13 +26,13 @@
 		/// Required method for Designer support - do not modify
 		/// the contents of this method with the code editor.
 		/// </summary>
-		private void InitializeComponent( )
+		private void InitializeComponent()
 		{
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Main));
 			this.label_UserName = new System.Windows.Forms.Label();
 			this.label_ScreenName = new System.Windows.Forms.Label();
 			this.btn_post = new System.Windows.Forms.Button();
-			this.picbox_profileImage = new RoundedPicturebox();
+			this.picbox_profileImage = new System.Windows.Forms.PictureBox();
 			this.label1 = new System.Windows.Forms.Label();
 			this.label2 = new System.Windows.Forms.Label();
 			this.label3 = new System.Windows.Forms.Label();
@@ -41,28 +41,28 @@
 			// 
 			// label_UserName
 			// 
-			this.label_UserName.AutoSize = true;
-			this.label_UserName.Font = new System.Drawing.Font("Malgun Gothic", 24F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
-			this.label_UserName.Location = new System.Drawing.Point(132, 282);
+			this.label_UserName.Font = new System.Drawing.Font("맑은 고딕", 24F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
+			this.label_UserName.Location = new System.Drawing.Point(132, 278);
 			this.label_UserName.Name = "label_UserName";
-			this.label_UserName.Size = new System.Drawing.Size(181, 45);
+			this.label_UserName.Size = new System.Drawing.Size(207, 49);
 			this.label_UserName.TabIndex = 1;
 			this.label_UserName.Text = "유 저 네 임";
+			this.label_UserName.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
 			// 
 			// label_ScreenName
 			// 
-			this.label_ScreenName.AutoSize = true;
-			this.label_ScreenName.Font = new System.Drawing.Font("Malgun Gothic", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
+			this.label_ScreenName.Font = new System.Drawing.Font("맑은 고딕", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
 			this.label_ScreenName.ForeColor = System.Drawing.SystemColors.ControlDark;
 			this.label_ScreenName.Location = new System.Drawing.Point(156, 327);
 			this.label_ScreenName.Name = "label_ScreenName";
-			this.label_ScreenName.Size = new System.Drawing.Size(118, 30);
+			this.label_ScreenName.Size = new System.Drawing.Size(173, 30);
 			this.label_ScreenName.TabIndex = 2;
 			this.label_ScreenName.Text = "스크린네임";
+			this.label_ScreenName.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
 			// 
 			// btn_post
 			// 
-			this.btn_post.Font = new System.Drawing.Font("Malgun Gothic", 20.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
+			this.btn_post.Font = new System.Drawing.Font("맑은 고딕", 20.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
 			this.btn_post.Location = new System.Drawing.Point(113, 447);
 			this.btn_post.Name = "btn_post";
 			this.btn_post.Size = new System.Drawing.Size(250, 60);
@@ -78,8 +78,8 @@
 			this.picbox_profileImage.Location = new System.Drawing.Point(113, 55);
 			this.picbox_profileImage.Name = "picbox_profileImage";
 			this.picbox_profileImage.Size = new System.Drawing.Size(200, 200);
+			this.picbox_profileImage.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
 			this.picbox_profileImage.TabIndex = 0;
-			this.picbox_profileImage.TabStop = false;
 			// 
 			// label1
 			// 
@@ -126,7 +126,9 @@
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.MaximizeBox = false;
 			this.Name = "Main";
+			this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
 			this.Text = "뎃찌NP";
+			this.Load += new System.EventHandler(this.Main_Load);
 			this.Resize += new System.EventHandler(this.Main_Resize);
 			((System.ComponentModel.ISupportInitialize)(this.picbox_profileImage)).EndInit();
 			this.ResumeLayout(false);
@@ -136,9 +138,9 @@
 
 		#endregion
 
-        private RoundedPicturebox picbox_profileImage;
-        private System.Windows.Forms.Label label_UserName;
-        private System.Windows.Forms.Label label_ScreenName;
+		private System.Windows.Forms.PictureBox picbox_profileImage;
+		private System.Windows.Forms.Label label_UserName;
+		private System.Windows.Forms.Label label_ScreenName;
 		private System.Windows.Forms.Button btn_post;
 		private System.Windows.Forms.Label label1;
 		private System.Windows.Forms.Label label2;
