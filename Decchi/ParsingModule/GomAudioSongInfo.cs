@@ -8,13 +8,6 @@ namespace ParsingModule
 
 		public override bool GetCurrentPlayingSong()
 		{
-			// Checking Thread Apartment State
-			//ApartmentState state = Thread.CurrentThread.GetApartmentState();
-			//if state == ApartmentState.STA)
-			//	throw new InvalidOperationException
-			//	"You cannot be in Single Thread Apartment (STA) State.");
-
-			// Finding the GomAudio window
 			var procs = Process.GetProcesses();
 			for (int i = 0; i < procs.Length; i++)
 			{
@@ -24,7 +17,7 @@ namespace ParsingModule
 					var sep = str.IndexOf('-');
 					var sep2 = str.LastIndexOf('-');
 					
-					this.Title	= str.Substring(sep + 1, sep2 - sep).Trim();
+					this.Title	= str.Substring(sep + 1, sep2 - sep - 1).Trim();
 					this.Album	= null;
 					this.Artist	= str.Substring(0, sep).Trim();
 
@@ -36,6 +29,4 @@ namespace ParsingModule
 			return false;
 		}
 	}
-
-
 }

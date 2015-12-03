@@ -70,10 +70,11 @@
     </Compile>
     <Compile Include="NativeMethods.cs" />
     <Compile Include="ParsingModule\GomAudioSongInfo.cs" />
-    <Compile Include="ParsingModule\iTunes.cs" />
+    <Compile Include="ParsingModule\iTunesSongInfo.cs" />
     <Compile Include="ParsingModule\SongInfo.cs" />
     <Compile Include="ParsingModule\WMPSongInfo.cs" />
     <Compile Include="Core\Program.cs" />
+    <Compile Include="ParsingModule\YoutubeSongInfo.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Core\Globals.cs" />
     <Compile Include="PublishingModule\IPublisher.cs" />
@@ -86,6 +87,7 @@
     <Compile Include="PublishingModule\Twitter\TweeterCommunicator.cs" />
     <Compile Include="ShortcutModule\globalKeyboardHook.cs" />
     <Compile Include="ShortcutModule\HookManager.cs" />
+    <Compile Include="Uncommit\TwitterToken.cs" />
     <EmbeddedResource Include="Core\Main.resx">
       <DependentUpon>Main.cs</DependentUpon>
       <SubType>Designer</SubType>

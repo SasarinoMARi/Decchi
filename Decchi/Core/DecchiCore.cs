@@ -57,7 +57,8 @@ namespace Decchi
 			List<SongInfo> songs = new List<SongInfo>();
 			songs.Add(new WMPSongInfo());
 			songs.Add(new GomAudioSongInfo());
-			songs.Add(new iTunesSongInfo());
+			songs.Add( new iTunesSongInfo( ) );
+			songs.Add( new YoutubeSongInfo( ) );
 
 			Parallel.ForEach(songs, e => { e.GetCurrentPlayingSong(); if (e.Loaded) Interlocked.Increment(ref playingCount); } );
 

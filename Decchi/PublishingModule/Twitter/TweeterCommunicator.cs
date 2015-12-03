@@ -30,9 +30,7 @@ namespace PublishingModule.Twitter
 		private TwitterCommunicator()
 		{
 			// 이 곳에 컨슈머 정보 입력.
-			throw new NotImplementedException();
-			Consumer_Key = "";
-			Consumer_Secret = "";
+			SetConsumer( );
 		}
 
 		public bool Login()

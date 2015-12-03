@@ -46,7 +46,7 @@
 			this.label_UserName.Name = "label_UserName";
 			this.label_UserName.Size = new System.Drawing.Size(207, 49);
 			this.label_UserName.TabIndex = 1;
-			this.label_UserName.Text = "유 저 네 임";
+			this.label_UserName.Text = "Loading...";
 			this.label_UserName.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
 			// 
 			// label_ScreenName
@@ -57,7 +57,7 @@
 			this.label_ScreenName.Name = "label_ScreenName";
 			this.label_ScreenName.Size = new System.Drawing.Size(173, 30);
 			this.label_ScreenName.TabIndex = 2;
-			this.label_ScreenName.Text = "스크린네임";
+			this.label_ScreenName.Text = "";
 			this.label_ScreenName.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
 			// 
 			// btn_post
