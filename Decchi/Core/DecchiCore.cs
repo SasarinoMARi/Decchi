@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Windows.Forms;
+using System.Windows.Input;
 using ParsingModule;
 using PublishingModule.Twitter;
 using Utilities;
@@ -21,7 +21,7 @@ namespace Decchi
 		static DecchiCore()
 		{
 			// 전역 키보드 후킹 이벤트를 초기화합니다,.
-			manager.HookedKeys.Add( Keys.Q );
+			manager.HookedKeys.Add( Key.Q );
 			manager.KeyDown += HookManager_KeyDown;
 		}
 		
@@ -30,9 +30,9 @@ namespace Decchi
 		/// </summary>
 		/// <param name="sender">이벤트 발생 오브젝트</param>
 		/// <param name="e">키 이벤트</param>
-		static void HookManager_KeyDown(object sender, KeyEventArgs e)
+		static void HookManager_KeyDown(ref bool handeled, Key key)
 		{
-			if (Control.ModifierKeys == Keys.Control)
+			if (Keyboard.Modifiers == ModifierKeys.Control)
 			{
 				DecchiCore.Run();
 			}

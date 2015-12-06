@@ -1,8 +1,7 @@
 ﻿using System;
-using System.Windows.Forms;
 using System.Reflection;
 
-namespace Decchi
+namespace Decchi.Core
 {
 	static class Program
 	{
@@ -36,12 +35,10 @@ namespace Decchi
  			};
 
 			Globals.ReadSettings();
-			Application.EnableVisualStyles();
-			Application.SetCompatibleTextRenderingDefault(false);
 			DecchiCore.Login();
 			Globals.SaveSettings();
 
-			Application.Run(new Main());
+			App.Main();
 		}
 		
 	}
