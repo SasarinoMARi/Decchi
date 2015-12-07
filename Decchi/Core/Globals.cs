@@ -63,7 +63,10 @@ namespace Decchi
 		public static void SetValue(string PropertyName, string Value)
 		{
 			lock (settings)
-				settings[PropertyName] = Value;
+			{
+				if(Value != string.Empty)
+					settings[PropertyName] = Value;
+			}
 		}
 
 		/// <summary>

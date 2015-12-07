@@ -49,7 +49,7 @@ namespace Decchi
 		/// <summary>
 		/// 뎃찌에서 실행중인 음악 리스트를 만들어 퍼블리싱 모듈에 전달합니다.
 		/// </summary>
-		public static void Run()
+		public static void Run( string format = SongInfo.defaultFormat )
 		{
 			var nowPlayings = new Dictionary<string, SongInfo>();
 			var playingCount = 0;
@@ -75,7 +75,7 @@ namespace Decchi
 			else
 			{
 				// 하나의 곡이 재생중인 경우
-				TwitterCommunicator.Instance.Publish(songs.First(e => e.Loaded).ToString());   
+				TwitterCommunicator.Instance.Publish(songs.First(e => e.Loaded).ToString(format));   
 			}
 		}
 		public static void Run(Action callback)

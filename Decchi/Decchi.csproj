@@ -69,7 +69,7 @@
     <Compile Include="Core\MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="NativeMethods.cs" />
+    <Compile Include="Core\NativeMethods.cs" />
     <Compile Include="ParsingModule\GomAudioSongInfo.cs" />
     <Compile Include="ParsingModule\iTunesSongInfo.cs" />
     <Compile Include="ParsingModule\SongInfo.cs" />

@@ -12,13 +12,18 @@ namespace Decchi.Core
 		public MainWindow()
 		{
 			InitializeComponent();
+			var format = Globals.GetValue("PublishFormat");
+			if ( format == string.Empty ) format = ParsingModule.SongInfo.defaultFormat;
+			this.textbox_FormatString.Text = format;
 		}
 
 		private async void ctlTWeet_Click(object sender, RoutedEventArgs e)
 		{
 			this.ctlTWeet.IsEnabled = false;
 
-			await Task.Run(new Action(DecchiCore.Run));
+			var format = Globals.GetValue("PublishFormat");
+			if ( format == string.Empty ) format = ParsingModule.SongInfo.defaultFormat;
+			await Task.Run( new Action( ( ) => DecchiCore.Run( format ) ) );
 
 			this.ctlTWeet.IsEnabled = true;
 		}
@@ -55,6 +60,17 @@ namespace Decchi.Core
 					this.Close();
 				}
 			}
+		}
+
+		private void textbox_FormatString_LostFocus( object sender, RoutedEventArgs e )
+		{
+			var format = this.textbox_FormatString.Text;
+			Globals.SetValue( "PublishFormat", format );
+		}
+
+		private void Window_Closing( object sender, System.ComponentModel.CancelEventArgs e )
+		{
+			Globals.SaveSettings( );
 		}
 	}
 }
