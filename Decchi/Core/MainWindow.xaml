@@ -4,19 +4,15 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008" Icon="../iconSample.ico"
 		Title="Decchi"
-		Height="503.333"
-		Width="330.667"
+		Height="500"
+		Width="330"
 		WindowStyle="SingleBorderWindow"
 		ResizeMode="CanMinimize"
 		WindowStartupLocation="CenterScreen"
 		Activated="Window_Activated" Closing="Window_Closing"
 		>
-    <Grid>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="13*"/>
-            <ColumnDefinition Width="36*"/>
-        </Grid.ColumnDefinitions>
-        <StackPanel HorizontalAlignment="Center"
+	<Grid>
+		<StackPanel HorizontalAlignment="Center"
 					VerticalAlignment="Center" Grid.ColumnSpan="2" Margin="47,44">
             <Image x:Name="ctlProfileImage"
 				   Width="200"
@@ -57,7 +53,15 @@
         <TextBlock Text="@SasarinoMari"
 				   HorizontalAlignment="Right"
 				   VerticalAlignment="Bottom"
-				   Margin="0,0,5,10" Grid.Column="1"/>
-        <TextBox x:Name="textbox_FormatString" HorizontalAlignment="Left" Height="23" TextWrapping="Wrap" VerticalAlignment="Bottom" Width="225" LostFocus="textbox_FormatString_LostFocus" Grid.ColumnSpan="2" Margin="5,0,0,5" ScrollViewer.CanContentScroll="True"/>
+				   Margin="0,0,5,10" />
+        <TextBox x:Name="textbox_FormatString"
+				 Height="23"
+				 Width="225"
+				 HorizontalAlignment="Left"
+				 VerticalAlignment="Bottom"
+				 TextWrapping="Wrap"
+				 Margin="5,0,0,5"
+				 ScrollViewer.CanContentScroll="True"
+				 LostFocus="textbox_FormatString_LostFocus" />
     </Grid>
 </Window>
