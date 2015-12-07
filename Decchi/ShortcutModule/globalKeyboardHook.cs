@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
-using System.Windows.Forms;
+using System.Windows.Input;
 
 namespace Utilities
 {
@@ -36,22 +36,24 @@ namespace Utilities
 		/// <summary>
 		/// The collections of keys to watch for
 		/// </summary>
-		public List<Keys> HookedKeys = new List<Keys>();
+		public List<Key> HookedKeys = new List<Key>();
 		/// <summary>
 		/// Handle to the hook, need this to unhook and call the next hook
 		/// </summary>
 		IntPtr hhook = IntPtr.Zero;
 		#endregion
+		
+		public delegate void KeyEvent(ref bool handled, Key key);
 
 		#region Events
 		/// <summary>
 		/// Occurs when one of the hooked keys is pressed
 		/// </summary>
-		public event KeyEventHandler KeyDown;
+		public event KeyEvent KeyDown;
 		/// <summary>
 		/// Occurs when one of the hooked keys is released
 		/// </summary>
-		public event KeyEventHandler KeyUp;
+		public event KeyEvent KeyUp;
 		#endregion
 
 		#region Constructors and Destructors
@@ -80,6 +82,7 @@ namespace Utilities
 
 			if (disposing)
 			{
+				unhook();
 			}
 		}
 
@@ -122,21 +125,22 @@ namespace Utilities
 		{
 			if (code >= 0)
 			{
-				Keys key = (Keys)lParam.vkCode;
+				Key key = KeyInterop.KeyFromVirtualKey(lParam.vkCode);
 				if (HookedKeys.Contains(key))
 				{
 					var wparam = wParam.ToInt64();
+					var handeled = false;
 
-					KeyEventArgs kea = new KeyEventArgs(key);
 					if ((wparam == WM_KEYDOWN || wparam == WM_SYSKEYDOWN) && (KeyDown != null))
 					{
-						KeyDown(this, kea);
+						KeyDown(ref handeled, key);
 					}
 					else if ((wparam == WM_KEYUP || wparam == WM_SYSKEYUP) && (KeyUp != null))
 					{
-						KeyUp(this, kea);
+						KeyUp(ref handeled, key);
 					}
-					if (kea.Handled)
+
+					if (handeled)
 						return new IntPtr(1);
 				}
 			}

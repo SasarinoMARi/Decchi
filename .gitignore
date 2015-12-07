@@ -41,6 +41,6 @@ Temporary Items
 *.suo
 *.opensdf
 
-bin/
-obj/
+[bB]in/
+[oO]bj/
 Uncommit/

@@ -1,9 +1,11 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Windows.Media.Imaging;
 
 namespace Decchi
 {
@@ -37,15 +39,18 @@ namespace Decchi
 		/// </summary>
 		public static void ReadSettings()
 		{
-			using (var reader = new StreamReader(SettingFilePath))
+			if (File.Exists(SettingFilePath))
 			{
-				string line;
-				string[] splitedLine;
-
-				while ((line = reader.ReadLine()) != null)
+				using (var reader = new StreamReader(SettingFilePath))
 				{
-					splitedLine = line.Split('=');
-					settings[splitedLine[0]] = splitedLine[1];
+					string line;
+					string[] splitedLine;
+
+					while ((line = reader.ReadLine()) != null)
+					{
+						splitedLine = line.Split('=');
+						settings[splitedLine[0]] = splitedLine[1];
+					}
 				}
 			}
 		}
@@ -89,23 +94,11 @@ namespace Decchi
 		{
 			try
 			{
-				Process.Start(new ProcessStartInfo { UseShellExecute = true, FileName = url });
+				using (Process.Start(new ProcessStartInfo { UseShellExecute = true, FileName = url }))
+				{ }
 			}
 			catch
 			{ }
-		}
-
-		/// <summary>
-		/// 네트워크 상에서 Image객체를 얻어옵니다
-		/// </summary>
-		/// <param name="Url">이미지 파일의 주소</param>
-		/// <returns>이미지 객체</returns>
-		public static Image GetImageFromUrl(string Url)
-		{
-			HttpWebRequest httpWebRequest = (HttpWebRequest)HttpWebRequest.Create(Url);
-			using (HttpWebResponse httpWebReponse = (HttpWebResponse)httpWebRequest.GetResponse())
-				using (Stream stream = httpWebReponse.GetResponseStream())
-					return Image.FromStream(stream);
 		}
 	}
 }

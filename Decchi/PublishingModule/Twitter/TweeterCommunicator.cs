@@ -1,7 +1,4 @@
-﻿using System;
-using System.Threading.Tasks;
-using System.Windows.Forms;
-using Decchi;
+﻿using Decchi;
 using Tweetinvi;
 using Tweetinvi.Core.Credentials;
 
@@ -47,7 +44,7 @@ namespace PublishingModule.Twitter
 						accessToken = user.AccessToken;
 						accessTokenSecret = user.AccessTokenSecret;
 						Globals.SetValue("TwitterAccessToken", accessToken);
-						Globals.SetValue( "TwitterAccessTokenSecret", accessTokenSecret);
+						Globals.SetValue("TwitterAccessTokenSecret", accessTokenSecret);
 					}
 					else
 					{
@@ -72,11 +69,9 @@ namespace PublishingModule.Twitter
 		private ITwitterCredentials NewAuth()
 		{
 			// 메모리 해제는 꼭
-			using (var form = new InputCaptcha(Consumer_Key, Consumer_Secret))
-			{
-				form.ShowDialog();
-				return form.Credentials;
-			}
+			var form = new InputCaptcha(Consumer_Key, Consumer_Secret);
+			form.ShowDialog();
+			return form.Credentials;
 		}
 
 		/// <summary>

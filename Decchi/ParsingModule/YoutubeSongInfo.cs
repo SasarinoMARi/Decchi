@@ -8,24 +8,35 @@ namespace ParsingModule
 
 		public override bool GetCurrentPlayingSong( )
 		{
+			var b = false;
 			var procs = Process.GetProcesses();
+			string str;
+
+			// Process is IDisposable
 			for ( int i = 0; i < procs.Length; i++ )
 			{
-				var str = procs[i].MainWindowTitle;
-				if ( procs[i].MainWindowTitle.Contains( "YouTube" ) )
+				using (procs[i])
 				{
-					var sep = str.LastIndexOf( " - YouTube" );
+					if (!b)
+					{
+						str = procs[i].MainWindowTitle;
+						if (procs[i].MainWindowTitle.Contains("YouTube"))
+						{
+							var sep = str.LastIndexOf(" - YouTube");
 
-					this.Title = str.Substring( 0, sep ).Trim( );
-					this.Album = null;
-					this.Artist = null;
+							this.Title = str.Substring(0, sep).Trim();
+							this.Album = null;
+							this.Artist = null;
 
-					this.Loaded = true;
-					return true;
+							this.Loaded = true;
+
+							b = true;
+						}
+					}
 				}
 			}
 
-			return false;
+			return b;
 		}
 	}
 }
