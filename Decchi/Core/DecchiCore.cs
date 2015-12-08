@@ -34,7 +34,9 @@ namespace Decchi
 		{
 			if (Keyboard.Modifiers == ModifierKeys.Control)
 			{
-				DecchiCore.Run();
+				var format = Globals.GetValue("PublishFormat");
+				if ( format == string.Empty ) format = ParsingModule.SongInfo.defaultFormat;
+				DecchiCore.Run( format );
 			}
 		}
 

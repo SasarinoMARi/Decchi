@@ -61,7 +61,6 @@
 				 VerticalAlignment="Bottom"
 				 TextWrapping="Wrap"
 				 Margin="5,0,0,5"
-				 ScrollViewer.CanContentScroll="True"
-				 LostFocus="textbox_FormatString_LostFocus" />
+				 ScrollViewer.CanContentScroll="True" TextChanged="textbox_FormatString_TextChanged" />
     </Grid>
 </Window>

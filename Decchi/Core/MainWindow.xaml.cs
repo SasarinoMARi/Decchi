@@ -62,15 +62,15 @@ namespace Decchi.Core
 			}
 		}
 
-		private void textbox_FormatString_LostFocus( object sender, RoutedEventArgs e )
-		{
-			var format = this.textbox_FormatString.Text;
-			Globals.SetValue( "PublishFormat", format );
-		}
-
 		private void Window_Closing( object sender, System.ComponentModel.CancelEventArgs e )
 		{
 			Globals.SaveSettings( );
+		}
+
+		private void textbox_FormatString_TextChanged( object sender, System.Windows.Controls.TextChangedEventArgs e )
+		{
+			var format = this.textbox_FormatString.Text;
+			Globals.SetValue( "PublishFormat", format );
 		}
 	}
 }
