@@ -21,9 +21,7 @@ namespace Decchi.Core
 		{
 			this.ctlTWeet.IsEnabled = false;
 
-			var format = Globals.GetValue("PublishFormat");
-			if ( format == string.Empty ) format = ParsingModule.SongInfo.defaultFormat;
-			await Task.Run( new Action( ( ) => DecchiCore.Run( format ) ) );
+			await Task.Run( new Action( ( ) => DecchiCore.Run() ) );
 
 			this.ctlTWeet.IsEnabled = true;
 		}

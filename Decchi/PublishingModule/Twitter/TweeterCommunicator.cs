@@ -68,7 +68,6 @@ namespace PublishingModule.Twitter
 		/// 
 		private ITwitterCredentials NewAuth()
 		{
-			// 메모리 해제는 꼭
 			var form = new InputCaptcha(Consumer_Key, Consumer_Secret);
 			form.ShowDialog();
 			return form.Credentials;

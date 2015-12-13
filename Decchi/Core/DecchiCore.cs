@@ -34,9 +34,7 @@ namespace Decchi
 		{
 			if (Keyboard.Modifiers == ModifierKeys.Control)
 			{
-				var format = Globals.GetValue("PublishFormat");
-				if ( format == string.Empty ) format = ParsingModule.SongInfo.defaultFormat;
-				DecchiCore.Run( format );
+				DecchiCore.Run();
 			}
 		}
 
@@ -51,8 +49,11 @@ namespace Decchi
 		/// <summary>
 		/// 뎃찌에서 실행중인 음악 리스트를 만들어 퍼블리싱 모듈에 전달합니다.
 		/// </summary>
-		public static void Run( string format = SongInfo.defaultFormat )
+		public static void Run()
 		{
+			var format = Globals.GetValue("PublishFormat");
+			if (format == string.Empty) format = ParsingModule.SongInfo.defaultFormat;
+
 			var nowPlayings = new Dictionary<string, SongInfo>();
 			var playingCount = 0;
 
