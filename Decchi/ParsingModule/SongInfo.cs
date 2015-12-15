@@ -1,4 +1,4 @@
-﻿namespace ParsingModule
+﻿namespace Decchi.ParsingModule
 {
 	public abstract class SongInfo
 	{

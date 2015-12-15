@@ -14,7 +14,7 @@
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <TargetFrameworkProfile>
     </TargetFrameworkProfile>
-    <AssemblyVersion>1.0.0.157</AssemblyVersion>
+    <AssemblyVersion>1.0.0.353</AssemblyVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -44,19 +44,33 @@
     <ApplicationIcon>iconSample.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Interop.iTunesLib">
-      <HintPath>.\Interop.iTunesLib.dll</HintPath>
+    <Reference Include="Hammock.ClientProfile">
+      <HintPath>ExternalLibrarys\TweetSharp.2.3.1\Hammock.ClientProfile.dll</HintPath>
+    </Reference>
+    <Reference Include="Interop.iTunesLib, Version=1.13.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <EmbedInteropTypes>False</EmbedInteropTypes>
-      <Private>False</Private>
+      <HintPath>ExternalLibrarys\Interop.iTunesLib-1.13\Interop.iTunesLib.dll</HintPath>
+    </Reference>
+    <Reference Include="MahApps.Metro, Version=1.1.2.0, Culture=neutral, PublicKeyToken=f4fb5a3c4d1e5b4f, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>ExternalLibrarys\MahApps.Metro-1.1.2\MahApps.Metro.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=4.5.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>ExternalLibrarys\Newtonsolft.Json-5.0.6\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Windows.Interactivity, Version=4.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>ExternalLibrarys\MahApps.Metro-1.1.2\System.Windows.Interactivity.dll</HintPath>
+    </Reference>
     <Reference Include="System.Xaml" />
-    <Reference Include="TweetinviAPI">
-      <HintPath>ExternalLibrarys\Tweetinvi\TweetinviAPI.dll</HintPath>
-      <Private>False</Private>
+    <Reference Include="TweetSharp">
+      <HintPath>ExternalLibrarys\TweetSharp.2.3.1\TweetSharp.dll</HintPath>
     </Reference>
     <Reference Include="UIAutomationClient" />
     <Reference Include="WindowsBase" />
@@ -70,11 +84,13 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="Core\NativeMethods.cs" />
+    <Compile Include="Visibility2Boolean.cs" />
     <Compile Include="ParsingModule\GomAudioSongInfo.cs" />
     <Compile Include="ParsingModule\iTunesSongInfo.cs" />
     <Compile Include="ParsingModule\SongInfo.cs" />
     <Compile Include="ParsingModule\WMPSongInfo.cs" />
     <Compile Include="Core\Program.cs" />
+    <Compile Include="ParsingModule\AlsongSongInfo.cs" />
     <Compile Include="ParsingModule\YoutubeSongInfo.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Core\Globals.cs" />
@@ -92,10 +108,6 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="ExternalLibrarys\Tweetinvi\TweetinviAPI.dll" />
-    <EmbeddedResource Include="Interop.iTunesLib.dll" />
-  </ItemGroup>
-  <ItemGroup>
     <Resource Include="iconSample.ico" />
   </ItemGroup>
   <ItemGroup>
@@ -108,9 +120,27 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="PublishingModule\Twitter\InputCaptcha.xaml">
-      <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="iconSample.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="ExternalLibrarys\Newtonsolft.Json-5.0.6\Newtonsoft.Json.dll" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="ExternalLibrarys\Interop.iTunesLib-1.13\Interop.iTunesLib.dll" />
+    <EmbeddedResource Include="ExternalLibrarys\MahApps.Metro-1.1.2\MahApps.Metro.dll" />
+    <EmbeddedResource Include="ExternalLibrarys\MahApps.Metro-1.1.2\System.Windows.Interactivity.dll" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="ExternalLibrarys\MahApps.Metro-1.1.2\LICENSE.txt" />
+    <Content Include="ExternalLibrarys\Newtonsolft.Json-5.0.6\LICENSE.txt" />
+    <EmbeddedResource Include="ExternalLibrarys\TweetSharp.2.3.1\Hammock.ClientProfile.dll" />
+    <Content Include="ExternalLibrarys\TweetSharp.2.3.1\LICENSE.txt" />
+    <EmbeddedResource Include="ExternalLibrarys\TweetSharp.2.3.1\TweetSharp.dll" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

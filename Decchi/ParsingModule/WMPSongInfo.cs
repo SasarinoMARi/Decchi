@@ -3,9 +3,8 @@
 using System;
 using System.Collections.Generic;
 using System.Windows.Automation;
-using Decchi;
 
-namespace ParsingModule
+namespace Decchi.ParsingModule
 {
 	public class WMPSongInfo : SongInfo
 	{

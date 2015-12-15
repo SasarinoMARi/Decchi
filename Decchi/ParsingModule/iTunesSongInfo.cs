@@ -1,4 +1,6 @@
-﻿namespace ParsingModule
+﻿using System.Diagnostics;
+
+namespace Decchi.ParsingModule
 {
 	public class iTunesSongInfo : SongInfo
 	{
@@ -6,6 +8,13 @@
 
 		public override bool GetCurrentPlayingSong()
 		{
+			var procs = Process.GetProcessesByName("itunes");
+
+			if (procs.Length == 0) return false;
+
+			for (int i = 0; i < procs.Length; ++i)
+				procs[i].Dispose();
+
 			try
 			{
 				var itunes = new iTunesLib.iTunesAppClass();

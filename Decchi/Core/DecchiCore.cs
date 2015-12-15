@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
-using ParsingModule;
-using PublishingModule.Twitter;
-using Utilities;
+using Decchi.ParsingModule;
+using Decchi.PublishingModule.Twitter;
+using Decchi.Utilities;
 
 namespace Decchi
 {
@@ -18,8 +19,28 @@ namespace Decchi
 	{
 		private static globalKeyboardHook manager = new globalKeyboardHook();
 
+		private static Type[] m_types;
+
 		static DecchiCore()
 		{
+			int i = 0;
+
+			var lst = new List<Type>();
+
+			var songInfoType = typeof(SongInfo);
+
+			var types = Assembly.GetExecutingAssembly().GetTypes();
+			for (i = 0; i < types.Length; ++i)
+			{
+				if (!types[i].IsClass) continue;
+				if (types[i].Namespace != songInfoType.Namespace) continue;
+				if (!types[i].IsSubclassOf(songInfoType)) continue;
+
+				lst.Add(types[i]);
+			}
+
+			m_types = lst.ToArray();
+
 			// 전역 키보드 후킹 이벤트를 초기화합니다,.
 			manager.HookedKeys.Add( Key.Q );
 			manager.KeyDown += HookManager_KeyDown;
@@ -34,7 +55,7 @@ namespace Decchi
 		{
 			if (Keyboard.Modifiers == ModifierKeys.Control)
 			{
-				DecchiCore.Run();
+				Task.Run(new Action(DecchiCore.Run));
 			}
 		}
 
@@ -51,18 +72,17 @@ namespace Decchi
 		/// </summary>
 		public static void Run()
 		{
+			int i;
+
 			var format = Globals.GetValue("PublishFormat");
-			if (format == string.Empty) format = ParsingModule.SongInfo.defaultFormat;
+			if (string.IsNullOrEmpty(format)) format = Decchi.ParsingModule.SongInfo.defaultFormat;
 
-			var nowPlayings = new Dictionary<string, SongInfo>();
+			SongInfo[] songs = new SongInfo[m_types.Length];
+
+			for (i = 0; i < m_types.Length; ++i)
+				songs[i] = (SongInfo)Activator.CreateInstance(m_types[i]);
+
 			var playingCount = 0;
-
-			List<SongInfo> songs = new List<SongInfo>();
-			songs.Add(new WMPSongInfo());
-			songs.Add(new GomAudioSongInfo());
-			songs.Add( new iTunesSongInfo( ) );
-			songs.Add( new YoutubeSongInfo( ) );
-
 			Parallel.ForEach(songs, e => { e.GetCurrentPlayingSong(); if (e.Loaded) Interlocked.Increment(ref playingCount); } );
 
 			if (playingCount >= 2)
@@ -78,7 +98,14 @@ namespace Decchi
 			else
 			{
 				// 하나의 곡이 재생중인 경우
-				TwitterCommunicator.Instance.Publish(songs.First(e => e.Loaded).ToString(format));   
+				for (i = 0; i < songs.Length; ++i)
+				{
+					if (songs[i].Loaded)
+					{
+						TwitterCommunicator.Instance.Publish(songs[i].ToString(format));
+						break;
+					}
+				}
 			}
 		}
 		public static void Run(Action callback)

@@ -1,20 +1,20 @@
-﻿<Window x:Class="PublishingModule.Twitter.InputCaptcha"
-        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-		Title="트위터 인증"
-		Width="250"
-		Height="79"
-		ShowInTaskbar="False"
-		WindowStartupLocation="CenterScreen"
-		Activated="Window_Activated"
-		FontSize="16"
-		Icon="/Decchi;component/iconSample.ico"
-		ResizeMode="CanMinimize">
-	<Grid x:Name="ctl"
-		  Margin="10"
-		  IsEnabled="False">
+﻿<MahApps.Metro.Controls:MetroWindow x:Class="Decchi.PublishingModule.Twitter.InputCaptcha"
+									xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+									xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+									xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+									xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+									xmlns:MahApps.Metro.Controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
+									Title="트위터 인증"
+									Width="180"
+									Height="67"
+									ShowInTaskbar="True"
+									WindowStartupLocation="CenterOwner"
+									Icon="/Decchi;component/iconSample.png"
+									ResizeMode="CanMinimize"
+									BorderBrush="{DynamicResource AccentColorBrush}"
+									BorderThickness="1"
+									Activated="Window_Activated">
+	<Grid Margin="5">
 		<Grid.ColumnDefinitions>
 			<ColumnDefinition Width="*" />
 			<ColumnDefinition Width="50" />
@@ -23,9 +23,10 @@
 				 x:Name="ctlVerifyKey"
 				 Margin="0 0 10 0"
 				 KeyDown="ctlVerifyKey_KeyDown"
-				 TextAlignment="Center" />
+				 PreviewTextInput="ctlVerifyKey_PreviewTextInput"
+				 DataObject.Pasting="ctlVerifyKey_Pasting"/>
 		<Button Grid.Column="1"
 				Content="인증"
-				Click="Button_Click"/>
+				Click="Button_Click" />
 	</Grid>
-</Window>
+</MahApps.Metro.Controls:MetroWindow>

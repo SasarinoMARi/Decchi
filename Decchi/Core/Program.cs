@@ -35,8 +35,6 @@ namespace Decchi.Core
  			};
 
 			Globals.ReadSettings();
-			DecchiCore.Login();
-			Globals.SaveSettings();
 
 			App.Main();
 		}
