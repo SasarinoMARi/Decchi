@@ -91,7 +91,7 @@ namespace Decchi
 				this.btn_Summit.Name = "btn_Summit";
 				this.btn_Summit.Size = new System.Drawing.Size( 360, 56 );
 				this.btn_Summit.TabIndex = 1;
-				this.btn_Summit.Text = "확인";
+				this.btn_Summit.Text = "뎃찌!";
 				this.btn_Summit.UseVisualStyleBackColor = true;
 				this.btn_Summit.Click += Btn_Summit_Click;
 				// 
