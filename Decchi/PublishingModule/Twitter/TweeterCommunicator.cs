@@ -1,8 +1,10 @@
-﻿using Decchi;
-using Tweetinvi;
-using Tweetinvi.Core.Credentials;
+﻿using System;
+using System.Threading.Tasks;
+using Decchi.Core;
+using MahApps.Metro.Controls.Dialogs;
+using TweetSharp;
 
-namespace PublishingModule.Twitter
+namespace Decchi.PublishingModule.Twitter
 {
 	/// <summary>
 	/// 트위터와 통신을 담당하는 TwitterCommunicator를 정의합니다.
@@ -11,11 +13,11 @@ namespace PublishingModule.Twitter
 	/// </summary>
 	public partial class TwitterCommunicator : IDecchiPublisher
 	{
+		//const string Consumer_Key		= "";
+		//const string Consumer_Secret	= "";
+		
 		private static TwitterCommunicator _instance = null;
-		string Consumer_Key { get; set; }
-		string Consumer_Secret { get; set; }
-
-
+		
 		public static TwitterCommunicator Instance
 		{
 			get
@@ -24,36 +26,23 @@ namespace PublishingModule.Twitter
 			}
 		}
 
-		private TwitterCommunicator()
-		{
-			// 이 곳에 컨슈머 정보 입력.
-			SetConsumer( );
-		}
+		private TwitterService m_api;
 
 		public bool Login()
 		{
 			try
 			{
-				var accessToken = Globals.GetValue("TwitterAccessToken");
-				var accessTokenSecret = Globals.GetValue("TwitterAccessTokenSecret");
-				if (string.IsNullOrEmpty(accessToken) || string.IsNullOrEmpty(accessTokenSecret))
-				{
-					var user = NewAuth();
-					if(user != null)
-					{
-						accessToken = user.AccessToken;
-						accessTokenSecret = user.AccessTokenSecret;
-						Globals.SetValue("TwitterAccessToken", accessToken);
-						Globals.SetValue("TwitterAccessTokenSecret", accessTokenSecret);
-					}
-					else
-					{
-						//트위터 인증 실패
-						return false;
-					}
-				}
-				Auth.SetUserCredentials(Consumer_Key, Consumer_Secret, accessToken, accessTokenSecret);
-				return true;
+				this.m_api = null;
+
+				var token  = Globals.GetValue("TwitterAccessToken");
+				var secret = Globals.GetValue("TwitterAccessTokenSecret");
+
+				if (string.IsNullOrEmpty(token) || string.IsNullOrEmpty(secret))
+					NewAuth();
+				else
+					this.m_api = new TwitterService(Consumer_Key, Consumer_Secret, token, secret);
+
+				return this.m_api != null;
 			}
 			catch
 			{
@@ -65,12 +54,27 @@ namespace PublishingModule.Twitter
 		/// 새로이 트위터 인증 절차를 진행합니다.
 		/// </summary>
 		/// <returns></returns>
-		/// 
-		private ITwitterCredentials NewAuth()
+		private void NewAuth()
 		{
-			var form = new InputCaptcha(Consumer_Key, Consumer_Secret);
-			form.ShowDialog();
-			return form.Credentials;
+			this.m_api = new TwitterService(Consumer_Key, Consumer_Secret);
+
+			var token = this.m_api.GetRequestToken();
+
+			Globals.OpenWebSite(this.m_api.GetAuthorizationUri(token).ToString());
+
+			var window = new InputCaptcha();
+			window.Owner = MainWindow.Instance;
+
+			MainWindow.Instance.Dispatcher.Invoke(new Action(() => window.ShowDialog()));
+
+			var key = window.Password.Trim();
+
+			var access = this.m_api.GetAccessToken(token, key);
+
+			Globals.SetValue("TwitterAccessToken",			access.Token);
+			Globals.SetValue("TwitterAccessTokenSecret",	access.TokenSecret);
+
+			this.m_api.AuthenticateWith(access.Token, access.TokenSecret);
 		}
 
 		/// <summary>
@@ -80,16 +84,24 @@ namespace PublishingModule.Twitter
 		/// <returns>트윗 성공 여부</returns>
 		public bool Publish(string text)
 		{
-			return !string.IsNullOrEmpty(text) && Tweet.PublishTweet(text) != null;
+			try
+			{
+				this.m_api.SendTweet(new SendTweetOptions { Status = text });
+				return true;
+			}
+			catch
+			{
+				return false;
+			}
 		}
 
-		private Tweetinvi.Core.Interfaces.ILoggedUser me;
+		private TwitterUser me;
 
 		/// <summary>
 		/// 로그인된 유저 객체를 얻어옵니다.
 		/// 유저 정보 갱신이 필요할 경우 RefrashMe() 메서드를 호출합니다.
 		/// </summary>
-		public Tweetinvi.Core.Interfaces.ILoggedUser Me
+		public TwitterUser Me
 		{
 			get
 			{
@@ -98,7 +110,7 @@ namespace PublishingModule.Twitter
 				{
 					try
 					{
-						me = User.GetLoggedUser();
+						me = this.m_api.VerifyCredentials(new VerifyCredentialsOptions { IncludeEntities = false, SkipStatus = true });
 					}
 					catch
 					{ }
@@ -112,9 +124,10 @@ namespace PublishingModule.Twitter
 		/// 로그인된 유저 정보를 갱신하고, Me 객체를 반환합니다.
 		/// </summary>
 		/// <returns></returns>
-		public Tweetinvi.Core.Interfaces.ILoggedUser RefrashMe()
+		public TwitterUser RefrashMe()
 		{
-			return User.GetLoggedUser();
+			me = null;
+			return this.Me;
 		}
 	}
 }

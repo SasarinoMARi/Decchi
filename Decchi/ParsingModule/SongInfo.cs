@@ -1,7 +1,6 @@
 ﻿using System.Text.RegularExpressions;
 
-namespace ParsingModule
-{
+namespace Decchi.ParsingModule{
 	public abstract class SongInfo
 	{
 		public const string Via = "#뎃찌NP";

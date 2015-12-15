@@ -1,4 +1,4 @@
-﻿namespace PublishingModule
+﻿namespace Decchi.PublishingModule
 {
 	internal interface IDecchiPublisher
 	{

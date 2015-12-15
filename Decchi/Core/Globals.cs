@@ -1,11 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Diagnostics;
-using System.Drawing;
 using System.IO;
-using System.Linq;
-using System.Net;
-using System.Windows.Media.Imaging;
 
 namespace Decchi
 {
@@ -64,7 +59,7 @@ namespace Decchi
 		{
 			lock (settings)
 			{
-				if(Value != string.Empty)
+				if (string.IsNullOrEmpty(Value))
 					settings[PropertyName] = Value;
 			}
 		}
@@ -78,13 +73,13 @@ namespace Decchi
 		{
 			lock (settings)
 			{
-				if (settings.Keys.Contains(PropertyName))
+				if (settings.ContainsKey(PropertyName))
 				{
 					return settings[PropertyName];
 				}
 				else
 				{
-					return string.Empty;
+					return null;
 				}
 			}
 		}

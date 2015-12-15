@@ -1,6 +1,6 @@
 ﻿using System.Diagnostics;
 
-namespace ParsingModule
+namespace Decchi.ParsingModule
 {
 	public class GomAudioSongInfo : SongInfo
 	{
