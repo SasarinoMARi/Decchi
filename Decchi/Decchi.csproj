@@ -14,7 +14,7 @@
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <TargetFrameworkProfile>
     </TargetFrameworkProfile>
-    <AssemblyVersion>1.0.0.389</AssemblyVersion>
+    <AssemblyVersion>1.0.0.397</AssemblyVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -85,7 +85,6 @@
     <Compile Include="Core\Windows\ClientSelectWindow.xaml.cs">
       <DependentUpon>ClientSelectWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Core\Windows\Converter\ImageConverter.cs" />
     <Compile Include="Core\Windows\MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
     </Compile>
@@ -94,9 +93,11 @@
     <Compile Include="ParsingModule\GomAudioSongInfo.cs" />
     <Compile Include="ParsingModule\iTunesSongInfo.cs" />
     <Compile Include="ParsingModule\SongInfo.cs" />
-    <Compile Include="ParsingModule\WMPSongInfo.cs" />
     <Compile Include="Core\Program.cs" />
     <Compile Include="ParsingModule\AlsongSongInfo.cs" />
+    <Compile Include="ParsingModule\WMPSongInfo.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="ParsingModule\YoutubeSongInfo.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Globals.cs" />

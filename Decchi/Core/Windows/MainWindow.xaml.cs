@@ -1,8 +1,8 @@
 ﻿using System;
-using System.IO;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media.Imaging;
+using Decchi.ParsingModule;
 using Decchi.PublishingModule.Twitter;
 using TweetSharp;
 
@@ -32,9 +32,9 @@ namespace Decchi.Core.Windows
 		private async void Window_Activated(object sender, EventArgs e)
 		{
 			if (!this.m_firstActivated) return;
+			this.m_firstActivated = false;
 			
 			DecchiCore.Login();
-			Globals.SaveSettings();
 
 			// 폼에 트위터 유저 정보 매핑
 			var me = await Task.Run(new Func<TwitterUser>(() => TwitterCommunicator.Instance.Me));
@@ -68,6 +68,12 @@ namespace Decchi.Core.Windows
 		{
 			var format = this.textbox_FormatString.Text;
 			Globals.SetValue( "PublishFormat", format );
+		}
+
+		private void textbox_FormatString_LostFocus(object sender, RoutedEventArgs e)
+		{
+			if (string.IsNullOrEmpty(this.textbox_FormatString.Text))
+				this.textbox_FormatString.Text = SongInfo.defaultFormat;
 		}
 	}
 }

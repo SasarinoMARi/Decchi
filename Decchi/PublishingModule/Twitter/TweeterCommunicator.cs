@@ -71,6 +71,7 @@ namespace Decchi.PublishingModule.Twitter
 
 			Globals.SetValue("TwitterAccessToken",			access.Token);
 			Globals.SetValue("TwitterAccessTokenSecret",	access.TokenSecret);
+			Globals.SaveSettings();
 
 			this.m_api.AuthenticateWith(access.Token, access.TokenSecret);
 		}

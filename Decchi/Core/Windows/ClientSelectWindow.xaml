@@ -12,11 +12,6 @@
 									ResizeMode="NoResize"
 									BorderBrush="{DynamicResource AccentColorBrush}"
 									BorderThickness="1">
-	<MahApps.Metro.Controls:MetroWindow.Resources>
-		<ResourceDictionary>
-			<Decchi.Core.Windows.Converter:ImageConverter x:Key="ImageConverter" />
-		</ResourceDictionary>
-	</MahApps.Metro.Controls:MetroWindow.Resources>
 	<Grid Margin="5">
 		<Grid.RowDefinitions>
 			<RowDefinition />

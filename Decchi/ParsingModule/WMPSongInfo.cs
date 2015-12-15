@@ -13,50 +13,43 @@ namespace Decchi.ParsingModule
 
 		public override bool GetCurrentPlayingSong()
         {
-            try
-            {
 			// Finding the WMP window
 			IntPtr handle = NativeMethods.FindWindow("WMPlayerApp", "Windows Media Player");
 			if (handle == IntPtr.Zero) return false;
-			
-			var walker			= TreeWalker.ControlViewWalker;
-			// Whole WMP window
-			var wmpPlayer		= AutomationElement.FromHandle(handle);
-			var wmpAppHost		= walker.GetFirstChild(wmpPlayer);
-			var wmpSkinHost		= walker.GetFirstChild(wmpAppHost);
-			// All elements in WMP window
-			var wmpContainer	= walker.GetFirstChild(wmpSkinHost);
-			// Container with song information
-			var wmpSongInfo		= walker.GetFirstChild(wmpContainer);
 
-			if (wmpSongInfo == null)
+			try
 			{
-				// 전체화면이 아님
-			}
-
-			// Iterating through all components in container - searching for container with song information
-			while (wmpSongInfo.Current.ClassName != "CWmpControlCntr")
-			{
-				wmpSongInfo = walker.GetNextSibling(wmpSongInfo);
+				var walker			= TreeWalker.ControlViewWalker;
+				// Whole WMP window
+				var wmpPlayer		= AutomationElement.FromHandle(handle);
+				var wmpAppHost		= walker.GetFirstChild(wmpPlayer);
+				var wmpSkinHost		= walker.GetFirstChild(wmpAppHost);
+				// All elements in WMP window
+				var wmpContainer	= walker.GetFirstChild(wmpSkinHost);
+				// Container with song information
+				var wmpSongInfo		= walker.GetFirstChild(wmpContainer);
 
 				if (wmpSongInfo == null)
-					break;
-			}
+				{
+					// 전체화면이 아님
+				}
 
-			// Walking through children (image, hyperlink, song info etc.)
-			List<AutomationElement> info = GetChildren(wmpSongInfo);
-			info = GetChildren(info[0]);
-			info = GetChildren(info[1]);
-			info = GetChildren(info[2]);
+				// Iterating through all components in container - searching for container with song information
+				while (wmpSongInfo.Current.ClassName != "CWmpControlCntr")
+				{
+					wmpSongInfo = walker.GetNextSibling(wmpSongInfo);
 
-			// Obtaining elements with desired information
-// 			AutomationElement songE = info[0];
-// 			AutomationElement albumE = info[3];
-// 			AutomationElement artistE = info[4];
-// 
-// 			string name = string.Empty;
-// 			string album = string.Empty;
-// 			string artist = string.Empty;
+					if (wmpSongInfo == null)
+						break;
+				}
+
+				// Walking through children (image, hyperlink, song info etc.)
+				List<AutomationElement> info = GetChildren(wmpSongInfo);
+				info = GetChildren(info[0]);
+				info = GetChildren(info[1]);
+				info = GetChildren(info[2]);
+
+				// Obtaining elements with desired information
 
 				this.Title	= info[0].Current.Name;
 				this.Album	= info[3].Current.Name;
@@ -68,7 +61,8 @@ namespace Decchi.ParsingModule
 			catch
 			{ }
 
-			return false;
+			this.Loaded = false;
+			return true;
 		}
 
 		// Returns all child AutomationElement nodes in "element" node

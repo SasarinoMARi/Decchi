@@ -15,7 +15,7 @@ namespace Decchi.ParsingModule{
 
 		public abstract bool GetCurrentPlayingSong( );
 
-		public const string defaultFormat = "{/Artist/의 }{/Title/을(를){(/Album/)} }듣고 있어요! {/Via/} - {/Client/}";
+		public const string defaultFormat = "{/Artist/의 }{/Title/{ (/Album/)}을(를) }듣고 있어요! {/Via/} - {/Client/}";
 		public override string ToString( )
 		{
 			return ToString( defaultFormat );

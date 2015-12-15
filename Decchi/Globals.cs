@@ -20,10 +20,9 @@ namespace Decchi
 			// SIMPLE IS GOOD
 			using (var writer = new StreamWriter(SettingFilePath))
 			{
-				var list = new List<string>(settings.Keys);
-				for (int i = 0; i < list.Count; i++)
+				foreach (var st in settings)
 				{
-					writer.WriteLine("{0}={1}", list[i], settings[list[i]]);
+					writer.WriteLine("{0}={1}", st.Key, st.Value);
 				}
 			}
 		}
@@ -59,7 +58,7 @@ namespace Decchi
 		{
 			lock (settings)
 			{
-				if (string.IsNullOrEmpty(Value))
+				if (!string.IsNullOrEmpty(Value))
 					settings[PropertyName] = Value;
 			}
 		}

@@ -113,6 +113,7 @@
 				 VerticalAlignment="Bottom"
 				 TextWrapping="NoWrap"
 				 ScrollViewer.CanContentScroll="True"
-				 TextChanged="textbox_FormatString_TextChanged" />
+				 TextChanged="textbox_FormatString_TextChanged"
+				 LostFocus="textbox_FormatString_LostFocus"/>
 	</Grid>
 </MahApps.Metro.Controls:MetroWindow>
