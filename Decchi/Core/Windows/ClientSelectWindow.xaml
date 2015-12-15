@@ -1,0 +1,76 @@
+﻿<MahApps.Metro.Controls:MetroWindow x:Class="Decchi.Core.Windows.ClientSelectWindow"
+									xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+									xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+									xmlns:MahApps.Metro.Controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
+									xmlns:Decchi.Core.Windows.Converter="clr-namespace:Decchi.Core.Windows.Converter"
+									Title="선택"
+									Height="240"
+									Width="180"
+									ShowInTaskbar="True"
+									WindowStartupLocation="CenterOwner"
+									Icon="/Decchi;component/icon.png"
+									ResizeMode="NoResize"
+									BorderBrush="{DynamicResource AccentColorBrush}"
+									BorderThickness="1">
+	<MahApps.Metro.Controls:MetroWindow.Resources>
+		<ResourceDictionary>
+			<Decchi.Core.Windows.Converter:ImageConverter x:Key="ImageConverter" />
+		</ResourceDictionary>
+	</MahApps.Metro.Controls:MetroWindow.Resources>
+	<Grid Margin="5">
+		<Grid.RowDefinitions>
+			<RowDefinition />
+			<RowDefinition Height="40" />
+		</Grid.RowDefinitions>
+		
+		<ListBox x:Name="ctlSongList"
+				 Margin="0 0 0 5"
+				 ScrollViewer.VerticalScrollBarVisibility="Visible">
+			<ListBox.ItemContainerStyle>
+				<Style TargetType="ListBoxItem">
+					<Setter Property="Height" Value="36" />
+
+					<Style.Triggers>
+						<Trigger Property="IsSelected" Value="True" >
+							<Setter Property="TextBlock.Foreground" Value="{StaticResource BlackColorBrush}" />
+						</Trigger>
+						
+						<Trigger Property="IsSelected" Value="False" >
+							<Setter Property="TextBlock.Foreground" Value="{StaticResource GrayBrush7}" />
+						</Trigger>
+					</Style.Triggers>
+				</Style>
+			</ListBox.ItemContainerStyle>
+			<ListBox.ItemTemplate>
+				<DataTemplate>
+					<Grid>
+						<Grid.ColumnDefinitions>
+							<ColumnDefinition Width="32" />
+							<ColumnDefinition />
+						</Grid.ColumnDefinitions>
+
+						<Image Grid.Column="0"
+							   x:Name="image"
+							   Width="32"
+							   Height="32"
+							   VerticalAlignment="Center">
+							<Image.Source>
+								<BitmapImage UriSource="{Binding Path=ClientIcon}" CacheOption="OnDemand" />
+							</Image.Source>
+						</Image>
+						
+						<TextBlock Grid.Column="1"
+								   x:Name="TextBlock"
+								   Text="{Binding Path=Client}"
+								   VerticalAlignment="Center"
+								   Margin="5 0 0 0"/>
+					</Grid>
+				</DataTemplate>
+			</ListBox.ItemTemplate>
+		</ListBox>
+		
+		<Button Grid.Row="1"
+				Content="뎃찌!"
+				Click="Button_Click"/>
+	</Grid>
+</MahApps.Metro.Controls:MetroWindow>

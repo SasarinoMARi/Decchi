@@ -6,9 +6,10 @@ using System.Windows.Automation;
 
 namespace Decchi.ParsingModule
 {
-	public class WMPSongInfo : SongInfo
+	public sealed class WMPSongInfo : SongInfo
 	{
-		protected override string Client { get { return "Windows Media Player"; } }
+		public override string Client { get { return "Windows Media Player"; } }
+		public override string ClientIcon { get { return "/Decchi;component/ParsingModule/IconImages/WMP.png"; } }
 
 		public override bool GetCurrentPlayingSong()
 		{

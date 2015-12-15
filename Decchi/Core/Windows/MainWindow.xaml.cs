@@ -6,7 +6,7 @@ using System.Windows.Media.Imaging;
 using Decchi.PublishingModule.Twitter;
 using TweetSharp;
 
-namespace Decchi.Core
+namespace Decchi.Core.Windows
 {
 	public partial class MainWindow : MahApps.Metro.Controls.MetroWindow
 	{

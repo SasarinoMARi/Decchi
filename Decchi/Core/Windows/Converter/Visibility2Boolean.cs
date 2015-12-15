@@ -3,9 +3,9 @@ using System.Globalization;
 using System.Windows;
 using System.Windows.Data;
 
-namespace Decchi
+namespace Decchi.Core.Windows.Converter
 {
-	public class Visibility2Boolean : IValueConverter
+	public sealed class Visibility2Boolean : IValueConverter
 	{
 		public Visibility WhenTrue	{ get; set; }
 		public Visibility WhenFalse	{ get; set; }

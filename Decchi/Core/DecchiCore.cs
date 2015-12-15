@@ -1,15 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using Decchi.Core.Windows;
 using Decchi.ParsingModule;
 using Decchi.PublishingModule.Twitter;
 using Decchi.Utilities;
 
-namespace Decchi
+namespace Decchi.Core
 {
 	/// <summary>
 	/// 뎃찌의 내부 프레임워크를 정의합니다.
@@ -88,11 +88,7 @@ namespace Decchi
 			if (playingCount >= 2)
 			{
 				// 두 개 이상의 곡이 재생중인 경우
-				var form_clientSelect = new ClientSelector(songs);
-				form_clientSelect.ShowDialog( new Action<SongInfo>(delegate (SongInfo song)
-				{
-					TwitterCommunicator.Instance.Publish( song.ToString() );
-                } ));
+				MainWindow.Instance.Dispatcher.BeginInvoke(new Action(() => ShowSelectWindow(songs)));
             }
 			else if (playingCount == 0)
 			{
@@ -110,6 +106,12 @@ namespace Decchi
 					}
 				}
 			}
+		}
+		private static void ShowSelectWindow(SongInfo[] songs)
+		{
+			var window = new ClientSelectWindow(songs, e => Task.Run(new Action(() => TwitterCommunicator.Instance.Publish(e.ToString()))));
+			window.Owner = MainWindow.Instance;
+			window.ShowDialog();
 		}
 		public static void Run(Action callback)
 		{

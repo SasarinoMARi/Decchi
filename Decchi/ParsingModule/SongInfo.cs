@@ -5,7 +5,8 @@ namespace Decchi.ParsingModule{
 	{
 		public const string Via = "#뎃찌NP";
 
-		protected abstract string Client { get; }
+		public abstract string Client { get; }
+		public abstract string ClientIcon { get; }
 
 		public string Title { get; protected set; }
 		public string Album { get; protected set; }
@@ -14,7 +15,7 @@ namespace Decchi.ParsingModule{
 
 		public abstract bool GetCurrentPlayingSong( );
 
-		public const string defaultFormat = "{/Artist/의 }{/Title/을 }듣고 있어요! {/Via/} - {/Client/}";
+		public const string defaultFormat = "{/Artist/의 }{/Title/을(를) }듣고 있어요! {/Via/} - {/Client/}";
 		public override string ToString( )
 		{
 			return ToString( defaultFormat );
@@ -23,31 +24,33 @@ namespace Decchi.ParsingModule{
 		{
 			string str = format;
 
-			str = Replace( str, "Title", this.Title );
-			str = Replace( str, "Artist", this.Artist );
-			str = Replace( str, "Album", this.Album );
-			str = Replace( str, "Client", this.Client );
-			str = Replace( str, "Via", SongInfo.Via );
+			str = Replace( str, "/Title/", this.Title );
+			str = Replace( str, "/Artist/", this.Artist );
+			str = Replace( str, "/Album/", this.Album );
+			str = Replace( str, "/Client/", this.Client );
+			str = Replace( str, "/Via/", SongInfo.Via );
 
 			return str;
 		}
 
 		private string Replace( string SourceString, string TargetString, string Value )
 		{
-			string replaceString = string.Empty;
-			var regex = new Regex( @"{[^{]*/" + TargetString + "/[^}]*}" );
-			var match = regex.Match(SourceString);
+			// 구조좀 바꿈
+			var match = Regex.Match(SourceString , @"{([^{/]*" + TargetString + "[^}]*)}", RegexOptions.IgnoreCase);
 			if ( match.Success )
 			{
-				if ( !string.IsNullOrEmpty(Value) )
+				var replaceString = match.Groups[1].Value;
+
+				if (!string.IsNullOrEmpty(Value))
 				{
-					replaceString = match.Value.Replace( "{", "" ).Replace( "}", "" ).Replace( "/" + TargetString + "/", Value );
+					replaceString = match.Groups[1].Value.Replace(TargetString, Value);
 				}
 				else
 				{
 					replaceString = string.Empty;
 				}
-				SourceString = regex.Replace( SourceString, replaceString );
+
+				SourceString = SourceString.Replace(match.Value, replaceString);
 			}
 			return SourceString;
 		}

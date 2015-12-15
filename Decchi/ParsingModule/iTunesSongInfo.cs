@@ -2,9 +2,10 @@
 
 namespace Decchi.ParsingModule
 {
-	public class iTunesSongInfo : SongInfo
+	public sealed class iTunesSongInfo : SongInfo
 	{
-		protected override string Client { get { return "iTunes"; } }
+		public override string Client { get { return "iTunes"; } }
+		public override string ClientIcon { get { return "/Decchi;component/ParsingModule/IconImages/ITunes.png"; } }
 
 		public override bool GetCurrentPlayingSong()
 		{

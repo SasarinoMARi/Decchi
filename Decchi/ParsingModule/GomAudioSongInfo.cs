@@ -2,14 +2,15 @@
 
 namespace Decchi.ParsingModule
 {
-	public class GomAudioSongInfo : SongInfo
+	public sealed class GomAudioSongInfo : SongInfo
 	{
-		protected override string Client { get { return "곰오디오"; } }
+		public override string Client { get { return "곰오디오"; } }
+		public override string ClientIcon { get { return "/Decchi;component/ParsingModule/IconImages/GomAudio.png"; } }
 
 		public override bool GetCurrentPlayingSong()
 		{
 			var b = false;
-			var procs = Process.GetProcesses();
+			var procs = Process.GetProcessesByName("goma");
 			string str;
 
 			for (int i = 0; i < procs.Length; i++)

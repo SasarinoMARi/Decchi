@@ -2,9 +2,10 @@
 
 namespace Decchi.ParsingModule
 {
-	public class YoutubeSongInfo : SongInfo
+	public sealed class YoutubeSongInfo : SongInfo
 	{
-		protected override string Client { get { return "YouTube"; } }
+		public override string Client { get { return "YouTube"; } }
+		public override string ClientIcon { get { return "/Decchi;component/ParsingModule/IconImages/Youtube.png"; } }
 
 		public override bool GetCurrentPlayingSong( )
 		{

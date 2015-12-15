@@ -3,9 +3,10 @@ using System.Text;
 
 namespace Decchi.ParsingModule
 {
-	public class AlsongSongInfo : SongInfo
+	public sealed class AlsongSongInfo : SongInfo
 	{
-		protected override string Client { get { return "알송"; } }
+		public override string Client { get { return "알송"; } }
+		public override string ClientIcon { get { return "/Decchi;component/ParsingModule/IconImages/AlSong.png"; } }
 
 		public override bool GetCurrentPlayingSong( )
 		{
@@ -22,11 +23,22 @@ namespace Decchi.ParsingModule
 			NativeMethods.SendMessage(hwnd, 0x000D, new IntPtr(length), lpString);
 
 			var str = lpString.ToString();
-			var sep = str.IndexOf('-');
 
-			this.Title	= str.Substring(sep + 1).Trim();
-			this.Album	= null;
-			this.Artist	= str.Substring(0, sep).Trim();
+			try
+			{
+				var sep = str.IndexOf('-');
+
+				this.Title	= str.Substring(sep + 1).Trim();
+				this.Album	= null;
+				this.Artist	= str.Substring(0, sep).Trim();
+			}
+			catch
+			{
+				this.Title	= str;
+				this.Album	= null;
+				this.Artist	= null;
+			}
+
 			this.Loaded = true;
 
 			return true;

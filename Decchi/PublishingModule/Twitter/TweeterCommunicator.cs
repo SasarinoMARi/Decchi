@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Threading.Tasks;
-using Decchi.Core;
-using MahApps.Metro.Controls.Dialogs;
+using Decchi.Core.Windows;
 using TweetSharp;
 
 namespace Decchi.PublishingModule.Twitter

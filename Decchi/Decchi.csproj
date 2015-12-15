@@ -14,7 +14,7 @@
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <TargetFrameworkProfile>
     </TargetFrameworkProfile>
-    <AssemblyVersion>1.0.0.353</AssemblyVersion>
+    <AssemblyVersion>1.0.0.389</AssemblyVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -41,7 +41,7 @@
     <StartupObject>Decchi.Core.Program</StartupObject>
   </PropertyGroup>
   <PropertyGroup>
-    <ApplicationIcon>iconSample.ico</ApplicationIcon>
+    <ApplicationIcon>icon.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Hammock.ClientProfile">
@@ -52,16 +52,6 @@
       <EmbedInteropTypes>False</EmbedInteropTypes>
       <HintPath>ExternalLibrarys\Interop.iTunesLib-1.13\Interop.iTunesLib.dll</HintPath>
     </Reference>
-<<<<<<< .mine
-    <Reference Include="NDde, Version=2.1.563.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>ExternalLibrarys\NDde\NDde.dll</HintPath>
-    </Reference>
-
-
-
-
-=======
     <Reference Include="MahApps.Metro, Version=1.1.2.0, Culture=neutral, PublicKeyToken=f4fb5a3c4d1e5b4f, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>ExternalLibrarys\MahApps.Metro-1.1.2\MahApps.Metro.dll</HintPath>
@@ -70,50 +60,37 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>ExternalLibrarys\Newtonsolft.Json-5.0.6\Newtonsoft.Json.dll</HintPath>
     </Reference>
->>>>>>> .theirs
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
     <Reference Include="System" />
-    <Reference Include="System.Core" />
-<<<<<<< .mine
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
-
-=======
     <Reference Include="System.Windows.Interactivity, Version=4.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>ExternalLibrarys\MahApps.Metro-1.1.2\System.Windows.Interactivity.dll</HintPath>
     </Reference>
->>>>>>> .theirs
     <Reference Include="System.Xaml" />
-<<<<<<< .mine
-    <Reference Include="System.Xml" />
-    <Reference Include="TweetinviAPI">
-      <HintPath>ExternalLibrarys\Tweetinvi\TweetinviAPI.dll</HintPath>
-      <Private>False</Private>
-=======
     <Reference Include="TweetSharp">
       <HintPath>ExternalLibrarys\TweetSharp.2.3.1\TweetSharp.dll</HintPath>
-
-
->>>>>>> .theirs
     </Reference>
     <Reference Include="UIAutomationClient" />
-    <Reference Include="UIAutomationTypes" />
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Core\App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Core\ClientSelect.cs" />
     <Compile Include="Core\DecchiCore.cs" />
-    <Compile Include="Core\MainWindow.xaml.cs">
+    <Compile Include="Core\Windows\ClientSelectWindow.xaml.cs">
+      <DependentUpon>ClientSelectWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Core\Windows\Converter\ImageConverter.cs" />
+    <Compile Include="Core\Windows\MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Core\NativeMethods.cs" />
-    <Compile Include="Visibility2Boolean.cs" />
+    <Compile Include="NativeMethods.cs" />
+    <Compile Include="Core\Windows\Converter\Visibility2Boolean.cs" />
     <Compile Include="ParsingModule\GomAudioSongInfo.cs" />
     <Compile Include="ParsingModule\iTunesSongInfo.cs" />
     <Compile Include="ParsingModule\SongInfo.cs" />
@@ -122,7 +99,7 @@
     <Compile Include="ParsingModule\AlsongSongInfo.cs" />
     <Compile Include="ParsingModule\YoutubeSongInfo.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Core\Globals.cs" />
+    <Compile Include="Globals.cs" />
     <Compile Include="PublishingModule\IPublisher.cs" />
     <Compile Include="PublishingModule\Twitter\InputCaptcha.xaml.cs">
       <DependentUpon>InputCaptcha.xaml</DependentUpon>
@@ -137,14 +114,18 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="iconSample.ico" />
+    <Resource Include="icon.ico" />
   </ItemGroup>
   <ItemGroup>
     <ApplicationDefinition Include="Core\App.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </ApplicationDefinition>
-    <Page Include="Core\MainWindow.xaml">
+    <Page Include="Core\Windows\ClientSelectWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Core\Windows\MainWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -154,9 +135,8 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="iconSample.png" />
-    <Content Include="ExternalLibrarys\NDde\NDde.dll" />
-    <Content Include="ExternalLibrarys\NDde\NDde.xml" />
+    <Resource Include="icon.png" />
+  </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="ExternalLibrarys\Newtonsolft.Json-5.0.6\Newtonsoft.Json.dll" />
   </ItemGroup>
@@ -168,10 +148,16 @@
   <ItemGroup>
     <Content Include="ExternalLibrarys\MahApps.Metro-1.1.2\LICENSE.txt" />
     <Content Include="ExternalLibrarys\Newtonsolft.Json-5.0.6\LICENSE.txt" />
+    <Resource Include="ParsingModule\IconImages\AlSong.png" />
+    <Resource Include="ParsingModule\IconImages\GomAudio.png" />
+    <Resource Include="ParsingModule\IconImages\ITunes.png" />
+    <Resource Include="ParsingModule\IconImages\WMP.png" />
+    <Resource Include="ParsingModule\IconImages\Youtube.png" />
     <EmbeddedResource Include="ExternalLibrarys\TweetSharp.2.3.1\Hammock.ClientProfile.dll" />
     <Content Include="ExternalLibrarys\TweetSharp.2.3.1\LICENSE.txt" />
     <EmbeddedResource Include="ExternalLibrarys\TweetSharp.2.3.1\TweetSharp.dll" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

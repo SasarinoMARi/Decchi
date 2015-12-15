@@ -1,11 +1,11 @@
-﻿<MahApps.Metro.Controls:MetroWindow x:Class="Decchi.Core.MainWindow"
+﻿<MahApps.Metro.Controls:MetroWindow x:Class="Decchi.Core.Windows.MainWindow"
 									xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
 									xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 									xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
 									xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 									xmlns:MahApps.Metro.Controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
-									xmlns:Decchi="clr-namespace:Decchi"
-									Icon="/Decchi;component/iconSample.png"
+									xmlns:Decchi.Core.Windows.Converter="clr-namespace:Decchi.Core.Windows.Converter"
+									Icon="/Decchi;component/icon.png"
 									Title="Decchi"
 									Height="500"
 									Width="310"
@@ -16,7 +16,7 @@
 									Activated="Window_Activated">
 	<MahApps.Metro.Controls:MetroWindow.Resources>
 		<ResourceDictionary>
-			<Decchi:Visibility2Boolean x:Key="ActiveConverter" WhenTrue="Hidden" WhenFalse="Visible" />
+			<Decchi.Core.Windows.Converter:Visibility2Boolean x:Key="ActiveConverter" WhenTrue="Hidden" WhenFalse="Visible" />
 		</ResourceDictionary>
 	</MahApps.Metro.Controls:MetroWindow.Resources>
 	<Grid Margin="5">
