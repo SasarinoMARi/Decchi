@@ -68,12 +68,15 @@ namespace Decchi
 			if (playingCount >= 2)
 			{
 				// 두 개 이상의 곡이 재생중인 경우
-
-			}
+				var form_clientSelect = new ClientSelector(songs);
+				form_clientSelect.ShowDialog( new Action<SongInfo>(delegate (SongInfo song)
+				{
+					TwitterCommunicator.Instance.Publish( song.ToString() );
+                } ));
+            }
 			else if (playingCount == 0)
 			{
 				// 재생중인 곡이 없는 경우
-
 			}
 			else
 			{

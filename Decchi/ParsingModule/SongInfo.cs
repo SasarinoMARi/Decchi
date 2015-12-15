@@ -13,7 +13,7 @@
 
 		public abstract bool GetCurrentPlayingSong();
 
-		public const string defaultFormat = "/artist/의 /title/을 듣고 있어요! /via/ - /client/";
+		public const string defaultFormat = "/artist/ - /title/ via (/client/)";
 		public override string ToString()
 		{
 			return ToString(defaultFormat);
