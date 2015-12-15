@@ -12,7 +12,9 @@ namespace Decchi.ParsingModule
 		public override string ClientIcon { get { return "/Decchi;component/ParsingModule/IconImages/WMP.png"; } }
 
 		public override bool GetCurrentPlayingSong()
-		{
+        {
+            try
+            {
 			// Finding the WMP window
 			IntPtr handle = NativeMethods.FindWindow("WMPlayerApp", "Windows Media Player");
 			if (handle == IntPtr.Zero) return false;
@@ -56,8 +58,6 @@ namespace Decchi.ParsingModule
 // 			string album = string.Empty;
 // 			string artist = string.Empty;
 
-			try
-			{
 				this.Title	= info[0].Current.Name;
 				this.Album	= info[3].Current.Name;
 				this.Artist	= info[4].Current.Name;
