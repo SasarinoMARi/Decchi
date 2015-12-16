@@ -23,9 +23,14 @@ namespace Decchi.Core.Windows
 			this.textbox_FormatString.Text = format;
 		}
 
-		private async void ctlTweet_Click(object sender, RoutedEventArgs e)
+		public void SetButtonState(bool progress)
 		{
-			await Task.Run(new Action(DecchiCore.Run));
+			this.ctlTweet.IsEnabled = progress;
+		}
+
+		private void ctlTweet_Click(object sender, RoutedEventArgs e)
+		{
+			Task.Run(new Action(DecchiCore.Run));
 		}
 
 		private bool m_firstActivated = true;
@@ -52,7 +57,7 @@ namespace Decchi.Core.Windows
  			image.BeginInit();
  			image.UriSource = new Uri(me.ProfileImageUrl.Replace("_normal", ""));
  			image.EndInit();
-			image.DownloadCompleted += (ls, le) => this.ctlProfile.Visibility = Visibility.Visible;
+			image.DownloadCompleted += (ls, le) => this.ctlElements.Visibility = Visibility.Visible;
 
 			this.ctlProfileImage.Source = image;
 			this.ctlName.Text			= me.Name;

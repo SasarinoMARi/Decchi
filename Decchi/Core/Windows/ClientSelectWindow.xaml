@@ -8,7 +8,7 @@
 									Width="180"
 									ShowInTaskbar="True"
 									WindowStartupLocation="CenterOwner"
-									Icon="/Decchi;component/icon.png"
+									Icon="/Decchi;component/icon.ico"
 									ResizeMode="NoResize"
 									BorderBrush="{DynamicResource AccentColorBrush}"
 									BorderThickness="1">

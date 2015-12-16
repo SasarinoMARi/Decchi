@@ -14,7 +14,7 @@
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <TargetFrameworkProfile>
     </TargetFrameworkProfile>
-    <AssemblyVersion>1.0.0.397</AssemblyVersion>
+    <AssemblyVersion>1.0.0.423</AssemblyVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -85,6 +85,8 @@
     <Compile Include="Core\Windows\ClientSelectWindow.xaml.cs">
       <DependentUpon>ClientSelectWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Core\Windows\Converter\Boolean2Visibility.cs" />
+    <Compile Include="Core\Windows\Converter\InvertBoolean.cs" />
     <Compile Include="Core\Windows\MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
     </Compile>
@@ -134,9 +136,6 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="icon.png" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="ExternalLibrarys\Newtonsolft.Json-5.0.6\Newtonsoft.Json.dll" />

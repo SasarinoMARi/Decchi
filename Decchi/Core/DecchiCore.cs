@@ -72,6 +72,8 @@ namespace Decchi.Core
 		/// </summary>
 		public static void Run()
 		{
+			MainWindow.Instance.Dispatcher.Invoke(new Action<bool>(MainWindow.Instance.SetButtonState), false);
+
 			int i;
 
 			var format = Globals.GetValue("PublishFormat");
@@ -88,7 +90,7 @@ namespace Decchi.Core
 			if (playingCount >= 2)
 			{
 				// 두 개 이상의 곡이 재생중인 경우
-				MainWindow.Instance.Dispatcher.BeginInvoke(new Action(() => ShowSelectWindow(songs)));
+				MainWindow.Instance.Dispatcher.Invoke(new Action(() => ShowSelectWindow(songs)));
             }
 			else if (playingCount == 0)
 			{
@@ -106,6 +108,8 @@ namespace Decchi.Core
 					}
 				}
 			}
+
+			MainWindow.Instance.Dispatcher.Invoke(new Action<bool>(MainWindow.Instance.SetButtonState), true);
 		}
 		private static void ShowSelectWindow(SongInfo[] songs)
 		{

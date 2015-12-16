@@ -5,7 +5,7 @@
 									xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 									xmlns:MahApps.Metro.Controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
 									xmlns:Decchi.Core.Windows.Converter="clr-namespace:Decchi.Core.Windows.Converter"
-									Icon="/Decchi;component/icon.png"
+									Icon="/Decchi;component/icon.ico"
 									Title="Decchi"
 									Height="500"
 									Width="310"
@@ -16,53 +16,57 @@
 									Activated="Window_Activated">
 	<MahApps.Metro.Controls:MetroWindow.Resources>
 		<ResourceDictionary>
-			<Decchi.Core.Windows.Converter:Visibility2Boolean x:Key="ActiveConverter" WhenTrue="Hidden" WhenFalse="Visible" />
+			<Decchi.Core.Windows.Converter:Visibility2Boolean x:Key="ProfileLoading" WhenTrue="Hidden" WhenFalse="Visible" />
+			<Decchi.Core.Windows.Converter:Boolean2Visibility x:Key="EcchiProgress" TrueVisibility="Visible" FalseVisibility="Hidden" />
+			<Decchi.Core.Windows.Converter:InvertBoolean x:Key="InvertBoolean"/>
 		</ResourceDictionary>
 	</MahApps.Metro.Controls:MetroWindow.Resources>
-	<Grid Margin="5">
-		<Grid.ColumnDefinitions>
-			<ColumnDefinition Width="1*" />
-			<ColumnDefinition Width="3*" />
-			<ColumnDefinition Width="1*" />
-			<ColumnDefinition Width="1*" />
-		</Grid.ColumnDefinitions>
-		
+	<Grid>
+
 		<MahApps.Metro.Controls:ProgressRing Grid.ColumnSpan="4"
-											 IsActive="{Binding ElementName=ctlProfile, Path=Visibility, Converter={StaticResource ActiveConverter}}" />
+											 IsActive="{Binding ElementName=ctlElements, Path=Visibility, Converter={StaticResource ProfileLoading}}" />
+		
+		<Grid Margin="5"
+			  x:Name="ctlElements"
+			  Visibility="Hidden">
+			<Grid.Style>
+				<Style TargetType="FrameworkElement">
+					<Style.Triggers>
+						<Trigger Property="Visibility" Value="Visible">
+							<Trigger.EnterActions>
+								<BeginStoryboard>
+									<Storyboard>
+										<DoubleAnimation Storyboard.TargetProperty="Opacity"
+																		 From="0.0"
+																		 To="1.0"
+																		 Duration="0:0:0.5"/>
+									</Storyboard>
+								</BeginStoryboard>
+							</Trigger.EnterActions>
+						</Trigger>
+					</Style.Triggers>
+				</Style>
+			</Grid.Style>
+			
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="1*" />
+				<ColumnDefinition Width="3*" />
+				<ColumnDefinition Width="1*" />
+				<ColumnDefinition Width="1*" />
+			</Grid.ColumnDefinitions>
 
-
-		<StackPanel Grid.Column="1"
-					Grid.ColumnSpan="2"
-					HorizontalAlignment="Stretch"
-					VerticalAlignment="Center">
-			<StackPanel x:Name="ctlProfile"
-						Visibility="Hidden">
-				<StackPanel.Style>
-					<Style TargetType="FrameworkElement">
-						<Style.Triggers>
-							<Trigger Property="Visibility" Value="Visible">
-								<Trigger.EnterActions>
-									<BeginStoryboard>
-										<Storyboard>
-											<DoubleAnimation Storyboard.TargetProperty="Opacity"
-																	 From="0.0"
-																	 To="1.0"
-																	 Duration="0:0:0.5"/>
-										</Storyboard>
-									</BeginStoryboard>
-								</Trigger.EnterActions>
-							</Trigger>
-						</Style.Triggers>
-					</Style>
-				</StackPanel.Style>
-				
+			<StackPanel Grid.Column="1"
+						Grid.ColumnSpan="2"
+						HorizontalAlignment="Stretch"
+						VerticalAlignment="Center">
+			
 				<Viewbox Stretch="Uniform"
-						 StretchDirection="DownOnly"
-						 HorizontalAlignment="Stretch"
-						 Margin="0 0 0 10">
+							StretchDirection="DownOnly"
+							HorizontalAlignment="Stretch"
+							Margin="0 0 0 10">
 					<Image x:Name="ctlProfileImage"
-						   Width="400"
-						   Height="400">
+							Width="400"
+							Height="400">
 						<Image.Clip>
 							<EllipseGeometry Center="200,200" RadiusX="200" RadiusY="200" />
 						</Image.Clip>
@@ -70,50 +74,56 @@
 				</Viewbox>
 
 				<Viewbox Stretch="Uniform"
-						 StretchDirection="DownOnly"
-						 Height="32">
+							StretchDirection="DownOnly"
+							Height="32">
 					<TextBlock x:Name="ctlName"
-						   FontSize="24"
-						   Text="Loading..."/>
+							FontSize="24"
+							Text="Loading..."/>
 				</Viewbox>
 
 				<TextBlock x:Name="ctlScreenName"
-					   FontSize="15"
-					   TextAlignment="Center"
-					   Foreground="DarkGray" />
+						   FontSize="15"
+						   TextAlignment="Center"
+						   Foreground="DarkGray" />
+
+				<Button x:Name="ctlTweet"
+						HorizontalAlignment="Stretch"
+						Height="60"
+						Margin="0 20 0 5"
+						Click="ctlTweet_Click"
+						IsEnabled="False">
+					<Button.Content>
+						<Grid>
+							<MahApps.Metro.Controls:ProgressRing IsActive="{Binding ElementName=ctlTweet, Path=IsEnabled, Converter={StaticResource InvertBoolean}}"
+																 Width="48"
+																 Height="48" />
+							<TextBlock Text="뎃찌!"
+									   FontSize="30"
+									   Visibility="{Binding ElementName=ctlTweet, Path=IsEnabled, Converter={StaticResource EcchiProgress}}"/>
+						</Grid>
+					</Button.Content>
+				</Button>
+
+				<TextBlock Text="Ctrl + Q 누르면 어디서든 트윗 가능!"
+						   Foreground="Red"
+						   TextAlignment="Center"/>
 			</StackPanel>
 
-            <Button x:Name="ctlTweet"
-					HorizontalAlignment="Stretch"
-					Height="60"
-					Margin="0 20 0 5"
-					Click="ctlTweet_Click"
-					IsEnabled="False">
-                <Button.Content>
-                    <TextBlock Text="뎃찌!"
-							   FontSize="30" />
-                </Button.Content>
-            </Button>
-
-			<TextBlock Text="Ctrl + Q 누르면 어디서든 트윗 가능!"
-					   Foreground="Red"
-					   TextAlignment="Center"/>
-		</StackPanel>
-
-		<TextBlock Grid.Column="2"
-				   Grid.ColumnSpan="2"
-				   Text="@SasarinoMari"
-				   HorizontalAlignment="Right"
-				   VerticalAlignment="Bottom" />
+			<TextBlock Grid.Column="2"
+					   Grid.ColumnSpan="2"
+					   Text="@SasarinoMari"
+					   HorizontalAlignment="Right"
+					   VerticalAlignment="Bottom" />
 
 
-		<TextBox Grid.ColumnSpan="2"
-				 x:Name="textbox_FormatString"
-				 HorizontalAlignment="Stretch"
-				 VerticalAlignment="Bottom"
-				 TextWrapping="NoWrap"
-				 ScrollViewer.CanContentScroll="True"
-				 TextChanged="textbox_FormatString_TextChanged"
-				 LostFocus="textbox_FormatString_LostFocus"/>
+			<TextBox Grid.ColumnSpan="2"
+					 x:Name="textbox_FormatString"
+					 HorizontalAlignment="Stretch"
+					 VerticalAlignment="Bottom"
+					 TextWrapping="NoWrap"
+					 ScrollViewer.CanContentScroll="True"
+					 TextChanged="textbox_FormatString_TextChanged"
+					 LostFocus="textbox_FormatString_LostFocus"/>
+		</Grid>
 	</Grid>
 </MahApps.Metro.Controls:MetroWindow>

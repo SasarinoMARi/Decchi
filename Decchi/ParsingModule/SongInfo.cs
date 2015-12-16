@@ -1,6 +1,8 @@
-﻿using System.Text.RegularExpressions;
+﻿using System.Collections.Generic;
+using System.Text;
 
-namespace Decchi.ParsingModule{
+namespace Decchi.ParsingModule
+{
 	public abstract class SongInfo
 	{
 		public const string Via = "#뎃찌NP";
@@ -15,44 +17,106 @@ namespace Decchi.ParsingModule{
 
 		public abstract bool GetCurrentPlayingSong( );
 
-		public const string defaultFormat = "{/Artist/의 }{/Title/{ (/Album/)}을(를) }듣고 있어요! {/Via/} - {/Client/}";
+		public const string defaultFormat = "{/Artist/의 }{/Title/{ (/Album/)}을(를) }듣고 있어요! {/Via/} - {/Client/} #NowPlaying";
 		public override string ToString( )
 		{
 			return ToString( defaultFormat );
 		}
 		public string ToString( string format )
 		{
-			string str = format;
-
-			str = Replace( str, "/Title/", this.Title );
-			str = Replace( str, "/Artist/", this.Artist );
-			str = Replace( str, "/Album/", this.Album );
-			str = Replace( str, "/Client/", this.Client );
-			str = Replace( str, "/Via/", SongInfo.Via );
-
-			return str;
+			try
+			{
+				return ToFormat(format);	
+			}
+			catch
+			{
+				return null;
+			}
 		}
 
-		private string Replace( string SourceString, string TargetString, string Value )
+		private string ToFormat(string format)
 		{
-			// 구조좀 바꿈
-			var match = Regex.Match(SourceString , @"{([^{/]*" + TargetString + "[^}]*)}", RegexOptions.IgnoreCase);
-			if ( match.Success )
+			var total = new StringBuilder();
+
+			StringBuilder sb = null;
+			var queue = new Queue<StringBuilder>();
+			char c;
+
+			bool b;
+
+			string str;
+
+			int i = 0;
+			while (i < format.Length)
 			{
-				var replaceString = match.Groups[1].Value;
+				// { 부터 } 까지다
+				c = format[i];
 
-				if (!string.IsNullOrEmpty(Value))
+				switch (c)
 				{
-					replaceString = match.Groups[1].Value.Replace(TargetString, Value);
-				}
-				else
-				{
-					replaceString = string.Empty;
+					case '{':
+						{
+							if (sb != null) queue.Enqueue(sb);
+							sb = new StringBuilder();
+						}
+						break;
+
+					case '}':
+						{
+							str = sb.ToString();
+
+							b = false;
+							str = Replace(str, "/Title/",	this.Title,		ref b);
+							str = Replace(str, "/Artist/",	this.Artist,	ref b);
+							str = Replace(str, "/Album/",	this.Album,		ref b);
+							str = Replace(str, "/Client/",	this.Client,	ref b);
+							str = Replace(str, "/Via/",		SongInfo.Via,	ref b);
+
+							if (b)
+							{
+								if (queue.Count > 0)
+								{
+									sb = queue.Dequeue();
+									sb.Append(str);
+								}
+								else
+								{
+									total.Append(str);
+									sb = null;
+								}
+							}
+							else
+							{
+								if (queue.Count > 0)
+									sb = queue.Dequeue();
+								else
+									sb = null;
+							}
+						}
+						break;
+
+					default:
+						if (sb == null)
+							total.Append(c);
+						else
+							sb.Append(c);
+						break;
 				}
 
-				SourceString = SourceString.Replace(match.Value, replaceString);
+				i++;
 			}
-			return SourceString;
+
+			return total.ToString();
+		}
+
+		private string Replace(string str, string find, string replace, ref bool b)
+		{
+			if (str.IndexOf(find) >= 0 && !string.IsNullOrEmpty(replace))
+			{
+				b = true;
+				return str.Replace(find, replace);
+			}
+			return str;
 		}
 	}
 }

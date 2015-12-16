@@ -9,7 +9,7 @@
 									Height="67"
 									ShowInTaskbar="True"
 									WindowStartupLocation="CenterOwner"
-									Icon="/Decchi;component/icon.png"
+									Icon="/Decchi;component/icon.ico"
 									ResizeMode="CanMinimize"
 									BorderBrush="{DynamicResource AccentColorBrush}"
 									BorderThickness="1"

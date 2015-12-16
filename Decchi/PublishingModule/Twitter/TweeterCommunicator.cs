@@ -83,6 +83,8 @@ namespace Decchi.PublishingModule.Twitter
 		/// <returns>트윗 성공 여부</returns>
 		public bool Publish(string text)
 		{
+			if (string.IsNullOrEmpty(text)) return false;
+
 			try
 			{
 				this.m_api.SendTweet(new SendTweetOptions { Status = text });
