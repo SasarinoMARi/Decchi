@@ -23,9 +23,11 @@ namespace Decchi.Core.Windows
 			this.textbox_FormatString.Text = format;
 		}
 
-		public void SetButtonState(bool progress)
+		public bool SetButtonState(bool progress)
 		{
+			var b = this.ctlTweet.IsEnabled;
 			this.ctlTweet.IsEnabled = progress;
+			return b ^ progress;
 		}
 
 		private void ctlTweet_Click(object sender, RoutedEventArgs e)

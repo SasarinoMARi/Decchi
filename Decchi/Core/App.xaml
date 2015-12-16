@@ -4,7 +4,7 @@
 			 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 			 xmlns:System="clr-namespace:System;assembly=mscorlib"
 			 StartupUri="Windows/MainWindow.xaml"
-			 ShutdownMode="OnMainWindowClose">
+			 ShutdownMode="OnMainWindowClose" Exit="Application_Exit">
 	<Application.Resources>
 		<ResourceDictionary>
 			<ResourceDictionary.MergedDictionaries>

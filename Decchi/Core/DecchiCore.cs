@@ -72,7 +72,8 @@ namespace Decchi.Core
 		/// </summary>
 		public static void Run()
 		{
-			MainWindow.Instance.Dispatcher.Invoke(new Action<bool>(MainWindow.Instance.SetButtonState), false);
+			if (!(bool)MainWindow.Instance.Dispatcher.Invoke(new Func<bool, bool>(MainWindow.Instance.SetButtonState), false))
+				return;
 
 			int i;
 
@@ -109,7 +110,7 @@ namespace Decchi.Core
 				}
 			}
 
-			MainWindow.Instance.Dispatcher.Invoke(new Action<bool>(MainWindow.Instance.SetButtonState), true);
+			MainWindow.Instance.Dispatcher.Invoke(new Func<bool, bool>(MainWindow.Instance.SetButtonState), true);
 		}
 		private static void ShowSelectWindow(SongInfo[] songs)
 		{
