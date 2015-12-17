@@ -8,11 +8,11 @@ namespace Decchi.Core.Windows.Converter
 	{
 		public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
 		{
-			return value is bool && !(bool)value;
+			return !(bool)value;
 		}
 		public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
 		{
-			return value is bool && !(bool)value;
+			return !(bool)value;
 		}
 	}
 }

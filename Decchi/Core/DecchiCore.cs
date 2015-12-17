@@ -77,9 +77,6 @@ namespace Decchi.Core
 
 			int i;
 
-			var format = Globals.GetValue("PublishFormat");
-			if (string.IsNullOrEmpty(format)) format = Decchi.ParsingModule.SongInfo.defaultFormat;
-
 			SongInfo[] songs = new SongInfo[m_types.Length];
 
 			for (i = 0; i < m_types.Length; ++i)
@@ -91,7 +88,8 @@ namespace Decchi.Core
 			if (playingCount >= 2)
 			{
 				// 두 개 이상의 곡이 재생중인 경우
-				MainWindow.Instance.Dispatcher.Invoke(new Action(() => ShowSelectWindow(songs)));
+
+				TwitterCommunicator.Instance.Publish(MainWindow.Instance.Dispatcher.Invoke<SongInfo>(() => ShowSelectWindow(songs)));
             }
 			else if (playingCount == 0)
 			{
@@ -104,7 +102,7 @@ namespace Decchi.Core
 				{
 					if (songs[i].Loaded)
 					{
-						TwitterCommunicator.Instance.Publish(songs[i].ToString(format));
+						TwitterCommunicator.Instance.Publish(songs[i]);
 						break;
 					}
 				}
@@ -112,16 +110,14 @@ namespace Decchi.Core
 
 			MainWindow.Instance.Dispatcher.Invoke(new Func<bool, bool>(MainWindow.Instance.SetButtonState), true);
 		}
-		private static void ShowSelectWindow(SongInfo[] songs)
+
+		private static SongInfo ShowSelectWindow(SongInfo[] songs)
 		{
-			var window = new ClientSelectWindow(songs, e => Task.Run(new Action(() => TwitterCommunicator.Instance.Publish(e.ToString()))));
+			var window = new ClientSelectWindow(songs);
 			window.Owner = MainWindow.Instance;
 			window.ShowDialog();
-		}
-		public static void Run(Action callback)
-		{
-			Run();
-			callback();
+
+			return window.SongInfo;
 		}
 	}
 }

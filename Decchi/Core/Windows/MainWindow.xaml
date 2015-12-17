@@ -21,14 +21,13 @@
 			<Decchi.Core.Windows.Converter:InvertBoolean x:Key="InvertBoolean"/>
 		</ResourceDictionary>
 	</MahApps.Metro.Controls:MetroWindow.Resources>
-	<Grid>
 
+	<Grid>
 		<MahApps.Metro.Controls:ProgressRing Grid.ColumnSpan="4"
 											 IsActive="{Binding ElementName=ctlElements, Path=Visibility, Converter={StaticResource ProfileLoading}}" />
-		
+
 		<Grid Margin="5"
-			  x:Name="ctlElements"
-			  Visibility="Hidden">
+			  x:Name="ctlElements">
 			<Grid.Style>
 				<Style TargetType="FrameworkElement">
 					<Style.Triggers>
@@ -37,9 +36,9 @@
 								<BeginStoryboard>
 									<Storyboard>
 										<DoubleAnimation Storyboard.TargetProperty="Opacity"
-																		 From="0.0"
-																		 To="1.0"
-																		 Duration="0:0:0.5"/>
+														 From="0.0"
+														 To="1.0"
+														 Duration="0:0:0.5"/>
 									</Storyboard>
 								</BeginStoryboard>
 							</Trigger.EnterActions>
@@ -47,38 +46,34 @@
 					</Style.Triggers>
 				</Style>
 			</Grid.Style>
-			
+
 			<Grid.ColumnDefinitions>
 				<ColumnDefinition Width="1*" />
-				<ColumnDefinition Width="3*" />
-				<ColumnDefinition Width="1*" />
+				<ColumnDefinition Width="4*" />
 				<ColumnDefinition Width="1*" />
 			</Grid.ColumnDefinitions>
 
 			<StackPanel Grid.Column="1"
-						Grid.ColumnSpan="2"
 						HorizontalAlignment="Stretch"
 						VerticalAlignment="Center">
-			
-				<Viewbox Stretch="Uniform"
-							StretchDirection="DownOnly"
-							HorizontalAlignment="Stretch"
-							Margin="0 0 0 10">
-					<Image x:Name="ctlProfileImage"
-							Width="400"
-							Height="400">
-						<Image.Clip>
-							<EllipseGeometry Center="200,200" RadiusX="200" RadiusY="200" />
-						</Image.Clip>
-					</Image>
-				</Viewbox>
+				<Ellipse Height="{Binding RelativeSource={RelativeSource Self}, Path=ActualWidth}">
+					<Ellipse.OpacityMask>
+						<RadialGradientBrush>
+							<GradientStop Offset="0.95" Color="Black"/>
+							<GradientStop Offset="1.00" Color="Transparent"/>
+						</RadialGradientBrush>
+					</Ellipse.OpacityMask>
+					<Ellipse.Fill>
+						<ImageBrush x:Name="ctlProfile" Stretch="UniformToFill" />
+					</Ellipse.Fill>
+				</Ellipse>
 
 				<Viewbox Stretch="Uniform"
-							StretchDirection="DownOnly"
-							Height="32">
+						 StretchDirection="DownOnly"
+						 Height="32">
 					<TextBlock x:Name="ctlName"
-							FontSize="24"
-							Text="Loading..."/>
+							   FontSize="24"
+							   Text="Loading..."/>
 				</Viewbox>
 
 				<TextBlock x:Name="ctlScreenName"
@@ -90,8 +85,7 @@
 						HorizontalAlignment="Stretch"
 						Height="60"
 						Margin="0 20 0 5"
-						Click="ctlTweet_Click"
-						IsEnabled="False">
+						Click="ctlTweet_Click">
 					<Button.Content>
 						<Grid>
 							<MahApps.Metro.Controls:ProgressRing IsActive="{Binding ElementName=ctlTweet, Path=IsEnabled, Converter={StaticResource InvertBoolean}}"
@@ -109,14 +103,12 @@
 						   TextAlignment="Center"/>
 			</StackPanel>
 
-			<TextBlock Grid.Column="2"
-					   Grid.ColumnSpan="2"
+			<TextBlock Grid.ColumnSpan="3"
 					   Text="@SasarinoMari"
 					   HorizontalAlignment="Right"
-					   VerticalAlignment="Bottom" />
+					   VerticalAlignment="Top"/>
 
-
-			<TextBox Grid.ColumnSpan="2"
+			<TextBox Grid.ColumnSpan="3"
 					 x:Name="textbox_FormatString"
 					 HorizontalAlignment="Stretch"
 					 VerticalAlignment="Bottom"

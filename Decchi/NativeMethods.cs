@@ -20,5 +20,23 @@ namespace Decchi
 		public static extern IntPtr SendMessage(IntPtr hWnd, int Msg, IntPtr wParam, [Out] StringBuilder lParam);
 		[DllImport("user32.dll", CharSet = CharSet.Auto)]
 		public static extern IntPtr SendMessage(IntPtr hWnd, int Msg, IntPtr wParam, IntPtr lParam);
+
+		public const int WM_GETTEXTLENGTH	= 0x000E;
+		public const int WM_GETTEXT			= 0x000D;
+
+		//////////////////////////////////////////////////
+
+		public static string GetWindowTitle(string strClassName, string strWindowName)
+		{
+			var hwnd = NativeMethods.FindWindow(strClassName, strWindowName);
+			if (hwnd == IntPtr.Zero) return null;
+
+			var length = NativeMethods.SendMessage(hwnd, NativeMethods.WM_GETTEXTLENGTH, IntPtr.Zero, IntPtr.Zero).ToInt32() + 1;
+			var lpString = new StringBuilder(length);
+
+			NativeMethods.SendMessage(hwnd, NativeMethods.WM_GETTEXT, new IntPtr(length), lpString);
+
+			return lpString.ToString();
+		}
 	}
 }

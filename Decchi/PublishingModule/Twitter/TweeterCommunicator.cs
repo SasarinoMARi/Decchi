@@ -1,5 +1,8 @@
 ﻿using System;
+using System.IO;
 using Decchi.Core.Windows;
+using Decchi.ParsingModule;
+using Decchi.Utilities;
 using TweetSharp;
 
 namespace Decchi.PublishingModule.Twitter
@@ -76,18 +79,50 @@ namespace Decchi.PublishingModule.Twitter
 			this.m_api.AuthenticateWith(access.Token, access.TokenSecret);
 		}
 
+
 		/// <summary>
 		/// 트윗을 게시합니다.
 		/// </summary>
-		/// <param name="text">트윗 본문</param>
+		/// <param name="songinfo">트윗할 SongInfo 객체</param>
 		/// <returns>트윗 성공 여부</returns>
-		public bool Publish(string text)
+		public bool Publish(SongInfo songinfo)
 		{
+			if (songinfo == null || !songinfo.Loaded) return false;
+			
+			var text = songinfo.ToString();
 			if (string.IsNullOrEmpty(text)) return false;
+
+			string mediaId = null;
+
+			if (!string.IsNullOrEmpty(songinfo.Thumbnail) && File.Exists(songinfo.Thumbnail) && new FileInfo(songinfo.Thumbnail).Length > 0)
+			{
+				using (var file = ImageResize.LoadImageResized(songinfo.Thumbnail))
+				{
+					try
+					{
+						mediaId = this.m_api.UploadMedia(new UploadMediaOptions { Media = new MediaFile { Content = file } }).Media_Id;
+					}
+					catch
+					{ }
+				}
+
+				try
+				{
+					File.Delete(songinfo.Thumbnail);
+				}
+				catch
+				{ }
+			}
 
 			try
 			{
-				this.m_api.SendTweet(new SendTweetOptions { Status = text });
+				var option = new SendTweetOptions { Status = text };
+
+				if (!string.IsNullOrEmpty(mediaId))
+					option.MediaIds = new string[] { mediaId };
+
+				this.m_api.SendTweet(option);
+
 				return true;
 			}
 			catch

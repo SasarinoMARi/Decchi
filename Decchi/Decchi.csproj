@@ -14,7 +14,7 @@
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <TargetFrameworkProfile>
     </TargetFrameworkProfile>
-    <AssemblyVersion>1.0.0.427</AssemblyVersion>
+    <AssemblyVersion>1.0.0.522</AssemblyVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -44,8 +44,9 @@
     <ApplicationIcon>icon.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Hammock.ClientProfile">
-      <HintPath>ExternalLibrarys\TweetSharp.2.3.1\Hammock.ClientProfile.dll</HintPath>
+    <Reference Include="Hammock.ClientProfile, Version=1.0.0.0, Culture=neutral, PublicKeyToken=c148cfba29ed1a4d, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>ExternalLibrarys\TweetMoaSharp.3.0.0.12\Hammock.ClientProfile.dll</HintPath>
     </Reference>
     <Reference Include="Interop.iTunesLib, Version=1.13.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -56,9 +57,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>ExternalLibrarys\MahApps.Metro-1.1.2\MahApps.Metro.dll</HintPath>
     </Reference>
-    <Reference Include="Newtonsoft.Json, Version=4.5.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+    <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>ExternalLibrarys\Newtonsolft.Json-5.0.6\Newtonsoft.Json.dll</HintPath>
+      <HintPath>ExternalLibrarys\Newtonsoft.Json.7.0.1\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
@@ -71,8 +72,9 @@
       <HintPath>ExternalLibrarys\MahApps.Metro-1.1.2\System.Windows.Interactivity.dll</HintPath>
     </Reference>
     <Reference Include="System.Xaml" />
-    <Reference Include="TweetSharp">
-      <HintPath>ExternalLibrarys\TweetSharp.2.3.1\TweetSharp.dll</HintPath>
+    <Reference Include="TweetSharp, Version=3.0.0.1, Culture=neutral, PublicKeyToken=c148cfba29ed1a4d, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>ExternalLibrarys\TweetMoaSharp.3.0.0.12\TweetSharp.dll</HintPath>
     </Reference>
     <Reference Include="UIAutomationClient" />
     <Reference Include="WindowsBase" />
@@ -93,6 +95,7 @@
     <Compile Include="NativeMethods.cs" />
     <Compile Include="Core\Windows\Converter\Visibility2Boolean.cs" />
     <Compile Include="ParsingModule\GomAudioSongInfo.cs" />
+    <Compile Include="ParsingModule\MelonSongInfo.cs" />
     <Compile Include="ParsingModule\iTunesSongInfo.cs" />
     <Compile Include="ParsingModule\SongInfo.cs" />
     <Compile Include="Core\Program.cs" />
@@ -108,8 +111,9 @@
       <DependentUpon>InputCaptcha.xaml</DependentUpon>
     </Compile>
     <Compile Include="PublishingModule\Twitter\TweeterCommunicator.cs" />
-    <Compile Include="ShortcutModule\globalKeyboardHook.cs" />
+    <Compile Include="Utilities\globalKeyboardHook.cs" />
     <Compile Include="Uncommit\TwitterToken.cs" />
+    <Compile Include="Utilities\ImageResize.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config">
@@ -138,26 +142,25 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="ExternalLibrarys\Newtonsolft.Json-5.0.6\Newtonsoft.Json.dll" />
-  </ItemGroup>
-  <ItemGroup>
     <EmbeddedResource Include="ExternalLibrarys\Interop.iTunesLib-1.13\Interop.iTunesLib.dll" />
     <EmbeddedResource Include="ExternalLibrarys\MahApps.Metro-1.1.2\MahApps.Metro.dll" />
     <EmbeddedResource Include="ExternalLibrarys\MahApps.Metro-1.1.2\System.Windows.Interactivity.dll" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="ExternalLibrarys\MahApps.Metro-1.1.2\LICENSE.txt" />
-    <Content Include="ExternalLibrarys\Newtonsolft.Json-5.0.6\LICENSE.txt" />
+    <None Include="ExternalLibrarys\MahApps.Metro-1.1.2\LICENSE.txt" />
+    <None Include="ExternalLibrarys\Newtonsoft.Json.7.0.1\LICENSE.txt" />
+    <EmbeddedResource Include="ExternalLibrarys\Newtonsoft.Json.7.0.1\Newtonsoft.Json.dll" />
+    <None Include="ExternalLibrarys\Newtonsoft.Json.7.0.1\Newtonsoft.Json.xml" />
+    <EmbeddedResource Include="ExternalLibrarys\TweetMoaSharp.3.0.0.12\Hammock.ClientProfile.dll" />
+    <None Include="ExternalLibrarys\TweetMoaSharp.3.0.0.12\LICENSE.txt" />
+    <EmbeddedResource Include="ExternalLibrarys\TweetMoaSharp.3.0.0.12\TweetSharp.dll" />
+    <Resource Include="ParsingModule\IconImages\Melon.png" />
     <Resource Include="ParsingModule\IconImages\AlSong.png" />
     <Resource Include="ParsingModule\IconImages\GomAudio.png" />
     <Resource Include="ParsingModule\IconImages\ITunes.png" />
     <Resource Include="ParsingModule\IconImages\WMP.png" />
     <Resource Include="ParsingModule\IconImages\Youtube.png" />
-    <EmbeddedResource Include="ExternalLibrarys\TweetSharp.2.3.1\Hammock.ClientProfile.dll" />
-    <Content Include="ExternalLibrarys\TweetSharp.2.3.1\LICENSE.txt" />
-    <EmbeddedResource Include="ExternalLibrarys\TweetSharp.2.3.1\TweetSharp.dll" />
   </ItemGroup>
-  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

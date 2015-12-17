@@ -1,9 +1,11 @@
-﻿namespace Decchi.PublishingModule
+﻿using Decchi.ParsingModule;
+
+namespace Decchi.PublishingModule
 {
 	internal interface IDecchiPublisher
 	{
 		bool Login();
 
-		bool Publish(string text);
+		bool Publish(SongInfo text);
 	}
 }

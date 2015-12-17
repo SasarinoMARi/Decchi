@@ -1,4 +1,8 @@
-﻿using System.Diagnostics;
+﻿using System;
+using System.Drawing;
+using System.Drawing.Imaging;
+using System.IO;
+using iTunesLib;
 
 namespace Decchi.ParsingModule
 {
@@ -9,22 +13,41 @@ namespace Decchi.ParsingModule
 
 		public override bool GetCurrentPlayingSong()
 		{
-			var procs = Process.GetProcessesByName("itunes");
-
-			if (procs.Length == 0) return false;
-
-			for (int i = 0; i < procs.Length; ++i)
-				procs[i].Dispose();
+			var hwnd = NativeMethods.FindWindow("iTunes", null);
+			if (hwnd == IntPtr.Zero) return false;
 
 			try
 			{
-				var itunes = new iTunesLib.iTunesAppClass();
+				var itunes = new iTunesAppClass();
 				var track = itunes.CurrentTrack;
 
 				this.Title	= track.Name;
 				this.Album	= track.Album;
 				this.Artist	= track.Artist;
 				this.Loaded	= true;
+
+				if (track.Artwork.Count > 0)
+				{
+					var artwork		= track.Artwork[1];
+					var thumbnail	= Path.GetTempFileName();
+
+					switch (artwork.Format)
+					{
+						case ITArtworkFormat.ITArtworkFormatBMP:
+							artwork.SaveArtworkToFile(thumbnail);
+							using (var image = Image.FromFile(thumbnail))
+								image.Save(thumbnail, ImageFormat.Png);
+							break;
+
+						case ITArtworkFormat.ITArtworkFormatJPEG:
+						case ITArtworkFormat.ITArtworkFormatPNG:
+							artwork.SaveArtworkToFile(thumbnail);
+							break;
+					}
+
+					this.Thumbnail = thumbnail;
+				}
+
 				return true;
 			}
 			catch

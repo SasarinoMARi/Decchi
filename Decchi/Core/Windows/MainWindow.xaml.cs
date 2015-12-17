@@ -5,6 +5,7 @@ using System.Windows.Media.Imaging;
 using Decchi.ParsingModule;
 using Decchi.PublishingModule.Twitter;
 using TweetSharp;
+using System.Windows.Media;
 
 namespace Decchi.Core.Windows
 {
@@ -18,6 +19,9 @@ namespace Decchi.Core.Windows
 			MainWindow.m_instance = this;
 
 			InitializeComponent();
+
+			this.ctlElements.Visibility = Visibility.Hidden;
+
 			var format = Globals.GetValue("PublishFormat");
 			if (string.IsNullOrEmpty(format)) format = Decchi.ParsingModule.SongInfo.defaultFormat;
 			this.textbox_FormatString.Text = format;
@@ -53,22 +57,15 @@ namespace Decchi.Core.Windows
 				return;
 			}
 
-			this.ctlTweet.IsEnabled = true;
-
  			var image = new BitmapImage();
  			image.BeginInit();
  			image.UriSource = new Uri(me.ProfileImageUrl.Replace("_normal", ""));
  			image.EndInit();
 			image.DownloadCompleted += (ls, le) => this.ctlElements.Visibility = Visibility.Visible;
 
-			this.ctlProfileImage.Source = image;
+			this.ctlProfile.ImageSource	= image;
 			this.ctlName.Text			= me.Name;
 			this.ctlScreenName.Text		= "@" + me.ScreenName;
-		}
-
-		private void Window_Closing( object sender, System.ComponentModel.CancelEventArgs e )
-		{
-			Globals.SaveSettings( );
 		}
 
 		private void textbox_FormatString_TextChanged( object sender, System.Windows.Controls.TextChangedEventArgs e )

@@ -1,6 +1,4 @@
-﻿using System;
-using System.Text;
-using System.Text.RegularExpressions;
+﻿using System.Text.RegularExpressions;
 using Microsoft.Win32;
 
 namespace Decchi.ParsingModule
@@ -12,21 +10,9 @@ namespace Decchi.ParsingModule
 
 		public override bool GetCurrentPlayingSong( )
 		{
-			var hwnd = NativeMethods.FindWindow("ALSong_Class", null);
+			var str = NativeMethods.GetWindowTitle("ALSong_Class", null);
 
-			if (hwnd == IntPtr.Zero)
-				return false;
-
-			// WM_GETTEXTLENGTH = 0x000E;
-			var length = NativeMethods.SendMessage(hwnd, 0x000E, IntPtr.Zero, IntPtr.Zero).ToInt32();
-			var lpString = new StringBuilder(length + 1);
-
-			// WM_GETTEXT = 0x000D;
-			NativeMethods.SendMessage(hwnd, 0x000D, new IntPtr(length), lpString);
-
-			var str = lpString.ToString();
-
-			return this.Parse(str);
+			return str != null ? this.Parse(str) : false;
 		}
 
 		private bool Parse(string str)
