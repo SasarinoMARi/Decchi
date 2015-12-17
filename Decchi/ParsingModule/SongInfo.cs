@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Text;
 
 namespace Decchi.ParsingModule
@@ -21,6 +22,20 @@ namespace Decchi.ParsingModule
 		public abstract bool GetCurrentPlayingSong( );
 
 		public const string defaultFormat = "{/Artist/의 }{/Title/{ (/Album/)}을/를 }듣고 있어요! {/Via/} - {/Client/} #NowPlaying";
+
+		public static bool CheckFormat(string format)
+		{
+			try
+			{
+				ToFormat(format, null, true);
+				return true;
+			}
+			catch
+			{
+				return false;
+			}
+		}
+
 		public override string ToString( )
 		{
 			var format = Globals.GetValue("PublishFormat");
@@ -28,7 +43,7 @@ namespace Decchi.ParsingModule
 
 			try
 			{
-				return ToFormat(format);
+				return ToFormat(format, this);
 			}
 			catch
 			{
@@ -36,23 +51,22 @@ namespace Decchi.ParsingModule
 			}
 		}
 
-		private string ToFormat(string format)
+		private static string ToFormat(string format, SongInfo info, bool checkFormat = false)
 		{
-			var total = new StringBuilder();
+			StringBuilder			total	= !checkFormat ? new StringBuilder() : null;
+			
+			StringBuilder			sb	= null;
+			Queue<StringBuilder>	queue = new Queue<StringBuilder>();
+			string					str;
 
-			StringBuilder sb = null;
-			var queue = new Queue<StringBuilder>();
 			char c;
-
 			bool b;
-
-			string str;
 
 			int i = 0;
 			while (i < format.Length)
 			{
 				// { 부터 } 까지다
-				c = format[i];
+				c = format[i++];
 
 				switch (c)
 				{
@@ -68,50 +82,80 @@ namespace Decchi.ParsingModule
 							str = sb.ToString();
 
 							b = false;
-							str = Replace(str, "/Title/",	this.Title,		ref b);
-							str = Replace(str, "/Artist/",	this.Artist,	ref b);
-							str = Replace(str, "/Album/",	this.Album,		ref b);
-							str = Replace(str, "/Client/",	this.Client,	ref b);
-							str = Replace(str, "/Via/",		SongInfo.Via,	ref b);
 
-							if (b)
+							if (checkFormat)
 							{
-								if (queue.Count > 0)
+								b = str.IndexOf("/Title/")	>= 0 ||
+									str.IndexOf("/Artist/")	>= 0 ||
+									str.IndexOf("/Album/")	>= 0 ||
+									str.IndexOf("/Client/")	>= 0 ||
+									str.IndexOf("/Via/")	>= 0;
+
+								if (b)
 								{
-									sb = queue.Dequeue();
-									sb.Append(str);
+									if (queue.Count > 0)
+									{
+										sb = queue.Dequeue();
+										sb.Append(str);
+									}
+									else
+									{
+										sb = null;
+									}
 								}
 								else
 								{
-									total.Append(str);
-									sb = null;
+									// { } 안에는 최소한 하나가 있어야함
+									throw new Exception();
 								}
 							}
 							else
 							{
-								if (queue.Count > 0)
-									sb = queue.Dequeue();
+								// b -> { } 안에 포멧 변환된게 있음
+								str = Replace(str, "/Title/",	info.Title,		ref b);
+								str = Replace(str, "/Artist/",	info.Artist,	ref b);
+								str = Replace(str, "/Album/",	info.Album,		ref b);
+								str = Replace(str, "/Client/",	info.Client,	ref b);
+								str = Replace(str, "/Via/",		SongInfo.Via,	ref b);
+
+								if (b)
+								{
+									if (queue.Count > 0)
+									{
+										sb = queue.Dequeue();
+										sb.Append(str);
+									}
+									else
+									{
+										total.Append(str);
+										sb = null;
+									}
+								}
 								else
-									sb = null;
+								{
+									if (queue.Count > 0)
+										sb = queue.Dequeue();
+									else
+										sb = null;
+								}
 							}
 						}
 						break;
 
 					default:
-						if (sb == null)
-							total.Append(c);
-						else
+						if (sb != null)
 							sb.Append(c);
 						break;
 				}
-
-				i++;
 			}
 
-			return total.ToString();
+			if (checkFormat && (queue.Count > 0 || sb != null))
+				throw new Exception();
+			
+			return !checkFormat ? total.ToString() : null;
 		}
 
-		private string Replace(string str, string find, string replace, ref bool b)
+		private static string Replace(string str, string find, string replace, ref bool b)
 		{
 			if (str.IndexOf(find) >= 0 && !string.IsNullOrEmpty(replace))
 			{

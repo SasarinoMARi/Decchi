@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Input;
+using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using Decchi.ParsingModule;
 using Decchi.PublishingModule.Twitter;
 using TweetSharp;
-using System.Windows.Media;
 
 namespace Decchi.Core.Windows
 {
@@ -25,6 +26,9 @@ namespace Decchi.Core.Windows
 			var format = Globals.GetValue("PublishFormat");
 			if (string.IsNullOrEmpty(format)) format = Decchi.ParsingModule.SongInfo.defaultFormat;
 			this.textbox_FormatString.Text = format;
+			
+			this.m_formatOK		= (Brush)this.FindResource("BlackColorBrush");
+			this.m_formatErr	= Brushes.Red;
 		}
 
 		public bool SetButtonState(bool progress)
@@ -68,16 +72,36 @@ namespace Decchi.Core.Windows
 			this.ctlScreenName.Text		= "@" + me.ScreenName;
 		}
 
-		private void textbox_FormatString_TextChanged( object sender, System.Windows.Controls.TextChangedEventArgs e )
+		private Brush m_formatOK;
+		private Brush m_formatErr;
+		private void textbox_FormatString_KeyDown(object sender, System.Windows.Input.KeyEventArgs e)
 		{
-			var format = this.textbox_FormatString.Text;
-			Globals.SetValue( "PublishFormat", format );
+			if (e.Key == Key.Enter)
+				this.textbox_FormatString_LostFocus(null, null);
 		}
 
 		private void textbox_FormatString_LostFocus(object sender, RoutedEventArgs e)
 		{
 			if (string.IsNullOrEmpty(this.textbox_FormatString.Text))
-				this.textbox_FormatString.Text = SongInfo.defaultFormat;
+			{
+				var format = this.textbox_FormatString.Text = SongInfo.defaultFormat;
+
+				Globals.SetValue("PublishFormat", format);
+			}
+			else
+			{
+				if (SongInfo.CheckFormat(this.textbox_FormatString.Text))
+				{
+					this.textbox_FormatString.Foreground = this.m_formatOK;
+
+					var format = this.textbox_FormatString.Text;
+					Globals.SetValue("PublishFormat", format);
+				}
+				else
+				{
+					this.textbox_FormatString.Foreground = this.m_formatErr;
+				}	
+			}
 		}
 	}
 }

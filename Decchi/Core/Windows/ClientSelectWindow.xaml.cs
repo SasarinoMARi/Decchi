@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 using System.Windows;
 using Decchi.ParsingModule;
 using MahApps.Metro.Controls;
@@ -9,9 +7,8 @@ namespace Decchi.Core.Windows
 {
 	public partial class ClientSelectWindow : MetroWindow
 	{
-		public SongInfo SongInfo { get; private set; } 
-
-		private List<SongInfo>		m_songinfo;
+		public	SongInfo		SongInfo	{ get; private set; }
+		private	List<SongInfo>	m_songinfo;
 
 		public ClientSelectWindow(SongInfo[] songs)
 		{
@@ -25,7 +22,12 @@ namespace Decchi.Core.Windows
 			this.ctlSongList.ItemsSource = this.m_songinfo;
 		}
 
-		private void Button_Click(object sender, RoutedEventArgs e)
+		private void ctlSongList_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
+		{
+			this.ctlSelectClient.IsEnabled = true;
+		}
+
+		private void ctlSelectClient_Click(object sender, RoutedEventArgs e)
 		{
 			this.SongInfo = (SongInfo)this.ctlSongList.SelectedItem;
 

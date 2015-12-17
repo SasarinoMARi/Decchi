@@ -4,7 +4,7 @@
 									xmlns:MahApps.Metro.Controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
 									xmlns:Decchi.Core.Windows.Converter="clr-namespace:Decchi.Core.Windows.Converter"
 									Title="선택"
-									Height="240"
+									Height="220"
 									Width="180"
 									ShowInTaskbar="True"
 									WindowStartupLocation="CenterOwner"
@@ -20,7 +20,8 @@
 		
 		<ListBox x:Name="ctlSongList"
 				 Margin="0 0 0 5"
-				 ScrollViewer.VerticalScrollBarVisibility="Visible">
+				 ScrollViewer.VerticalScrollBarVisibility="Visible"
+				 SelectionChanged="ctlSongList_SelectionChanged">
 			<ListBox.ItemContainerStyle>
 				<Style TargetType="ListBoxItem">
 					<Setter Property="Height" Value="36" />
@@ -31,7 +32,7 @@
 						</Trigger>
 						
 						<Trigger Property="IsSelected" Value="False" >
-							<Setter Property="TextBlock.Foreground" Value="{StaticResource GrayBrush7}" />
+							<Setter Property="TextBlock.Foreground" Value="{StaticResource GrayBrush3}" />
 						</Trigger>
 					</Style.Triggers>
 				</Style>
@@ -65,7 +66,9 @@
 		</ListBox>
 		
 		<Button Grid.Row="1"
-				Content="뎃찌!"
-				Click="Button_Click"/>
+				x:Name="ctlSelectClient"
+				Content="뎃찌!!"
+				Click="ctlSelectClient_Click"
+				IsEnabled="False"/>
 	</Grid>
 </MahApps.Metro.Controls:MetroWindow>
