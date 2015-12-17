@@ -10,12 +10,12 @@
 
 |클라이언트 명|곡 이름|아티스트 이름|앨범 이름|앨범 아트|
 |---|---|---|---|---|
-|Windows Media Player|O|O|X|X|X|
-|곰오디오|O|O|X|X|X|
-|iTunes|O|O|O|O|O|
-|웹 브라우저에서 보는 유튜브|O|X|X|X|X|
-|알송|O|O|X|X|X|
-|Melon|O|O|X|X|X|
+|Windows Media Player|O|O|X|X|
+|곰오디오|O|O|X|X|
+|iTunes|O|O|O|O|
+|웹 브라우저에서 보는 유튜브|O|X|X|X|
+|알송|O|O|X|X|
+|Melon|O|O|X|X|
 
 ## 설치
 
