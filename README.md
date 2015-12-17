@@ -2,10 +2,25 @@
 
 뎃찌와 함께 데스크탑에서 #Nowplaying을 게시해요.
 
+[사긔](https://github.com/Usagination)와 [륜](https://github.com/RyuaNerin)이 열씸히 만들었어요ㅇ.<!
+
+버그나 기능 개선 문의는 언제나 환영이에요!
+
+## 지원 클라이언트 및 파싱 구현 톺아보기
+
+|클라이언트 명|곡 이름|아티스트 이름|앨범 이름|앨범 아트|
+|---|---|---|---|---|
+|Windows Media Player|O|O|X|X|X|
+|곰오디오|O|O|X|X|X|
+|iTunes|O|O|O|O|O|
+|웹 브라우저에서 보는 유튜브|O|X|X|X|X|
+|알송|O|O|X|X|X|
+|Melon|O|O|X|X|X|
 
 ## 설치
 
 .NET Framework 4.5 이상 버전이 필요해요.
+
 별도의 설치 과정 없이 [여기](https://github.com/Usagination/Decchi/releases/latest)에서 다운로드받은 파일을 실행해주면 돼요.
 
 ## 사용법
@@ -45,12 +60,3 @@ Ctrl + Q를 눌러 다른 작업 중에도 뎃찌를 실행할 수 있어요.
 |夜もすがら君想ふ|Chalili|-|곰오디오|Chalili의 夜もすがら君想ふ을 듣고 있어요! #뎃찌NP - 곰오디오|
 |[beatmania IIDX 23 copula] STARLIGHT DANCEHALL SPA|-|-|Youtube|[beatmania IIDX 23 copula] STARLIGHT DANCEHALL SPA을 듣고 있어요! #뎃찌NP - Youtube|
 |モンタージュガー|ヒトリエ|ルームシック・ガールズエスケープ|Alsong|ヒトリエ의 モンタージュガール(ルームシック・ガールズエスケープ)을 듣고 있어요! #뎃찌NP - Alsong|
-
-## 지원 클라이언트
-
-- Windows Media Player
-- 곰오디오
-- iTunes
-- 알송
-- 웹 브라우저에서 보는 유튜브
-- Melon
