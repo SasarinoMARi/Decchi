@@ -6,16 +6,16 @@ using System.Windows.Automation;
 
 namespace Decchi.ParsingModule
 {
-	public sealed class WMPSongInfo : SongInfo
-	{
-		public override string Client { get { return "Windows Media Player"; } }
-		public override string ClientIcon { get { return "/Decchi;component/ParsingModule/IconImages/WMP.png"; } }
+    public sealed class WMPSongInfo : SongInfo
+    {
+        public override string Client { get { return "Windows Media Player"; } }
+        public override string ClientIcon { get { return "/Decchi;component/ParsingModule/IconImages/WMP.png"; } }
 
-		public override bool GetCurrentPlayingSong()
+        public override bool GetCurrentPlayingSong()
         {
-			// Finding the WMP window
-			IntPtr handle = NativeMethods.FindWindow("WMPlayerApp", "Windows Media Player");
-			if (handle == IntPtr.Zero) return false;
+            // Finding the WMP window
+            IntPtr handle = NativeMethods.FindWindow("WMPlayerApp", "Windows Media Player");
+            if (handle == IntPtr.Zero) return false;
 
  			var walker			= TreeWalker.ControlViewWalker;
  			// Whole WMP window
@@ -39,7 +39,7 @@ namespace Decchi.ParsingModule
  				wmpSongInfo = walker.GetNextSibling(wmpSongInfo);
  
  				if (wmpSongInfo == null)
-					return false;
+                    return false;
  			}
  
  			// Walking through children (image, hyperlink, song info etc.)
@@ -56,12 +56,9 @@ namespace Decchi.ParsingModule
  
  			this.Loaded = true;
  			return true;
- 
- 			this.Loaded = false;
- 			return true;
-		}
+        }
 
-		// Returns all child AutomationElement nodes in "element" node
+        // Returns all child AutomationElement nodes in "element" node
  		private List<AutomationElement> GetChildren(AutomationElement element)
  		{
  			List<AutomationElement> result = new List<AutomationElement>();
@@ -77,7 +74,7 @@ namespace Decchi.ParsingModule
  
  			return result;
  		}
-	}
+    }
 
 
 }
