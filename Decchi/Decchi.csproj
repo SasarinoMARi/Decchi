@@ -97,7 +97,9 @@
     </Compile>
     <Compile Include="NativeMethods.cs" />
     <Compile Include="Core\Windows\Converter\Visibility2Boolean.cs" />
+    <Compile Include="ParsingModule\AIMP3SongInfo.cs" />
     <Compile Include="ParsingModule\GomAudioSongInfo.cs" />
+    <Compile Include="ParsingModule\FoobarSongInfo.cs" />
     <Compile Include="ParsingModule\MelonSongInfo.cs" />
     <Compile Include="ParsingModule\iTunesSongInfo.cs" />
     <Compile Include="ParsingModule\SongInfo.cs" />
@@ -163,6 +165,12 @@
     <Resource Include="ParsingModule\IconImages\ITunes.png" />
     <Resource Include="ParsingModule\IconImages\WMP.png" />
     <Resource Include="ParsingModule\IconImages\Youtube.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="ParsingModule\IconImages\Foobar.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="ParsingModule\IconImages\AIMP.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
