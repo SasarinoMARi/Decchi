@@ -2,9 +2,17 @@
 
 뎃찌와 함께 데스크탑에서 #Nowplaying을 게시해요.
 
+우리는 이 놀라운 기능을 뎃찌라고 이름붙였답니다.
+
+.
+
+
 [사긔](https://github.com/Usagination)와 [륜](https://github.com/RyuaNerin)이 열씸히 만들었어요ㅇ.<!
 
 버그나 기능 개선 문의는 언제나 환영이에요!
+
+-
+
 
 ## 지원 클라이언트 및 파싱 구현 톺아보기
 
@@ -17,8 +25,11 @@
 |알송|O|O|X|X|
 |Melon|O|O|X|X|
 |Winamp|O|O|X|X|
-|foobar|O|O|X|X|
 |AIMP|O|O|X|X|
+
+곧 지원 예정인 클라이언트
+
+- foobar
 
 ## 설치
 
@@ -32,7 +43,7 @@ just click 뎃찌!
 
 ### 단축키
 
-Ctrl + Q를 눌러 다른 작업 중에도 뎃찌를 실행할 수 있어요.
+Ctrl + Q를 눌러 다른 작업 중에도 뎃찌할 수 있어요.
 
 ### 포맷팅
 
