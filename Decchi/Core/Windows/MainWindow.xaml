@@ -57,7 +57,9 @@
 			<TextBlock Grid.ColumnSpan="3"
 					   Text="@SasarinoMari"
 					   HorizontalAlignment="Right"
-					   VerticalAlignment="Top"/>
+					   VerticalAlignment="Top"
+                       Visibility="Hidden"
+                       />
 
 			<StackPanel Grid.Column="1"
 						HorizontalAlignment="Stretch"
