@@ -14,7 +14,7 @@
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <TargetFrameworkProfile>
     </TargetFrameworkProfile>
-    <AssemblyVersion>1.0.0.545</AssemblyVersion>
+    <AssemblyVersion>1.0.0.549</AssemblyVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -166,7 +166,7 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>call "$(SolutionDir)release.bat" "$(ConfigurationName)" "$(SolutionDir)" "$(TargetDir)" "$(TargetFileName)"</PostBuildEvent>
+    <PostBuildEvent>IF "$(ConfigurationName)"=="Release" ( call "$(SolutionDir)release.bat" "$(ConfigurationName)" "$(SolutionDir)" "$(TargetDir)" "$(TargetFileName)" )</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
