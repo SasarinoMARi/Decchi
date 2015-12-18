@@ -8,8 +8,8 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{0B0D4462-0533-4F29-92EB-05213167C9C7}"
 	ProjectSection(SolutionItems) = preProject
 		.editorconfig = .editorconfig
+		build.bat = build.bat
 		README.md = README.md
-		release.bat = release.bat
 	EndProjectSection
 EndProject
 Global
