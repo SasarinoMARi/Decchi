@@ -11,7 +11,8 @@
 									Icon="/Decchi;component/icon.ico"
 									ResizeMode="NoResize"
 									BorderBrush="{DynamicResource AccentColorBrush}"
-									BorderThickness="1" ShowIconOnTitleBar="False">
+									BorderThickness="1"
+                                    ShowIconOnTitleBar="False">
 	<Grid Margin="5">
 		<Grid.RowDefinitions>
 			<RowDefinition />

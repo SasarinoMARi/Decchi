@@ -10,10 +10,11 @@
 									ShowInTaskbar="False"
 									WindowStartupLocation="CenterOwner"
 									Icon="/Decchi;component/icon.ico"
-									ResizeMode="CanMinimize"
+									ResizeMode="NoResize"
 									BorderBrush="{DynamicResource AccentColorBrush}"
 									BorderThickness="1"
-									Activated="Window_Activated" ShowIconOnTitleBar="False">
+									Activated="Window_Activated"
+                                    ShowIconOnTitleBar="False">
 	<Grid Margin="5">
 		<Grid.ColumnDefinitions>
 			<ColumnDefinition Width="*" />
