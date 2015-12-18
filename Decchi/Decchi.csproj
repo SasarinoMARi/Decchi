@@ -104,6 +104,7 @@
     <Compile Include="ParsingModule\SongInfo.cs" />
     <Compile Include="Core\Program.cs" />
     <Compile Include="ParsingModule\AlsongSongInfo.cs" />
+    <Compile Include="ParsingModule\WinampSongInfo.cs" />
     <Compile Include="ParsingModule\WMPSongInfo.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -164,6 +165,9 @@
     <Resource Include="ParsingModule\IconImages\ITunes.png" />
     <Resource Include="ParsingModule\IconImages\WMP.png" />
     <Resource Include="ParsingModule\IconImages\Youtube.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="ParsingModule\IconImages\Winamp.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
