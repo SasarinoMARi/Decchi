@@ -51,6 +51,10 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>ExternalLibrarys\TweetMoaSharp.3.0.0.12\Hammock.ClientProfile.dll</HintPath>
     </Reference>
+    <Reference Include="Hardcodet.Wpf.TaskbarNotification, Version=1.0.5.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>ExternalLibrarys\Hardcodet.NotifyIcon.Wpf-1.0.5\Hardcodet.Wpf.TaskbarNotification.dll</HintPath>
+    </Reference>
     <Reference Include="Interop.iTunesLib, Version=1.13.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <EmbedInteropTypes>False</EmbedInteropTypes>
@@ -87,12 +91,12 @@
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
     <Compile Include="Core\DecchiCore.cs" />
-    <Compile Include="Core\TrayIcon.cs" />
     <Compile Include="Core\Windows\ClientSelectWindow.xaml.cs">
       <DependentUpon>ClientSelectWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="Core\Windows\Converter\Boolean2Visibility.cs" />
     <Compile Include="Core\Windows\Converter\InvertBoolean.cs" />
+    <Compile Include="Core\Windows\Converter\InvertVisibility.cs" />
     <Compile Include="Core\Windows\MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
     </Compile>
@@ -172,6 +176,12 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="ParsingModule\IconImages\AIMP.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="ExternalLibrarys\Hardcodet.NotifyIcon.Wpf-1.0.5\Hardcodet.Wpf.TaskbarNotification.dll" />
+    <None Include="ExternalLibrarys\Hardcodet.NotifyIcon.Wpf-1.0.5\Hardcodet.Wpf.TaskbarNotification.pdb" />
+    <None Include="ExternalLibrarys\Hardcodet.NotifyIcon.Wpf-1.0.5\Hardcodet.Wpf.TaskbarNotification.xml" />
+    <None Include="ExternalLibrarys\Hardcodet.NotifyIcon.Wpf-1.0.5\LICENSE.html" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

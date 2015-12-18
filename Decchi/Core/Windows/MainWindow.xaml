@@ -3,6 +3,7 @@
 									xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 									xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
 									xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                                    xmlns:tray="http://www.hardcodet.net/taskbar"
 									xmlns:MahApps.Metro.Controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
 									xmlns:Decchi.Core.Windows.Converter="clr-namespace:Decchi.Core.Windows.Converter"
 									Icon="/Decchi;component/icon.ico"
@@ -13,17 +14,24 @@
 									BorderBrush="{DynamicResource AccentColorBrush}"
 									BorderThickness="1"
 									WindowStartupLocation="CenterScreen"
+                                    ShowIconOnTitleBar="False"
 									Activated="Window_Activated"
-                                    ShowIconOnTitleBar="False">
+                                    StateChanged="MetroWindow_StateChanged">
 	<MahApps.Metro.Controls:MetroWindow.Resources>
 		<ResourceDictionary>
 			<Decchi.Core.Windows.Converter:Visibility2Boolean x:Key="ProfileLoading" WhenTrue="Hidden" WhenFalse="Visible" />
 			<Decchi.Core.Windows.Converter:Boolean2Visibility x:Key="EcchiProgress" TrueVisibility="Visible" FalseVisibility="Hidden" />
 			<Decchi.Core.Windows.Converter:InvertBoolean x:Key="InvertBoolean"/>
+            <Decchi.Core.Windows.Converter:InvertVisibility x:Key="InvertVisibility"/>
 		</ResourceDictionary>
 	</MahApps.Metro.Controls:MetroWindow.Resources>
 
 	<Grid>
+        <tray:TaskbarIcon x:Name="ctlTray"
+                          IconSource="/Decchi;component/icon.ico"
+                          Visibility="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}, Path=Visibility, Converter={StaticResource InvertVisibility}}"
+                          TrayBalloonTipClicked="ctlTray_TrayBalloonTipClicked"/>
+        
 		<MahApps.Metro.Controls:ProgressRing Grid.ColumnSpan="4"
 											 IsActive="{Binding ElementName=ctlElements, Path=Visibility, Converter={StaticResource ProfileLoading}}" />
 		
