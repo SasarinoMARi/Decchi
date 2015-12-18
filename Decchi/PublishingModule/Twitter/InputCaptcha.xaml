@@ -7,13 +7,13 @@
 									Title="트위터 인증"
 									Width="180"
 									Height="67"
-									ShowInTaskbar="True"
+									ShowInTaskbar="False"
 									WindowStartupLocation="CenterOwner"
 									Icon="/Decchi;component/icon.ico"
 									ResizeMode="CanMinimize"
 									BorderBrush="{DynamicResource AccentColorBrush}"
 									BorderThickness="1"
-									Activated="Window_Activated">
+									Activated="Window_Activated" ShowIconOnTitleBar="False">
 	<Grid Margin="5">
 		<Grid.ColumnDefinitions>
 			<ColumnDefinition Width="*" />

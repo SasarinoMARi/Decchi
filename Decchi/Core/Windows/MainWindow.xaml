@@ -13,7 +13,7 @@
 									BorderBrush="{DynamicResource AccentColorBrush}"
 									BorderThickness="1"
 									WindowStartupLocation="CenterScreen"
-									Activated="Window_Activated">
+									Activated="Window_Activated" ShowIconOnTitleBar="False">
 	<MahApps.Metro.Controls:MetroWindow.Resources>
 		<ResourceDictionary>
 			<Decchi.Core.Windows.Converter:Visibility2Boolean x:Key="ProfileLoading" WhenTrue="Hidden" WhenFalse="Visible" />
