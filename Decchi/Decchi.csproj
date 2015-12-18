@@ -110,6 +110,7 @@
     <Compile Include="ParsingModule\SongInfo.cs" />
     <Compile Include="Core\Program.cs" />
     <Compile Include="ParsingModule\AlsongSongInfo.cs" />
+    <Compile Include="ParsingModule\WinampSongInfo.cs" />
     <Compile Include="ParsingModule\WMPSongInfo.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -170,11 +171,7 @@
     <Resource Include="ParsingModule\IconImages\ITunes.png" />
     <Resource Include="ParsingModule\IconImages\WMP.png" />
     <Resource Include="ParsingModule\IconImages\Youtube.png" />
-  </ItemGroup>
-  <ItemGroup>
     <Resource Include="ParsingModule\IconImages\Foobar.png" />
-  </ItemGroup>
-  <ItemGroup>
     <Resource Include="ParsingModule\IconImages\AIMP.png" />
   </ItemGroup>
   <ItemGroup>
@@ -182,6 +179,9 @@
     <None Include="ExternalLibrarys\Hardcodet.NotifyIcon.Wpf-1.0.5\Hardcodet.Wpf.TaskbarNotification.pdb" />
     <None Include="ExternalLibrarys\Hardcodet.NotifyIcon.Wpf-1.0.5\Hardcodet.Wpf.TaskbarNotification.xml" />
     <None Include="ExternalLibrarys\Hardcodet.NotifyIcon.Wpf-1.0.5\LICENSE.html" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="ParsingModule\IconImages\Winamp.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

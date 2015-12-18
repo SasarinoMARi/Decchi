@@ -16,6 +16,9 @@
 |웹 브라우저에서 보는 유튜브|O|X|X|X|
 |알송|O|O|X|X|
 |Melon|O|O|X|X|
+|Winamp|O|O|X|X|
+|foobar|O|O|X|X|
+|AIMP|O|O|X|X|
 
 ## 설치
 
