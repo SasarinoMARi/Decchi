@@ -8,7 +8,7 @@ namespace Decchi.Core
 		[STAThread]
 		static void Main()
 		{
- 			AppDomain.CurrentDomain.AssemblyResolve += (s, e) =>
+            AppDomain.CurrentDomain.AssemblyResolve += (s, e) =>
 			{
 				var eInfo = new AssemblyName(e.Name);
 

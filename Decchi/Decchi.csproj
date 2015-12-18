@@ -87,6 +87,7 @@
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
     <Compile Include="Core\DecchiCore.cs" />
+    <Compile Include="Core\TrayIcon.cs" />
     <Compile Include="Core\Windows\ClientSelectWindow.xaml.cs">
       <DependentUpon>ClientSelectWindow.xaml</DependentUpon>
     </Compile>
