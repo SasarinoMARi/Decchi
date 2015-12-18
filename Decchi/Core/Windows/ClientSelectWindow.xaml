@@ -6,12 +6,12 @@
 									Title="선택"
 									Height="220"
 									Width="180"
-									ShowInTaskbar="True"
+									ShowInTaskbar="False"
 									WindowStartupLocation="CenterOwner"
 									Icon="/Decchi;component/icon.ico"
 									ResizeMode="NoResize"
 									BorderBrush="{DynamicResource AccentColorBrush}"
-									BorderThickness="1">
+									BorderThickness="1" ShowIconOnTitleBar="False">
 	<Grid Margin="5">
 		<Grid.RowDefinitions>
 			<RowDefinition />
