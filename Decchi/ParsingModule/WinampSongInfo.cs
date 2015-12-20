@@ -21,7 +21,7 @@ namespace Decchi.ParsingModule
 					if ( !b )
 					{
 						str = procs[i].MainWindowTitle;
-						if ( procs[i].MainWindowTitle.Contains( "Winamp" ) )
+						if ( str.Contains( "Winamp" ) )
 						{
 							var sep = str.IndexOf('-');
 							var sep2 = str.LastIndexOf('-');

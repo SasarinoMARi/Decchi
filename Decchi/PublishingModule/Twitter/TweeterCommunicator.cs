@@ -35,8 +35,8 @@ namespace Decchi.PublishingModule.Twitter
 			{
 				this.m_api = null;
 
-				var token  = Globals.GetValue("TwitterAccessToken");
-				var secret = Globals.GetValue("TwitterAccessTokenSecret");
+				var token  = Globals.Instance.TwitterToken;
+                var secret = Globals.Instance.TwitterSecret;
 
 				if (string.IsNullOrEmpty(token) || string.IsNullOrEmpty(secret))
 					NewAuth();
@@ -72,9 +72,9 @@ namespace Decchi.PublishingModule.Twitter
 
 			var access = this.m_api.GetAccessToken(token, key);
 
-			Globals.SetValue("TwitterAccessToken",			access.Token);
-			Globals.SetValue("TwitterAccessTokenSecret",	access.TokenSecret);
-			Globals.SaveSettings();
+			Globals.Instance.TwitterToken  = access.Token;
+			Globals.Instance.TwitterSecret = access.TokenSecret;
+			Globals.Instance.SaveSettings();
 
 			this.m_api.AuthenticateWith(access.Token, access.TokenSecret);
 		}
@@ -121,7 +121,7 @@ namespace Decchi.PublishingModule.Twitter
 				if (!string.IsNullOrEmpty(mediaId))
 					option.MediaIds = new string[] { mediaId };
 
-				this.m_api.SendTweet(option);
+				var d = this.m_api.SendTweet(option);
 
 				return true;
 			}

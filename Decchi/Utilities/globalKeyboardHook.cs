@@ -102,8 +102,11 @@ namespace Decchi.Utilities
 		/// </summary>
 		public void hook()
 		{
-			IntPtr hInstance = NativeMethods.LoadLibrary("User32");
-			hhook = NativeMethods.SetWindowsHookEx(WH_KEYBOARD_LL, khp, hInstance, 0);
+            if (hhook == IntPtr.Zero)
+            {
+                IntPtr hInstance = NativeMethods.LoadLibrary("User32");
+                hhook = NativeMethods.SetWindowsHookEx(WH_KEYBOARD_LL, khp, hInstance, 0);
+            }
 		}
 
 		/// <summary>
@@ -111,7 +114,11 @@ namespace Decchi.Utilities
 		/// </summary>
 		public void unhook()
 		{
-			NativeMethods.UnhookWindowsHookEx(hhook);
+            if (hhook != IntPtr.Zero)
+            {
+			    NativeMethods.UnhookWindowsHookEx(hhook);
+                hhook = IntPtr.Zero;
+            }
 		}
 
 		/// <summary>
@@ -121,7 +128,7 @@ namespace Decchi.Utilities
 		/// <param name="wParam">The event type</param>
 		/// <param name="lParam">The keyhook event information</param>
 		/// <returns></returns>
-		public IntPtr hookProc(int code, IntPtr wParam, ref keyboardHookStruct lParam)
+		private IntPtr hookProc(int code, IntPtr wParam, ref keyboardHookStruct lParam)
 		{
 			if (code >= 0)
 			{

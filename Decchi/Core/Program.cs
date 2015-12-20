@@ -31,8 +31,6 @@ namespace Decchi.Core
 				return null;
  			};
 
-			Globals.ReadSettings();
-
 			App.Main();
 		}
 		

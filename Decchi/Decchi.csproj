@@ -114,6 +114,7 @@
     <Compile Include="ParsingModule\WMPSongInfo.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="ParsingModule\NicodongSongInfo.cs" />
     <Compile Include="ParsingModule\YoutubeSongInfo.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Globals.cs" />
@@ -142,6 +143,14 @@
     <Page Include="Core\Windows\ClientSelectWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Core\Windows\Icons\HomeIcon.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Core\Windows\Icons\SettingIcon.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Core\Windows\MainWindow.xaml">
       <SubType>Designer</SubType>
@@ -182,6 +191,9 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="ParsingModule\IconImages\Winamp.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="ParsingModule\IconImages\Nicodong.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

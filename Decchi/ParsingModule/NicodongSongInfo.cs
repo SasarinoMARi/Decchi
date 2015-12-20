@@ -2,10 +2,10 @@
 
 namespace Decchi.ParsingModule
 {
-	public sealed class YoutubeSongInfo : SongInfo
+	public sealed class NicodongSongInfo : SongInfo
 	{
-		public override string Client { get { return "YouTube"; } }
-		public override string ClientIcon { get { return "/Decchi;component/ParsingModule/IconImages/Youtube.png"; } }
+		public override string Client { get { return "ニコニコ動画"; } }
+		public override string ClientIcon { get { return "/Decchi;component/ParsingModule/IconImages/Nicodong.png"; } }
 
 		public override bool GetCurrentPlayingSong( )
 		{
@@ -21,9 +21,11 @@ namespace Decchi.ParsingModule
 					if (!b)
 					{
 						str = procs[i].MainWindowTitle;
-						if (str.Contains("YouTube"))
+						if (str.Contains("- Niconico"))
 						{
-							var sep = str.LastIndexOf(" - YouTube");
+							var sep = str.LastIndexOf("- Niconico");
+                            if (str.IndexOf("Niconico Live") >= 0)
+                                sep = str.LastIndexOf('-', sep - 1);
 
 							this.Title = str.Substring(0, sep).Trim();
 							this.Album = null;

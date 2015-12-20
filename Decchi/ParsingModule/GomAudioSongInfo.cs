@@ -20,7 +20,7 @@ namespace Decchi.ParsingModule
 					if (!b)
 					{
 						str = procs[i].MainWindowTitle;
-						if (procs[i].MainWindowTitle.Contains("곰오디오"))
+						if (str.Contains("곰오디오"))
 						{
 							var sep = str.IndexOf('-');
 							var sep2 = str.LastIndexOf('-');

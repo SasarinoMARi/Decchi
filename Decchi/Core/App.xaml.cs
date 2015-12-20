@@ -6,7 +6,7 @@ namespace Decchi.Core
 	{
 		private void Application_Exit(object sender, ExitEventArgs e)
 		{
-			Globals.SaveSettings();
+			Globals.Instance.SaveSettings();
 		}
 	}
 }

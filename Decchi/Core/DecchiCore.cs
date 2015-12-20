@@ -41,11 +41,41 @@ namespace Decchi.Core
 
 			m_types = lst.ToArray();
 
-			// 전역 키보드 후킹 이벤트를 초기화합니다,.
-			manager.HookedKeys.Add( Key.Q );
-			manager.KeyDown += HookManager_KeyDown;
+            manager.KeyDown += HookManager_KeyDown;
 		}
-		
+
+        private static bool m_inited = false;
+        public static void Inited()
+        {
+            m_inited = true;
+
+            HookSetting();
+        }
+
+        /// <summary>
+        /// 설정 값에 따라서 후킹 이벤트를 등록하거나 해제합니다
+        /// </summary>
+        public static void HookSetting()
+        {
+            if (!m_inited) return;
+
+            if (Globals.Instance.UseShortcut)
+            {
+                manager.hook();
+                manager.HookedKeys.Clear();
+                manager.HookedKeys.Add(Globals.Instance.Shortcut.Key);
+            }
+            else
+            {
+                manager.unhook();
+            }
+        }
+
+        /// <summary>
+        /// 전역 키보드 이벤트를 중지합니다
+        /// </summary>
+        public static bool DisableKeyEvent { get; set; }
+
 		/// <summary>
 		/// 전역 키보드 이벤트 정의부
 		/// </summary>
@@ -53,7 +83,9 @@ namespace Decchi.Core
 		/// <param name="e">키 이벤트</param>
 		static void HookManager_KeyDown(ref bool handeled, Key key)
 		{
-			if (Keyboard.Modifiers == ModifierKeys.Control)
+            if (DisableKeyEvent) return;
+
+			if (Keyboard.Modifiers == Globals.Instance.Shortcut.Modifier)
 			{
 				Task.Run(new Action(DecchiCore.Run));
 			}

@@ -1,0 +1,18 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+	<DrawingImage x:Key="HomeIcon">
+		<DrawingImage.Drawing>
+			<DrawingGroup>
+				<DrawingGroup.ClipGeometry>
+					<RectangleGeometry Rect="0,0,76,76" />
+				</DrawingGroup.ClipGeometry>
+				<GeometryDrawing Brush="#FF000000">
+					<GeometryDrawing.Geometry>
+						<PathGeometry FillRule="Nonzero"
+									  Figures="M24.0033,56.0078L24.0033,38.0053 22.0031,40.0056 19.0027,35.0049 38.0053,20.0028 57.008,35.0049 54.0075,40.0056 52.0073,38.0053 52.0073,56.0078 24.0033,56.0078z M38.0053,26.9204L27.0038,36.005 27.0038,53.0074 49.0068,53.0074 49.0068,36.005 38.0053,26.9204z" />
+					</GeometryDrawing.Geometry>
+				</GeometryDrawing>
+			</DrawingGroup>
+		</DrawingImage.Drawing>
+	</DrawingImage>
+</ResourceDictionary>

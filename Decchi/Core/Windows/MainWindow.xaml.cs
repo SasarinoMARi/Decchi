@@ -28,15 +28,25 @@ namespace Decchi.Core.Windows
 
             this.ctlElements.Visibility = Visibility.Hidden;
 
-            var format = Globals.GetValue("PublishFormat");
-            if ( string.IsNullOrEmpty( format ) ) format = Decchi.ParsingModule.SongInfo.defaultFormat;
-            this.textbox_FormatString.Text = format;
+            this.ctlFormat.Text = Globals.Instance.PublishFormat;
 
             this.m_formatOK = ( Brush ) this.FindResource( "BlackColorBrush" );
             this.m_formatErr = Brushes.Red;
         }
 
+        private void ctlHomepage_Click(object sender, RoutedEventArgs e)
+        {
+            Globals.OpenWebSite("http://usagination.github.io/Decchi/");
+        }
+
         private void ctlTray_TrayBalloonTipClicked(object sender, RoutedEventArgs e)
+        {
+            this.Show();
+            this.WindowState = System.Windows.WindowState.Normal;
+            this.Focus();
+        }
+
+        private void ctlTray_TrayLeftMouseUp(object sender, RoutedEventArgs e)
         {
             this.Show();
             this.WindowState = System.Windows.WindowState.Normal;
@@ -50,6 +60,11 @@ namespace Decchi.Core.Windows
                 this.Hide();
                 this.ctlTray.ShowBalloonTip(this.Title, "트레이에서 실행 중이에요!", BalloonIcon.Info);
             }
+        }
+
+        private void ctlShowSetting_Click(object sender, RoutedEventArgs e)
+        {
+            this.ctlSetting.IsOpen = !this.ctlSetting.IsOpen;
         }
 
         public bool SetButtonState( bool progress )
@@ -86,7 +101,7 @@ namespace Decchi.Core.Windows
             image.BeginInit( );
             image.UriSource = new Uri( me.ProfileImageUrl.Replace( "_normal", "" ) );
             image.EndInit( );
-            image.DownloadCompleted += ( ls, le ) => this.ctlElements.Visibility = Visibility.Visible;
+            image.DownloadCompleted += ( ls, le ) => { this.ctlElements.Visibility = Visibility.Visible; DecchiCore.Inited(); };
 
             this.ctlProfile.ImageSource = image;
             this.ctlName.Text = me.Name;
@@ -95,34 +110,62 @@ namespace Decchi.Core.Windows
 
         private Brush m_formatOK;
         private Brush m_formatErr;
-        private void textbox_FormatString_KeyDown( object sender, System.Windows.Input.KeyEventArgs e )
+        private void ctlFormat_KeyDown( object sender, System.Windows.Input.KeyEventArgs e )
         {
             if ( e.Key == Key.Enter )
-                this.textbox_FormatString_LostFocus( null, null );
+                this.ctlFormat_LostFocus( null, null );
         }
 
-        private void textbox_FormatString_LostFocus( object sender, RoutedEventArgs e )
+        private void ctlFormat_LostFocus( object sender, RoutedEventArgs e )
         {
-            if ( string.IsNullOrEmpty( this.textbox_FormatString.Text ) )
+            if ( string.IsNullOrEmpty( this.ctlFormat.Text ) )
             {
-                var format = this.textbox_FormatString.Text = SongInfo.defaultFormat;
+                var format = this.ctlFormat.Text = SongInfo.defaultFormat;
 
-                Globals.SetValue( "PublishFormat", format );
+                Globals.Instance.PublishFormat = format;
             }
             else
             {
-                if ( SongInfo.CheckFormat( this.textbox_FormatString.Text ) )
+                if ( SongInfo.CheckFormat( this.ctlFormat.Text ) )
                 {
-                    this.textbox_FormatString.Foreground = this.m_formatOK;
+                    this.ctlFormat.Foreground = this.m_formatOK;
 
-                    var format = this.textbox_FormatString.Text;
-                    Globals.SetValue( "PublishFormat", format );
+                    var format = this.ctlFormat.Text;
+                    Globals.Instance.PublishFormat = format;
                 }
                 else
                 {
-                    this.textbox_FormatString.Foreground = this.m_formatErr;
+                    this.ctlFormat.Foreground = this.m_formatErr;
                 }
             }
+        }
+
+        private void ctlShortcut_PreviewKeyUp(object sender, KeyEventArgs e)
+        {
+            if ((
+                    e.KeyboardDevice.Modifiers != ModifierKeys.None &&
+                    e.KeyboardDevice.Modifiers != ModifierKeys.Windows
+                ) &
+                (
+                    e.Key != Key.LeftShift &&
+                    e.Key != Key.RightShift &&
+                    e.Key != Key.LeftAlt &&
+                    e.Key != Key.RightAlt &&
+                    e.Key != Key.LeftCtrl &&
+                    e.Key != Key.RightCtrl &&
+                    e.Key != Key.System
+                ))
+                Globals.Instance.Shortcut = new Globals.ShortcutInfo(e.KeyboardDevice.Modifiers, e.Key);
+        }
+
+        private void ctlShortcut_GotFocus(object sender, RoutedEventArgs e)
+        {
+            DecchiCore.DisableKeyEvent = true;
+        }
+
+        private void ctlShortcut_LostFocus(object sender, RoutedEventArgs e)
+        {
+            DecchiCore.DisableKeyEvent = false;
         }
     }
 }

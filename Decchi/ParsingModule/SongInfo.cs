@@ -38,12 +38,9 @@ namespace Decchi.ParsingModule
 
         public override string ToString( )
         {
-            var format = Globals.GetValue("PublishFormat");
-            if (string.IsNullOrEmpty(format)) format = Decchi.ParsingModule.SongInfo.defaultFormat;
-
             try
             {
-                return ToFormat(format, this);
+                return ToFormat(Globals.Instance.PublishFormat, this);
             }
             catch
             {

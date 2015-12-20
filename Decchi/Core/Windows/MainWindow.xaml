@@ -1,10 +1,12 @@
 ﻿<MahApps.Metro.Controls:MetroWindow x:Class="Decchi.Core.Windows.MainWindow"
+                                    x:Name="ctlWindow"
 									xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
 									xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 									xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
 									xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
                                     xmlns:tray="http://www.hardcodet.net/taskbar"
 									xmlns:MahApps.Metro.Controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
+									xmlns:Decchi="clr-namespace:Decchi"
 									xmlns:Decchi.Core.Windows.Converter="clr-namespace:Decchi.Core.Windows.Converter"
 									Icon="/Decchi;component/icon.ico"
 									Title="Decchi"
@@ -15,24 +17,79 @@
 									BorderThickness="1"
 									WindowStartupLocation="CenterScreen"
                                     ShowIconOnTitleBar="False"
+                                    LeftWindowCommandsOverlayBehavior="HiddenTitleBar"
 									Activated="Window_Activated"
                                     StateChanged="MetroWindow_StateChanged">
 	<MahApps.Metro.Controls:MetroWindow.Resources>
 		<ResourceDictionary>
-			<Decchi.Core.Windows.Converter:Visibility2Boolean x:Key="ProfileLoading" WhenTrue="Hidden" WhenFalse="Visible" />
-			<Decchi.Core.Windows.Converter:Boolean2Visibility x:Key="EcchiProgress" TrueVisibility="Visible" FalseVisibility="Hidden" />
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="/Decchi;component/Core/Windows/Icons/SettingIcon.xaml" />
+                <ResourceDictionary Source="/Decchi;component/Core/Windows/Icons/HomeIcon.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+            
+            <Decchi.Core.Windows.Converter:Visibility2Boolean x:Key="ProfileLoading" WhenTrue="Hidden" WhenFalse="Visible" />
+			<Decchi.Core.Windows.Converter:Boolean2Visibility x:Key="Bool2Visible" TrueVisibility="Visible" FalseVisibility="Hidden" />
 			<Decchi.Core.Windows.Converter:InvertBoolean x:Key="InvertBoolean"/>
             <Decchi.Core.Windows.Converter:InvertVisibility x:Key="InvertVisibility"/>
 		</ResourceDictionary>
 	</MahApps.Metro.Controls:MetroWindow.Resources>
 
-	<Grid>
+
+    <MahApps.Metro.Controls:MetroWindow.RightWindowCommands>
+        <MahApps.Metro.Controls:WindowCommands>
+            <Button Click="ctlHomepage_Click">
+                <Image Width="16"
+                       Height="16"
+                       Source="{StaticResource HomeIcon}" />
+            </Button>
+            <Button Click="ctlShowSetting_Click">
+                <Image Width="16"
+                       Height="16"
+                       Source="{StaticResource SettingIcon}" />
+            </Button>
+        </MahApps.Metro.Controls:WindowCommands>
+    </MahApps.Metro.Controls:MetroWindow.RightWindowCommands>
+
+    <MahApps.Metro.Controls:MetroWindow.Flyouts>
+        <MahApps.Metro.Controls:FlyoutsControl>
+            <MahApps.Metro.Controls:Flyout x:Name="ctlSetting"
+                                           Header="설정"
+                                           Position="Right"
+                                           Width="150"
+                                           Theme="Inverse"
+                                           AnimateOpacity="True">
+                <Grid>
+                    <GroupBox Header="단축키 사용">
+                        <DockPanel Height="auto">
+                            <MahApps.Metro.Controls:ToggleSwitch x:Name="ctlUseShortcut"
+                                                                 DockPanel.Dock="Top"
+                                                                 IsChecked="{Binding Source={x:Static Decchi:Globals.Instance}, Path=UseShortcut, Mode=TwoWay}" />
+                            <TextBox x:Name="ctlShortcut"
+                                     Text="{Binding Source={x:Static Decchi:Globals.Instance}, Path=Shortcut, Mode=OneWay}"
+                                     IsEnabled="{Binding ElementName=ctlUseShortcut, Path=IsChecked}"
+                                     IsReadOnly="True"
+                                     DockPanel.Dock="Top"
+                                     PreviewKeyUp="ctlShortcut_PreviewKeyUp"
+                                     TextAlignment="Center"
+                                     GotFocus="ctlShortcut_GotFocus"
+                                     LostFocus="ctlShortcut_LostFocus"/>
+                        </DockPanel>
+                    </GroupBox>
+                </Grid>
+            </MahApps.Metro.Controls:Flyout>
+        </MahApps.Metro.Controls:FlyoutsControl>
+    </MahApps.Metro.Controls:MetroWindow.Flyouts>
+
+    <Grid>
         <tray:TaskbarIcon x:Name="ctlTray"
                           IconSource="/Decchi;component/icon.ico"
-                          Visibility="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}, Path=Visibility, Converter={StaticResource InvertVisibility}}"
-                          TrayBalloonTipClicked="ctlTray_TrayBalloonTipClicked"/>
+                          Visibility="{Binding ElementName=ctlWindow, Path=Visibility, Converter={StaticResource InvertVisibility}}"
+                          TrayBalloonTipClicked="ctlTray_TrayBalloonTipClicked"
+                          TrayLeftMouseUp="ctlTray_TrayLeftMouseUp"/>
         
 		<MahApps.Metro.Controls:ProgressRing Grid.ColumnSpan="4"
+                                             Width="128"
+                                             Height="128"
 											 IsActive="{Binding ElementName=ctlElements, Path=Visibility, Converter={StaticResource ProfileLoading}}" />
 		
 		<Grid Margin="5"
@@ -69,64 +126,68 @@
                        Visibility="Hidden"
                        />
 
-			<StackPanel Grid.Column="1"
+            <StackPanel Grid.Column="1"
 						HorizontalAlignment="Stretch"
 						VerticalAlignment="Center">
-				<Ellipse Height="{Binding RelativeSource={RelativeSource Self}, Path=ActualWidth}">
-					<Ellipse.OpacityMask>
-						<RadialGradientBrush>
-							<GradientStop Offset="0.95" Color="Black"/>
-							<GradientStop Offset="1.00" Color="Transparent"/>
-						</RadialGradientBrush>
-					</Ellipse.OpacityMask>
-					<Ellipse.Fill>
-						<ImageBrush x:Name="ctlProfile" Stretch="UniformToFill" />
-					</Ellipse.Fill>
-				</Ellipse>
+                <Ellipse Height="{Binding RelativeSource={RelativeSource Self}, Path=ActualWidth}">
+                    <Ellipse.OpacityMask>
+                        <RadialGradientBrush>
+                            <GradientStop Offset="0.95" Color="Black"/>
+                            <GradientStop Offset="1.00" Color="Transparent"/>
+                        </RadialGradientBrush>
+                    </Ellipse.OpacityMask>
+                    <Ellipse.Fill>
+                        <ImageBrush x:Name="ctlProfile" Stretch="UniformToFill" />
+                    </Ellipse.Fill>
+                </Ellipse>
 
-				<Viewbox Stretch="Uniform"
+                <Viewbox Stretch="Uniform"
 						 StretchDirection="DownOnly"
 						 Height="32">
-					<TextBlock x:Name="ctlName"
+                    <TextBlock x:Name="ctlName"
 							   FontSize="24"
-							   Text="Loading..."/>
-				</Viewbox>
+							   Text="NAME"/>
+                </Viewbox>
 
-				<TextBlock x:Name="ctlScreenName"
+                <TextBlock x:Name="ctlScreenName"
 						   FontSize="15"
 						   TextAlignment="Center"
+                           Text="@SCREENNAME"
 						   Foreground="DarkGray" />
 
-				<Button x:Name="ctlTweet"
+                <Button x:Name="ctlTweet"
 						HorizontalAlignment="Stretch"
 						Height="60"
-						Margin="0 20 0 5"
+						Margin="0 20 0 0"
 						Click="ctlTweet_Click">
-					<Button.Content>
-						<Grid>
-							<MahApps.Metro.Controls:ProgressRing IsActive="{Binding ElementName=ctlTweet, Path=IsEnabled, Converter={StaticResource InvertBoolean}}"
+                    <Button.Content>
+                        <Grid>
+                            <MahApps.Metro.Controls:ProgressRing IsActive="{Binding ElementName=ctlTweet, Path=IsEnabled, Converter={StaticResource InvertBoolean}}"
 																 Width="48"
 																 Height="48" />
-							<TextBlock Text="뎃찌!"
+                            <TextBlock Text="뎃찌!"
 									   FontSize="30"
-									   Visibility="{Binding ElementName=ctlTweet, Path=IsEnabled, Converter={StaticResource EcchiProgress}}"/>
-						</Grid>
-					</Button.Content>
-				</Button>
+									   Visibility="{Binding ElementName=ctlTweet, Path=IsEnabled, Converter={StaticResource Bool2Visible}}"/>
+                        </Grid>
+                    </Button.Content>
+                </Button>
+            </StackPanel>
 
-				<TextBlock Text="Ctrl + Q 누르면 어디서든 트윗 가능!"
+            <StackPanel Grid.ColumnSpan="3"
+                        HorizontalAlignment="Stretch"
+                        VerticalAlignment="Bottom">
+                <TextBlock Text="{Binding ElementName=ctlShortcut, Path=Text, StringFormat='\{0\} 누르면 어디서든 트윗 가능!'}"
 						   Foreground="Red"
-						   TextAlignment="Center"/>
-			</StackPanel>
+						   TextAlignment="Center"
+                           Visibility="{Binding ElementName=ctlUseShortcut, Path=IsChecked, Converter={StaticResource Bool2Visible}}"
+                           Margin="0 0 0 5"/>
 
-			<TextBox Grid.ColumnSpan="3"
-					 x:Name="textbox_FormatString"
-					 HorizontalAlignment="Stretch"
-					 VerticalAlignment="Bottom"
-					 TextWrapping="NoWrap"
-					 ScrollViewer.CanContentScroll="True"
-					 KeyDown="textbox_FormatString_KeyDown"
-					 LostFocus="textbox_FormatString_LostFocus"/>
+                <TextBox x:Name="ctlFormat"
+					     TextWrapping="NoWrap"
+					     ScrollViewer.CanContentScroll="True"
+					     KeyDown="ctlFormat_KeyDown"
+					     LostFocus="ctlFormat_LostFocus"/>
+            </StackPanel>
 		</Grid>
 	</Grid>
 </MahApps.Metro.Controls:MetroWindow>
