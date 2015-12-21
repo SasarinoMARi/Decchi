@@ -67,10 +67,10 @@ Ctrl + Q를 눌러 다른 작업 중에도 뎃찌할 수 있어요.
 
 만약 { 이나 } 을 쓰고싶으면 \\{ 이나 \\} 으로 적으면 돼요!
 
-예) 포맷팅 문자열 : **{/Artist/의 }{/Title/{ (/Album/)}을 }듣고 있어요! {/Via/} - {/Client/} **
+예) 포맷팅 문자열 : {***/Artist/***의 }{***/Title/***{ (***/Album/***)}을 }듣고 있어요! {***/Via/***} - {***/Client/***}
 
 |Title|Artist|Album|Client|Output|
 |---|---|---|---|---|
-|夜もすがら君想ふ|Chalili|-|곰오디오|Chalili의 夜もすがら君想ふ을 듣고 있어요! #뎃찌NP - 곰오디오|
-|[beatmania IIDX 23 copula] STARLIGHT DANCEHALL SPA|-|-|Youtube|[beatmania IIDX 23 copula] STARLIGHT DANCEHALL SPA을 듣고 있어요! #뎃찌NP - Youtube|
-|モンタージュガー|ヒトリエ|ルームシック・ガールズエスケープ|Alsong|ヒトリエ의 モンタージュガール (ルームシック・ガールズエスケープ)을 듣고 있어요! #뎃찌NP - Alsong|
+|夜もすがら君想ふ|Chalili|-|곰오디오|***Chalili***의 ***夜もすがら君想ふ***을 듣고 있어요! ***#뎃찌NP*** - ***곰오디오***|
+|[beatmania IIDX 23 copula] STARLIGHT DANCEHALL SPA|-|-|Youtube|***[beatmania IIDX 23 copula] STARLIGHT DANCEHALL SPA***을 듣고 있어요! ***#뎃찌NP*** - ***Youtube***|
+|モンタージュガー|ヒトリエ|ルームシック・ガールズエスケープ|Alsong|***ヒトリエ***의 ***モンタージュガール*** (***ルームシック・ガールズエスケープ***)을 듣고 있어요! ***#뎃찌NP*** - ***Alsong***|
