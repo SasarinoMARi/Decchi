@@ -69,97 +69,94 @@ namespace Decchi.ParsingModule
                 {
                     case '{':
                         {
-                            if (i < format.Length && format[i] == '{')
-                            {
-                                i++;
-
-                                if (sb != null)
-                                    sb.Append(c);
-                                else if (!checkFormat)
-                                    total.Append(c);
-                            }
-                            else
-                            {
-                                if (sb != null) queue.Enqueue(sb);
-                                sb = new StringBuilder();
-                            }
+                            if (sb != null) queue.Enqueue(sb);
+                            sb = new StringBuilder();
                         }
                         break;
 
                     case '}':
                         {
-                            if (i < format.Length && format[i] == '}')
+                            str = sb.ToString();
+
+                            b = false;
+
+                            if (checkFormat)
                             {
-                                i++;
+                                b = str.IndexOf("/Title/")	>= 0 ||
+                                    str.IndexOf("/Artist/")	>= 0 ||
+                                    str.IndexOf("/Album/")	>= 0 ||
+                                    str.IndexOf("/Client/")	>= 0 ||
+                                    str.IndexOf("/Via/")	>= 0;
 
-                                if (sb != null)
-                                    sb.Append(c);
-                                else if (!checkFormat)
-                                    total.Append(c);
-                            }
-                            else
-                            {
-                                str = sb.ToString();
-
-                                b = false;
-
-                                if (checkFormat)
+                                if (b)
                                 {
-                                    b = str.IndexOf("/Title/")	>= 0 ||
-                                        str.IndexOf("/Artist/")	>= 0 ||
-                                        str.IndexOf("/Album/")	>= 0 ||
-                                        str.IndexOf("/Client/")	>= 0 ||
-                                        str.IndexOf("/Via/")	>= 0;
-
-                                    if (b)
+                                    if (queue.Count > 0)
                                     {
-                                        if (queue.Count > 0)
-                                        {
-                                            sb = queue.Dequeue();
-                                            sb.Append(str);
-                                        }
-                                        else
-                                        {
-                                            sb = null;
-                                        }
+                                        sb = queue.Dequeue();
+                                        sb.Append(str);
                                     }
                                     else
                                     {
-                                        // { } 안에는 최소한 하나가 있어야함
-                                        throw new Exception();
+                                        sb = null;
                                     }
                                 }
                                 else
                                 {
-                                    // b -> { } 안에 포멧 변환된게 있음
-                                    str = Replace(str, "/Title/",	info.Title,		ref b);
-                                    str = Replace(str, "/Artist/",	info.Artist,	ref b);
-                                    str = Replace(str, "/Album/",	info.Album,		ref b);
-                                    str = Replace(str, "/Client/",	info.Client,	ref b);
-                                    str = Replace(str, "/Via/",		SongInfo.Via,	ref b);
+                                    // { } 안에는 최소한 하나가 있어야함
+                                    throw new Exception();
+                                }
+                            }
+                            else
+                            {
+                                // b -> { } 안에 포멧 변환된게 있음
+                                str = Replace(str, "/Title/",	info.Title,		ref b);
+                                str = Replace(str, "/Artist/",	info.Artist,	ref b);
+                                str = Replace(str, "/Album/",	info.Album,		ref b);
+                                str = Replace(str, "/Client/",	info.Client,	ref b);
+                                str = Replace(str, "/Via/",		SongInfo.Via,	ref b);
 
-                                    if (b)
+                                if (b)
+                                {
+                                    if (queue.Count > 0)
                                     {
-                                        if (queue.Count > 0)
-                                        {
-                                            sb = queue.Dequeue();
-                                            sb.Append(str);
-                                        }
-                                        else
-                                        {
-                                            total.Append(str);
-                                            sb = null;
-                                        }
+                                        sb = queue.Dequeue();
+                                        sb.Append(str);
                                     }
                                     else
                                     {
-                                        if (queue.Count > 0)
-                                            sb = queue.Dequeue();
-                                        else
-                                            sb = null;
+                                        total.Append(str);
+                                        sb = null;
                                     }
                                 }
+                                else
+                                {
+                                    if (queue.Count > 0)
+                                        sb = queue.Dequeue();
+                                    else
+                                        sb = null;
+                                }
                             }
+                        }
+                        break;
+
+                    case '\\':
+                        {
+                            if (i < format.Length)
+                            {
+                                switch (format[i])
+                                {
+                                    case '{':
+                                    case '}':
+                                        c = format[i];
+                                        i++;
+                                        break;
+                                }
+                            }
+
+                            if (sb != null)
+                                sb.Append(c);
+                            else if (!checkFormat)
+                                total.Append(c);
                         }
                         break;
 
