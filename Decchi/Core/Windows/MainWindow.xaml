@@ -58,24 +58,28 @@
                                            Width="150"
                                            Theme="Inverse"
                                            AnimateOpacity="True">
-                <Grid>
-                    <GroupBox Header="단축키 사용">
-                        <DockPanel Height="auto">
+                <StackPanel>
+                    <GroupBox Header="단축키 사용"
+                              ToolTip="어디서든 키보드 입력 한번으로 뎃찌할 수 있어요!">
+                        <StackPanel>
                             <MahApps.Metro.Controls:ToggleSwitch x:Name="ctlUseShortcut"
-                                                                 DockPanel.Dock="Top"
-                                                                 IsChecked="{Binding Source={x:Static Decchi:Globals.Instance}, Path=UseShortcut, Mode=TwoWay}" />
+                                                                 IsChecked="{Binding Source={x:Static Decchi:Globals.Instance}, Path=UseShortcut, Mode=TwoWay}"/>
                             <TextBox x:Name="ctlShortcut"
+                                     Grid.Row="1"
                                      Text="{Binding Source={x:Static Decchi:Globals.Instance}, Path=Shortcut, Mode=OneWay}"
                                      IsEnabled="{Binding ElementName=ctlUseShortcut, Path=IsChecked}"
                                      IsReadOnly="True"
-                                     DockPanel.Dock="Top"
                                      PreviewKeyUp="ctlShortcut_PreviewKeyUp"
                                      TextAlignment="Center"
                                      GotFocus="ctlShortcut_GotFocus"
                                      LostFocus="ctlShortcut_LostFocus"/>
-                        </DockPanel>
+                        </StackPanel>
                     </GroupBox>
-                </Grid>
+                    <GroupBox Header="전체화면에서 사용안함"
+                              ToolTip="전체화면일때 뎃찌하지 않아요!">
+                        <MahApps.Metro.Controls:ToggleSwitch IsChecked="{Binding Source={x:Static Decchi:Globals.Instance}, Path=SkipFullscreen, Mode=TwoWay}"/>
+                    </GroupBox>
+                </StackPanel>
             </MahApps.Metro.Controls:Flyout>
         </MahApps.Metro.Controls:FlyoutsControl>
     </MahApps.Metro.Controls:MetroWindow.Flyouts>

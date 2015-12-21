@@ -1,13 +1,9 @@
 ﻿using System;
-using System.ComponentModel;
-using System.Diagnostics;
-using System.Reflection;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Windows.Threading;
 using Decchi.ParsingModule;
 using Decchi.PublishingModule.Twitter;
 using Hardcodet.Wpf.TaskbarNotification;

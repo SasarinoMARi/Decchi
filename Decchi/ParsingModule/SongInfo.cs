@@ -69,71 +69,95 @@ namespace Decchi.ParsingModule
                 {
                     case '{':
                         {
-                            if (sb != null) queue.Enqueue(sb);
-                            sb = new StringBuilder();
+                            if (i < format.Length && format[i] == '{')
+                            {
+                                i++;
+
+                                if (sb != null)
+                                    sb.Append(c);
+                                else if (!checkFormat)
+                                    total.Append(c);
+                            }
+                            else
+                            {
+                                if (sb != null) queue.Enqueue(sb);
+                                sb = new StringBuilder();
+                            }
                         }
                         break;
 
                     case '}':
                         {
-                            str = sb.ToString();
-
-                            b = false;
-
-                            if (checkFormat)
+                            if (i < format.Length && format[i] == '}')
                             {
-                                b = str.IndexOf("/Title/")	>= 0 ||
-                                    str.IndexOf("/Artist/")	>= 0 ||
-                                    str.IndexOf("/Album/")	>= 0 ||
-                                    str.IndexOf("/Client/")	>= 0 ||
-                                    str.IndexOf("/Via/")	>= 0;
+                                i++;
 
-                                if (b)
-                                {
-                                    if (queue.Count > 0)
-                                    {
-                                        sb = queue.Dequeue();
-                                        sb.Append(str);
-                                    }
-                                    else
-                                    {
-                                        sb = null;
-                                    }
-                                }
-                                else
-                                {
-                                    // { } 안에는 최소한 하나가 있어야함
-                                    throw new Exception();
-                                }
+                                if (sb != null)
+                                    sb.Append(c);
+                                else if (!checkFormat)
+                                    total.Append(c);
                             }
                             else
                             {
-                                // b -> { } 안에 포멧 변환된게 있음
-                                str = Replace(str, "/Title/",	info.Title,		ref b);
-                                str = Replace(str, "/Artist/",	info.Artist,	ref b);
-                                str = Replace(str, "/Album/",	info.Album,		ref b);
-                                str = Replace(str, "/Client/",	info.Client,	ref b);
-                                str = Replace(str, "/Via/",		SongInfo.Via,	ref b);
+                                str = sb.ToString();
 
-                                if (b)
+                                b = false;
+
+                                if (checkFormat)
                                 {
-                                    if (queue.Count > 0)
+                                    b = str.IndexOf("/Title/")	>= 0 ||
+                                        str.IndexOf("/Artist/")	>= 0 ||
+                                        str.IndexOf("/Album/")	>= 0 ||
+                                        str.IndexOf("/Client/")	>= 0 ||
+                                        str.IndexOf("/Via/")	>= 0;
+
+                                    if (b)
                                     {
-                                        sb = queue.Dequeue();
-                                        sb.Append(str);
+                                        if (queue.Count > 0)
+                                        {
+                                            sb = queue.Dequeue();
+                                            sb.Append(str);
+                                        }
+                                        else
+                                        {
+                                            sb = null;
+                                        }
                                     }
                                     else
                                     {
-                                        total.Append(str);
-                                        sb = null;
+                                        // { } 안에는 최소한 하나가 있어야함
+                                        throw new Exception();
                                     }
                                 }
                                 else
                                 {
-                                    if (queue.Count > 0)
-                                        sb = queue.Dequeue();
+                                    // b -> { } 안에 포멧 변환된게 있음
+                                    str = Replace(str, "/Title/",	info.Title,		ref b);
+                                    str = Replace(str, "/Artist/",	info.Artist,	ref b);
+                                    str = Replace(str, "/Album/",	info.Album,		ref b);
+                                    str = Replace(str, "/Client/",	info.Client,	ref b);
+                                    str = Replace(str, "/Via/",		SongInfo.Via,	ref b);
+
+                                    if (b)
+                                    {
+                                        if (queue.Count > 0)
+                                        {
+                                            sb = queue.Dequeue();
+                                            sb.Append(str);
+                                        }
+                                        else
+                                        {
+                                            total.Append(str);
+                                            sb = null;
+                                        }
+                                    }
                                     else
-                                        sb = null;
+                                    {
+                                        if (queue.Count > 0)
+                                            sb = queue.Dequeue();
+                                        else
+                                            sb = null;
+                                    }
                                 }
                             }
                         }

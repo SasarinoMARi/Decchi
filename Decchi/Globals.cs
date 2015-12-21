@@ -11,9 +11,9 @@ using System.Text;
 
 namespace Decchi
 {
-	/// <summary>
-	/// 이 클래스는 싱글턴으로 설계되었습니다
-	/// </summary>
+    /// <summary>
+    /// 이 클래스는 싱글턴으로 설계되었습니다
+    /// </summary>
     public class Globals : DependencyObject
     {
         /// <summary>
@@ -31,6 +31,11 @@ namespace Decchi
             { }
         }
 
+        //////////////////////////////////////////////////
+
+        /// <summary>
+        /// Property 에 Attribute 를 설정 하면 저장과 불러오기에 사용됩니다
+        /// </summary>
         private class PropAttr : Attribute
         { }
 
@@ -39,18 +44,28 @@ namespace Decchi
         private static Globals m_instance;
         public  static Globals   Instance { get { return m_instance ?? (m_instance = new Globals()); } }
 
-        private const BindingFlags PropFlags = BindingFlags.SetProperty | BindingFlags.GetProperty | BindingFlags.Public | BindingFlags.Instance;
+        private static PropertyInfo[] GetProperties()
+        {
+            return
+                typeof(Globals)
+                .GetProperties(BindingFlags.SetProperty | BindingFlags.GetProperty | BindingFlags.Public | BindingFlags.Instance)
+                .Where(e => e.CustomAttributes.Any(ee => ee.AttributeType == typeof(PropAttr)))
+                .ToArray();
+        }
+
         private Globals()
         {
             if (File.Exists(SettingFilePath))
             {
-                var props = typeof(Globals).GetProperties(PropFlags);
                 int i = 0;
 
                 using (var reader = new StreamReader(SettingFilePath))
                 {
-                    string line;
-                    string[] splitedLine;
+                    var props = GetProperties();
+
+                    string      line;
+                    string[]    splitedLine;
+                    object      obj;
 
                     while ((line = reader.ReadLine()) != null)
                     {
@@ -60,7 +75,10 @@ namespace Decchi
                         {
                             if (props[i].Name == splitedLine[0])
                             {
-                                props[i].SetValue(this, String2Object(splitedLine[1], props[i].PropertyType));
+                                obj = String2Object(splitedLine[1], props[i].PropertyType);
+                                if (obj != null)
+                                    props[i].SetValue(this, obj);
+                                    
                                 break;
                             }
                         }
@@ -69,20 +87,19 @@ namespace Decchi
             }
         }
 
-		/// <summary>
-		/// 프로퍼티 뭉텅이를 저장합니다. 설정이 바뀌거나 프로그램이 종료되기 직전에 호출해주세요.
-		/// </summary>
-		public void SaveSettings()
+        /// <summary>
+        /// 프로퍼티 뭉텅이를 저장합니다. 설정이 바뀌거나 프로그램이 종료되기 직전에 호출해주세요.
+        /// </summary>
+        public void SaveSettings()
         {
-			using (var writer = new StreamWriter(SettingFilePath))
+            using (var writer = new StreamWriter(SettingFilePath))
             {
-                var props = typeof(Globals).GetProperties(PropFlags);
+                var props = GetProperties();
 
                 for (int i = 0; i < props.Length; ++i)
-                    if (props[i].CustomAttributes.Any(e => e.AttributeType == typeof(PropAttr)))
-					    writer.WriteLine("{0}={1}", props[i].Name, Object2String(props[i].GetValue(this)));
-			}
-		}
+                    writer.WriteLine("{0}={1}", props[i].Name, Object2String(props[i].GetValue(this)));
+            }
+        }
 
         private static string Object2String(object value)
         {
@@ -103,6 +120,9 @@ namespace Decchi
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
 
+        /// <summary>
+        /// WPF Binding 에서 프로퍼티 수정했을때 콜백되는 함수
+        /// </summary>
         private static void PropertyChangedCallback(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             if (e.Property == UseShortcutProp ||
@@ -141,6 +161,14 @@ namespace Decchi
         {
             get { return (ShortcutInfo)this.GetValue(ShortcutProp); }
             set { this.SetValue(ShortcutProp, value); }
+        }
+
+        private static readonly DependencyProperty SkipFullscreenProp = DependencyProperty.Register("SkipFullscreen", typeof(bool), typeof(Globals), new FrameworkPropertyMetadata(true, Globals.PropertyChangedCallback));
+        [PropAttr]
+        public bool SkipFullscreen
+        {
+            get { return (bool)this.GetValue(SkipFullscreenProp); }
+            set { this.SetValue(SkipFullscreenProp, value); }
         }
 
         public struct ShortcutInfo
@@ -186,5 +214,5 @@ namespace Decchi
             public ModifierKeys Modifier;
             public Key          Key;
         }
-	}
+    }
 }

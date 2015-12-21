@@ -2,16 +2,13 @@
 
 뎃찌와 함께 데스크탑에서 #Nowplaying을 게시해요.
 
-우리는 이 놀라운 기능을 뎃찌라고 이름붙였답니다.
+우리는 이 놀라운 기능을 **뎃찌**라고 이름붙였답니다.
 
 .
 
-
-[사긔](https://github.com/Usagination)와 [륜](https://github.com/RyuaNerin)이 열씸히 만들었어요ㅇ.<!
+[**사긔**](https://github.com/Usagination)와 [**륜**](https://github.com/RyuaNerin)이 열씸히 만들었어요ㅇ.<!
 
 버그나 기능 개선 문의는 언제나 환영이에요!
-
--
 
 
 ## 지원 클라이언트 및 파싱 구현 톺아보기
@@ -21,11 +18,12 @@
 |Windows Media Player|O|O|X|X|
 |곰오디오|O|O|X|X|
 |iTunes|O|O|O|O|
-|웹 브라우저에서 보는 유튜브|O|X|X|X|
 |알송|O|O|X|X|
 |Melon|O|O|X|X|
 |Winamp|O|O|X|X|
-|AIMP|O|O|X|X|
+|AIMP3|O|O|X|X|
+|웹 브라우저에서 보는 유튜브|O|X|X|X|
+|웹 브라우저에서 보는 ニコニコ動画|O|X|X|X
 
 곧 지원 예정인 클라이언트
 
@@ -67,10 +65,12 @@ Ctrl + Q를 눌러 다른 작업 중에도 뎃찌할 수 있어요.
 
 중괄호 안, 약속어 앞 뒤에 쓰인 문자열은 치환 값이 비어있을 경우 포맷팅에서 제외되니 유용하게 사용할 수 있어요.
 
-예) 포맷팅 문자열 : <b>{/Artist/의 }{/Title/{(/Album/)}을 }듣고 있어요! {/Via/} - {/Client/} </b>
+만약 { 이나 } 을 쓰고싶으면 {{ 이나 }} 처럼 두번 쓰면 돼요.
+
+예) 포맷팅 문자열 : **{/Artist/의 }{/Title/{ (/Album/)}을 }듣고 있어요! {/Via/} - {/Client/} **
 
 |Title|Artist|Album|Client|Output|
 |---|---|---|---|---|
 |夜もすがら君想ふ|Chalili|-|곰오디오|Chalili의 夜もすがら君想ふ을 듣고 있어요! #뎃찌NP - 곰오디오|
 |[beatmania IIDX 23 copula] STARLIGHT DANCEHALL SPA|-|-|Youtube|[beatmania IIDX 23 copula] STARLIGHT DANCEHALL SPA을 듣고 있어요! #뎃찌NP - Youtube|
-|モンタージュガー|ヒトリエ|ルームシック・ガールズエスケープ|Alsong|ヒトリエ의 モンタージュガール(ルームシック・ガールズエスケープ)을 듣고 있어요! #뎃찌NP - Alsong|
+|モンタージュガー|ヒトリエ|ルームシック・ガールズエスケープ|Alsong|ヒトリエ의 モンタージュガール (ルームシック・ガールズエスケープ)을 듣고 있어요! #뎃찌NP - Alsong|
