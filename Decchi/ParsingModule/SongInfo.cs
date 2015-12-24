@@ -150,6 +150,10 @@ namespace Decchi.ParsingModule
                                         c = format[i];
                                         i++;
                                         break;
+                                    case 'n':
+                                        c = '\n';
+                                        i++;
+                                        break;
                                 }
                             }
 
