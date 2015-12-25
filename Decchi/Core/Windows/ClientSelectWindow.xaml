@@ -52,7 +52,8 @@
 							   Height="32"
 							   VerticalAlignment="Center">
 							<Image.Source>
-								<BitmapImage UriSource="{Binding Path=ClientIcon}" CacheOption="OnDemand" />
+								<BitmapImage UriSource="{Binding Path=ClientIcon}"
+                                             CacheOption="OnDemand" />
 							</Image.Source>
 						</Image>
 						

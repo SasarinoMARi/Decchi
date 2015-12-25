@@ -9,7 +9,7 @@
 									xmlns:Decchi="clr-namespace:Decchi"
 									xmlns:Decchi.Core.Windows.Converter="clr-namespace:Decchi.Core.Windows.Converter"
 									Icon="/Decchi;component/icon.ico"
-									Title="Decchi"
+									Title="뎃찌"
 									Height="500"
 									Width="310"
 									ResizeMode="CanMinimize"
@@ -37,12 +37,14 @@
 
     <MahApps.Metro.Controls:MetroWindow.RightWindowCommands>
         <MahApps.Metro.Controls:WindowCommands>
-            <Button Click="ctlHomepage_Click">
+            <Button Click="ctlHomepage_Click"
+                    ToolTip="뎃찌의 홈페이지를 열어요">
                 <Image Width="16"
                        Height="16"
                        Source="{StaticResource HomeIcon}" />
             </Button>
-            <Button Click="ctlShowSetting_Click">
+            <Button Click="ctlShowSetting_Click"
+                    ToolTip="설정 창을 열어요">
                 <Image Width="16"
                        Height="16"
                        Source="{StaticResource SettingIcon}" />
@@ -59,8 +61,16 @@
                                            Theme="Inverse"
                                            AnimateOpacity="True">
                 <StackPanel>
+                    <GroupBox Header="부팅시 뎃찌 실행"
+                              ToolTip="켬퓨터를 키자마자 뎃찌를 실행해요!">
+                        <MahApps.Metro.Controls:ToggleSwitch IsChecked="{Binding Source={x:Static Decchi:Globals.Instance}, Path=WinStartup, Mode=TwoWay}"/>
+                    </GroupBox>
+                    <GroupBox Header="최소화로 시작"
+                              ToolTip="뎃찌를 키면 바로 최소화해요!">
+                        <MahApps.Metro.Controls:ToggleSwitch IsChecked="{Binding Source={x:Static Decchi:Globals.Instance}, Path=TrayStart, Mode=TwoWay}"/>
+                    </GroupBox>
                     <GroupBox Header="단축키 사용"
-                              ToolTip="어디서든 키보드 입력 한번으로 뎃찌할 수 있어요!">
+                              ToolTip="어디서든 키보드 입력 한번으로 뎃찌!! 할 수 있어요!">
                         <StackPanel>
                             <MahApps.Metro.Controls:ToggleSwitch x:Name="ctlUseShortcut"
                                                                  IsChecked="{Binding Source={x:Static Decchi:Globals.Instance}, Path=UseShortcut, Mode=TwoWay}"/>
@@ -72,11 +82,13 @@
                                      PreviewKeyUp="ctlShortcut_PreviewKeyUp"
                                      TextAlignment="Center"
                                      GotFocus="ctlShortcut_GotFocus"
+                                     UndoLimit="0"
                                      LostFocus="ctlShortcut_LostFocus"/>
                         </StackPanel>
                     </GroupBox>
                     <GroupBox Header="전체화면에서 사용안함"
-                              ToolTip="전체화면일때 뎃찌하지 않아요!">
+                              ToolTip="전체화면일때 뎃찌!! 하지 않아요"
+                              IsEnabled="{Binding ElementName=ctlUseShortcut, Path=IsChecked}">
                         <MahApps.Metro.Controls:ToggleSwitch IsChecked="{Binding Source={x:Static Decchi:Globals.Instance}, Path=SkipFullscreen, Mode=TwoWay}"/>
                     </GroupBox>
                 </StackPanel>
@@ -84,20 +96,20 @@
         </MahApps.Metro.Controls:FlyoutsControl>
     </MahApps.Metro.Controls:MetroWindow.Flyouts>
 
-    <Grid>
+    <Grid Margin="5">
         <tray:TaskbarIcon x:Name="ctlTray"
                           IconSource="/Decchi;component/icon.ico"
-                          Visibility="{Binding ElementName=ctlWindow, Path=Visibility, Converter={StaticResource InvertVisibility}}"
-                          TrayBalloonTipClicked="ctlTray_TrayBalloonTipClicked"
                           TrayLeftMouseUp="ctlTray_TrayLeftMouseUp"/>
         
-		<MahApps.Metro.Controls:ProgressRing Grid.ColumnSpan="4"
-                                             Width="128"
+		<MahApps.Metro.Controls:ProgressRing Width="128"
                                              Height="128"
 											 IsActive="{Binding ElementName=ctlElements, Path=Visibility, Converter={StaticResource ProfileLoading}}" />
+        
+        <TextBlock x:Name="ctlVersion"
+                   HorizontalAlignment="Right"
+                   Foreground="{DynamicResource GrayBrush5}"/>
 		
-		<Grid Margin="5"
-			  x:Name="ctlElements">
+		<Grid x:Name="ctlElements">
 			<Grid.Style>
 				<Style TargetType="FrameworkElement">
 					<Style.Triggers>
@@ -141,7 +153,8 @@
                         </RadialGradientBrush>
                     </Ellipse.OpacityMask>
                     <Ellipse.Fill>
-                        <ImageBrush x:Name="ctlProfile" Stretch="UniformToFill" />
+                        <ImageBrush x:Name="ctlProfile"
+                                    Stretch="UniformToFill" />
                     </Ellipse.Fill>
                 </Ellipse>
 
@@ -169,7 +182,9 @@
                             <MahApps.Metro.Controls:ProgressRing IsActive="{Binding ElementName=ctlTweet, Path=IsEnabled, Converter={StaticResource InvertBoolean}}"
 																 Width="48"
 																 Height="48" />
-                            <TextBlock Text="뎃찌!"
+                            <TextBlock x:Name="ctlTweetText"
+                                       Text="뎃찌!!"
+                                       ToolTip="이 놀라운 기능을 뎃찌!! 라고 이름붙였답니다"
 									   FontSize="30"
 									   Visibility="{Binding ElementName=ctlTweet, Path=IsEnabled, Converter={StaticResource Bool2Visible}}"/>
                         </Grid>
@@ -189,6 +204,7 @@
                 <TextBox x:Name="ctlFormat"
 					     TextWrapping="NoWrap"
 					     ScrollViewer.CanContentScroll="True"
+                         UndoLimit="10"
 					     KeyDown="ctlFormat_KeyDown"
 					     LostFocus="ctlFormat_LostFocus"/>
             </StackPanel>

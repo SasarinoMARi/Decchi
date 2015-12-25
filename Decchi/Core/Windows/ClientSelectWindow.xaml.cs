@@ -10,14 +10,14 @@ namespace Decchi.Core.Windows
 		public	SongInfo		SongInfo	{ get; private set; }
 		private	List<SongInfo>	m_songinfo;
 
-		public ClientSelectWindow(SongInfo[] songs)
+		public ClientSelectWindow()
 		{
 			InitializeComponent();
 
 			this.m_songinfo = new List<SongInfo>();
-			for (int i = 0; i < songs.Length; ++i)
-				if (songs[i].Loaded)
-					this.m_songinfo.Add(songs[i]);
+			for (int i = 0; i < SongInfo.SongInfos.Length; ++i)
+				if (SongInfo.SongInfos[i].Loaded)
+					this.m_songinfo.Add(SongInfo.SongInfos[i]);
 
 			this.ctlSongList.ItemsSource = this.m_songinfo;
 		}

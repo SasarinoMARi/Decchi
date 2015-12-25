@@ -114,21 +114,14 @@ namespace Decchi.PublishingModule.Twitter
                 { }
             }
 
-            try
-            {
-                var option = new SendTweetOptions { Status = text };
+            var option = new SendTweetOptions { Status = text };
 
-                if (!string.IsNullOrEmpty(mediaId))
-                    option.MediaIds = new string[] { mediaId };
+            if (!string.IsNullOrEmpty(mediaId))
+                option.MediaIds = new string[] { mediaId };
 
-                var d = this.m_api.SendTweet(option);
+            var d = this.m_api.SendTweet(option);
 
-                return true;
-            }
-            catch
-            {
-                return false;
-            }
+            return d != null;
         }
 
         private TwitterUser me;

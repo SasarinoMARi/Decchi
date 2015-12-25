@@ -1,8 +1,8 @@
 # [뎃찌](https://github.com/Usagination/Decchi/releases/latest) (Decchi)
 
-뎃찌와 함께 데스크탑에서 #Nowplaying을 게시해요.
+**뎃찌** 와 함께 데스크탑에서 #Nowplaying을 게시해요.
 
-우리는 이 놀라운 기능을 **뎃찌**라고 이름붙였답니다.
+우리는 이 놀라운 기능을 **뎃찌!!**라고 이름붙였답니다. 느낌표가 두개에요!!
 
 .
 

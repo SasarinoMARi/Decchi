@@ -22,24 +22,28 @@ namespace Decchi.Core.Windows
 
             InitializeComponent( );
 
+            this.ctlVersion.Text = Program.Version.ToString();
+
             this.ctlElements.Visibility = Visibility.Hidden;
 
             this.ctlFormat.Text = Globals.Instance.PublishFormat;
 
             this.m_formatOK = ( Brush ) this.FindResource( "BlackColorBrush" );
             this.m_formatErr = Brushes.Red;
+
+            this.WindowStartupLocation = WindowStartupLocation.CenterScreen;
+
+            if (Globals.Instance.TrayStart)
+            {
+                this.Hide();
+                this.ctlTray.ShowBalloonTip(this.Title, "트레이에서 실행 중이에요!", BalloonIcon.Info);
+                this.WindowState = WindowState.Minimized;
+            }
         }
 
         private void ctlHomepage_Click(object sender, RoutedEventArgs e)
         {
             Globals.OpenWebSite("http://usagination.github.io/Decchi/");
-        }
-
-        private void ctlTray_TrayBalloonTipClicked(object sender, RoutedEventArgs e)
-        {
-            this.Show();
-            this.WindowState = System.Windows.WindowState.Normal;
-            this.Focus();
         }
 
         private void ctlTray_TrayLeftMouseUp(object sender, RoutedEventArgs e)
@@ -81,10 +85,26 @@ namespace Decchi.Core.Windows
             if ( !this.m_firstActivated ) return;
             this.m_firstActivated = false;
 
-            DecchiCore.Login( );
+            DecchiCore.Login();
+
+            // 두개 병렬처리
+            var thdSongInfo = Task.Run<bool>(new Func<bool>(SongInfo.InitSonginfo));
+            var thdTwitter  = Task.Run<TwitterUser>(new Func<TwitterUser>(TwitterCommunicator.Instance.RefrashMe));
+
+            await thdSongInfo;
+            await thdTwitter;
+
+            // 서버에서 SongInfo 데이터를 가져옴
+            if (!thdSongInfo.Result)
+            {
+                MessageBox.Show("NowPlaying 목록을 가져오지 못했습니다", "네트워크 오류");
+                this.Close();
+
+                return;
+            }
 
             // 폼에 트위터 유저 정보 매핑
-            var me = await Task.Run(new Func<TwitterUser>(() => TwitterCommunicator.Instance.Me));
+            var me = thdTwitter.Result;
             if ( me == null )
             {
                 MessageBox.Show( "유저 정보를 받아오는데 실패했습니다.", "네트워크 오류" );
@@ -94,14 +114,23 @@ namespace Decchi.Core.Windows
             }
 
             var image = new BitmapImage();
-            image.BeginInit( );
-            image.UriSource = new Uri( me.ProfileImageUrl.Replace( "_normal", "" ) );
-            image.EndInit( );
-            image.DownloadCompleted += ( ls, le ) => { this.ctlElements.Visibility = Visibility.Visible; DecchiCore.Inited(); };
+            image.CacheOption = BitmapCacheOption.OnDemand;
+            image.CreateOptions = BitmapCreateOptions.DelayCreation;
+            image.BeginInit();
+            image.UriSource = new Uri(me.ProfileImageUrl.Replace("_normal", ""));
+            image.EndInit();
+            image.DownloadCompleted += (ls, le) => { this.ctlElements.Visibility = Visibility.Visible; DecchiCore.Inited(); };
 
             this.ctlProfile.ImageSource = image;
-            this.ctlName.Text = me.Name;
-            this.ctlScreenName.Text = "@" + me.ScreenName;
+            this.ctlName.Text           = me.Name;
+            this.ctlScreenName.Text     = "@" + me.ScreenName;
+
+            // 업데이트를 확인함
+            if (await Task.Run<bool>(new Func<bool>(Program.CheckNewVersion)))
+            {
+                if (MessageBox.Show("데찌가 업데이트되었어요!\n업데이트는 하루에 한번만 확인해요!", "뎃찌", MessageBoxButton.OKCancel, MessageBoxImage.Information) == MessageBoxResult.OK)
+                    Globals.OpenWebSite("https://github.com/Usagination/Decchi/releases/latest");
+            }
         }
 
         private Brush m_formatOK;

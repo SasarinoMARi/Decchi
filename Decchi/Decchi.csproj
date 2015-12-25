@@ -14,7 +14,6 @@
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <TargetFrameworkProfile>
     </TargetFrameworkProfile>
-    <AssemblyVersion>1.0.0.545</AssemblyVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -46,6 +45,15 @@
   <PropertyGroup>
     <RunPostBuildEvent>OnBuildSuccess</RunPostBuildEvent>
   </PropertyGroup>
+  <PropertyGroup>
+    <SignAssembly>true</SignAssembly>
+  </PropertyGroup>
+  <PropertyGroup>
+    <AssemblyOriginatorKeyFile>Uncommit\decchi.snk</AssemblyOriginatorKeyFile>
+  </PropertyGroup>
+  <PropertyGroup>
+    <SignManifests>false</SignManifests>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="Hammock.ClientProfile, Version=1.0.0.0, Culture=neutral, PublicKeyToken=c148cfba29ed1a4d, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -54,11 +62,6 @@
     <Reference Include="Hardcodet.Wpf.TaskbarNotification, Version=1.0.5.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>ExternalLibrarys\Hardcodet.NotifyIcon.Wpf-1.0.5\Hardcodet.Wpf.TaskbarNotification.dll</HintPath>
-    </Reference>
-    <Reference Include="Interop.iTunesLib, Version=1.13.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <EmbedInteropTypes>False</EmbedInteropTypes>
-      <HintPath>ExternalLibrarys\Interop.iTunesLib-1.13\Interop.iTunesLib.dll</HintPath>
     </Reference>
     <Reference Include="MahApps.Metro, Version=1.1.2.0, Culture=neutral, PublicKeyToken=f4fb5a3c4d1e5b4f, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -83,7 +86,6 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>ExternalLibrarys\TweetMoaSharp.3.0.0.12\TweetSharp.dll</HintPath>
     </Reference>
-    <Reference Include="UIAutomationClient" />
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
@@ -102,20 +104,8 @@
     </Compile>
     <Compile Include="NativeMethods.cs" />
     <Compile Include="Core\Windows\Converter\Visibility2Boolean.cs" />
-    <Compile Include="ParsingModule\AIMP3SongInfo.cs" />
-    <Compile Include="ParsingModule\GomAudioSongInfo.cs" />
-    <Compile Include="ParsingModule\FoobarSongInfo.cs" />
-    <Compile Include="ParsingModule\MelonSongInfo.cs" />
-    <Compile Include="ParsingModule\iTunesSongInfo.cs" />
     <Compile Include="ParsingModule\SongInfo.cs" />
     <Compile Include="Core\Program.cs" />
-    <Compile Include="ParsingModule\AlsongSongInfo.cs" />
-    <Compile Include="ParsingModule\WinampSongInfo.cs" />
-    <Compile Include="ParsingModule\WMPSongInfo.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="ParsingModule\NicodongSongInfo.cs" />
-    <Compile Include="ParsingModule\YoutubeSongInfo.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Globals.cs" />
     <Compile Include="PublishingModule\IPublisher.cs" />
@@ -123,7 +113,7 @@
       <DependentUpon>InputCaptcha.xaml</DependentUpon>
     </Compile>
     <Compile Include="PublishingModule\Twitter\TweeterCommunicator.cs" />
-    <Compile Include="Utilities\globalKeyboardHook.cs" />
+    <Compile Include="Utilities\GlobalKeyboardHook.cs" />
     <Compile Include="Uncommit\TwitterToken.cs" />
     <Compile Include="Utilities\ImageResize.cs" />
   </ItemGroup>
@@ -131,6 +121,7 @@
     <None Include="App.config">
       <SubType>Designer</SubType>
     </None>
+    <None Include="Uncommit\decchi.snk" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="icon.ico" />
@@ -162,38 +153,16 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="ExternalLibrarys\Interop.iTunesLib-1.13\Interop.iTunesLib.dll" />
     <EmbeddedResource Include="ExternalLibrarys\MahApps.Metro-1.1.2\MahApps.Metro.dll" />
     <EmbeddedResource Include="ExternalLibrarys\MahApps.Metro-1.1.2\System.Windows.Interactivity.dll" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="ExternalLibrarys\MahApps.Metro-1.1.2\LICENSE.txt" />
-    <None Include="ExternalLibrarys\Newtonsoft.Json.7.0.1\LICENSE.txt" />
     <EmbeddedResource Include="ExternalLibrarys\Newtonsoft.Json.7.0.1\Newtonsoft.Json.dll" />
-    <None Include="ExternalLibrarys\Newtonsoft.Json.7.0.1\Newtonsoft.Json.xml" />
     <EmbeddedResource Include="ExternalLibrarys\TweetMoaSharp.3.0.0.12\Hammock.ClientProfile.dll" />
-    <None Include="ExternalLibrarys\TweetMoaSharp.3.0.0.12\LICENSE.txt" />
     <EmbeddedResource Include="ExternalLibrarys\TweetMoaSharp.3.0.0.12\TweetSharp.dll" />
-    <Resource Include="ParsingModule\IconImages\Melon.png" />
-    <Resource Include="ParsingModule\IconImages\AlSong.png" />
-    <Resource Include="ParsingModule\IconImages\GomAudio.png" />
-    <Resource Include="ParsingModule\IconImages\ITunes.png" />
-    <Resource Include="ParsingModule\IconImages\WMP.png" />
-    <Resource Include="ParsingModule\IconImages\Youtube.png" />
-    <Resource Include="ParsingModule\IconImages\Foobar.png" />
-    <Resource Include="ParsingModule\IconImages\AIMP.png" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="ExternalLibrarys\Hardcodet.NotifyIcon.Wpf-1.0.5\Hardcodet.Wpf.TaskbarNotification.dll" />
-    <None Include="ExternalLibrarys\Hardcodet.NotifyIcon.Wpf-1.0.5\Hardcodet.Wpf.TaskbarNotification.pdb" />
-    <None Include="ExternalLibrarys\Hardcodet.NotifyIcon.Wpf-1.0.5\Hardcodet.Wpf.TaskbarNotification.xml" />
-    <None Include="ExternalLibrarys\Hardcodet.NotifyIcon.Wpf-1.0.5\LICENSE.html" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="ParsingModule\IconImages\Winamp.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="ParsingModule\IconImages\Nicodong.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

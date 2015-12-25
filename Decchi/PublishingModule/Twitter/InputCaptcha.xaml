@@ -22,7 +22,7 @@
 		</Grid.ColumnDefinitions>
 		<TextBox Grid.Column="0"
 				 x:Name="ctlVerifyKey"
-				 Margin="0 0 10 0"
+				 Margin="0 0 5 0"
 				 KeyDown="ctlVerifyKey_KeyDown"
 				 PreviewTextInput="ctlVerifyKey_PreviewTextInput"
 				 DataObject.Pasting="ctlVerifyKey_Pasting"/>

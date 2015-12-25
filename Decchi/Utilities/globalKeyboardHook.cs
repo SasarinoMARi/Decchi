@@ -8,64 +8,53 @@ namespace Decchi.Utilities
 	/// <summary>
 	/// A class that manages a global low level keyboard hook
 	/// </summary>
-	public class globalKeyboardHook : IDisposable
+	public class GlobalKeyboardHook : IDisposable
 	{
-		#region Constant, Structure and Delegate Definitions
-		/// <summary>
-		/// defines the callback type for the hook
-		/// </summary>
-		public delegate IntPtr keyboardHookProc(int code, IntPtr wParam, ref keyboardHookStruct lParam);
-
-		public struct keyboardHookStruct
-		{
-			public int vkCode;
-			public int scanCode;
-			public int flags;
-			public int time;
-			public int dwExtraInfo;
-		}
-
-		const int WH_KEYBOARD_LL = 13;
-		const int WM_KEYDOWN = 0x100;
-		const int WM_KEYUP = 0x101;
-		const int WM_SYSKEYDOWN = 0x104;
-		const int WM_SYSKEYUP = 0x105;
-		#endregion
-
-		#region Instance Variables
+        #region Instance Variables
+        private IList<Key> m_hookedKeys = new List<Key>();
 		/// <summary>
 		/// The collections of keys to watch for
 		/// </summary>
-		public List<Key> HookedKeys = new List<Key>();
+        public IList<Key> HookedKeys { get { return this.m_hookedKeys; } }
 		/// <summary>
 		/// Handle to the hook, need this to unhook and call the next hook
 		/// </summary>
 		IntPtr hhook = IntPtr.Zero;
 		#endregion
 		
-		public delegate void KeyEvent(ref bool handled, Key key);
+        public class KeyHookEventArgs : EventArgs
+        {
+            public KeyHookEventArgs(Key key)
+            {
+                this.Key = key;
+            }
+            public bool Handled { get; set; }
+            public Key  Key     { get; private set; } 
+        }
+
+		public delegate void KeyHookEvent(object sender, KeyHookEventArgs e);
 
 		#region Events
 		/// <summary>
 		/// Occurs when one of the hooked keys is pressed
 		/// </summary>
-		public event KeyEvent KeyDown;
+		public event KeyHookEvent KeyDown;
 		/// <summary>
 		/// Occurs when one of the hooked keys is released
 		/// </summary>
-		public event KeyEvent KeyUp;
+		public event KeyHookEvent KeyUp;
 		#endregion
 
 		#region Constructors and Destructors
 
-		keyboardHookProc khp;
+		NativeMethods.keyboardHookProc khp;
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="globalKeyboardHook"/> class and installs the keyboard hook.
 		/// </summary>
-		public globalKeyboardHook()
+		public GlobalKeyboardHook()
 		{
-			khp = new keyboardHookProc(hookProc);
+			khp = new NativeMethods.keyboardHookProc(hookProc);
 			hook();
 		}
 
@@ -90,7 +79,7 @@ namespace Decchi.Utilities
 		/// Releases unmanaged resources and performs other cleanup operations before the
 		/// <see cref="globalKeyboardHook"/> is reclaimed by garbage collection and uninstalls the keyboard hook.
 		/// </summary>
-		~globalKeyboardHook()
+		~GlobalKeyboardHook()
 		{
 			this.Dispose(false);
 		}
@@ -105,7 +94,7 @@ namespace Decchi.Utilities
             if (hhook == IntPtr.Zero)
             {
                 IntPtr hInstance = NativeMethods.LoadLibrary("User32");
-                hhook = NativeMethods.SetWindowsHookEx(WH_KEYBOARD_LL, khp, hInstance, 0);
+                hhook = NativeMethods.SetWindowsHookEx(NativeMethods.WH_KEYBOARD_LL, khp, hInstance, 0);
             }
 		}
 
@@ -128,7 +117,7 @@ namespace Decchi.Utilities
 		/// <param name="wParam">The event type</param>
 		/// <param name="lParam">The keyhook event information</param>
 		/// <returns></returns>
-		private IntPtr hookProc(int code, IntPtr wParam, ref keyboardHookStruct lParam)
+		private IntPtr hookProc(int code, IntPtr wParam, ref NativeMethods.keyboardHookStruct lParam)
 		{
 			if (code >= 0)
 			{
@@ -136,18 +125,19 @@ namespace Decchi.Utilities
 				if (HookedKeys.Contains(key))
 				{
 					var wparam = wParam.ToInt64();
-					var handeled = false;
 
-					if ((wparam == WM_KEYDOWN || wparam == WM_SYSKEYDOWN) && (KeyDown != null))
+                    var args = new KeyHookEventArgs(key);
+
+					if ((wparam == NativeMethods.WM_KEYDOWN || wparam == NativeMethods.WM_SYSKEYDOWN) && (KeyDown != null))
 					{
-						KeyDown(ref handeled, key);
+						KeyDown.Invoke(this, args);
 					}
-					else if ((wparam == WM_KEYUP || wparam == WM_SYSKEYUP) && (KeyUp != null))
+					else if ((wparam == NativeMethods.WM_KEYUP || wparam == NativeMethods.WM_SYSKEYUP) && (KeyUp != null))
 					{
-						KeyUp(ref handeled, key);
+						KeyUp.Invoke(this, args);
 					}
 
-					if (handeled)
+					if (args.Handled)
 						return new IntPtr(1);
 				}
 			}
@@ -157,6 +147,28 @@ namespace Decchi.Utilities
 
 		private static class NativeMethods
 		{
+            #region Constant, Structure and Delegate Definitions
+            /// <summary>
+            /// defines the callback type for the hook
+            /// </summary>
+            public delegate IntPtr keyboardHookProc(int code, IntPtr wParam, ref keyboardHookStruct lParam);
+
+            public struct keyboardHookStruct
+            {
+                public int vkCode;
+                public int scanCode;
+                public int flags;
+                public int time;
+                public int dwExtraInfo;
+            }
+
+            public const int WH_KEYBOARD_LL = 13;
+            public const int WM_KEYDOWN = 0x100;
+            public const int WM_KEYUP = 0x101;
+            public const int WM_SYSKEYDOWN = 0x104;
+            public const int WM_SYSKEYUP = 0x105;
+            #endregion
+
 			#region DLL imports
 			/// <summary>
 			/// Sets the windows hook, do the desired event, one of hInstance or threadId must be non-null

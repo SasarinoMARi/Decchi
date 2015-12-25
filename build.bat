@@ -19,7 +19,7 @@ echo ^<project outputDir="%CDIR%" baseDir="%RDIR%" xmlns="http://confuser.codepl
 echo ^<rule pattern="true" inherit="false"^>												>> "%RDIR%ConfuserEx.crproj"
 echo ^<protection id="resources"/^>															>> "%RDIR%ConfuserEx.crproj"
 echo ^</rule^>																				>> "%RDIR%ConfuserEx.crproj"
-echo ^<module path="Decchi.exe"/^>							>> "%RDIR%ConfuserEx.crproj"
+echo ^<module path="Decchi.exe" snKey="%cd%\Decchi\Uncommit\decchi.snk" /^>					>> "%RDIR%ConfuserEx.crproj"
 echo ^</project^>																			>> "%RDIR%ConfuserEx.crproj"
 
 "%cd%\ConfuserEx\Confuser.CLI.exe" -n "%RDIR%confuserex.crproj"

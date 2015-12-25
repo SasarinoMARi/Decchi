@@ -1,13 +1,15 @@
 ﻿using System;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Reflection;
+using System.Text;
 using System.Windows;
 using System.Windows.Input;
 using Decchi.Core;
 using Decchi.ParsingModule;
-using System.Linq;
-using System.Text;
+using Microsoft.Win32;
 
 namespace Decchi
 {
@@ -106,14 +108,22 @@ namespace Decchi
             if (value is string)        return (string)value;
             if (value is bool)          return (bool)value ? "1" : "0";
             if (value is ShortcutInfo)  return ((ShortcutInfo)value).ToString();
+            if (value is DateTime)      return ((DateTime)value).ToString("yyyy-MM-dd hh:mm:ss");
 
             return null;
         }
         private static object String2Object(string value, Type type)
         {
-            if (type == typeof(string))         return value;
-            if (type == typeof(bool))           return value == "1" ? true : false;
-            if (type == typeof(ShortcutInfo))   return ShortcutInfo.Parse(value);
+            if (type == typeof(string))             return value;
+            if (type == typeof(bool))               return value == "1" ? true : false;
+
+            try
+            {
+                if (type == typeof(ShortcutInfo))   return ShortcutInfo.Parse(value);
+                if (type == typeof(DateTime))       return DateTime.Parse(value);	
+            }
+            catch
+            {}
 
             return null;
         }
@@ -130,9 +140,26 @@ namespace Decchi
             {
                 DecchiCore.HookSetting();
             }
+            else if (e.Property == WinStartupProp)
+            {
+                if ((bool)e.NewValue)
+                {
+                    using (var reg = Registry.CurrentUser.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", true))
+                        reg.SetValue("Decchi", Program.ExePath);
+                }
+                else
+                {
+                    using (var reg = Registry.CurrentUser.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", true))
+                        reg.DeleteValue("Decchi");
+                }
+            }
         }
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
+
+        [PropAttr]
+        public DateTime LastUpdateCheck { get; set; }
+
         [PropAttr]
         public string TwitterToken { get; set; }
         
@@ -169,6 +196,22 @@ namespace Decchi
         {
             get { return (bool)this.GetValue(SkipFullscreenProp); }
             set { this.SetValue(SkipFullscreenProp, value); }
+        }
+
+        private static readonly DependencyProperty TrayStartProp = DependencyProperty.Register("TrayStart", typeof(bool), typeof(Globals), new FrameworkPropertyMetadata(false));
+        [PropAttr]
+        public bool TrayStart
+        {
+            get { return (bool)this.GetValue(TrayStartProp); }
+            set { this.SetValue(TrayStartProp, value); }
+        }
+
+        private static readonly DependencyProperty WinStartupProp = DependencyProperty.Register("WinStartup", typeof(bool), typeof(Globals), new FrameworkPropertyMetadata(false, Globals.PropertyChangedCallback));
+        [PropAttr]
+        public bool WinStartup
+        {
+            get { return (bool)this.GetValue(WinStartupProp); }
+            set { this.SetValue(WinStartupProp, value); }
         }
 
         public struct ShortcutInfo
