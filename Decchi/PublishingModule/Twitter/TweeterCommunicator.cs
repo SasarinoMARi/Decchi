@@ -66,7 +66,7 @@ namespace Decchi.PublishingModule.Twitter
             var window = new InputCaptcha();
             window.Owner = MainWindow.Instance;
 
-            MainWindow.Instance.Dispatcher.Invoke(new Action(() => window.ShowDialog()));
+            MainWindow.Instance.Dispatcher.Invoke(new Func<bool?>(window.ShowDialog));
 
             var key = window.Password.Trim();
 
@@ -94,21 +94,12 @@ namespace Decchi.PublishingModule.Twitter
 
             string mediaId = null;
 
-            if (!string.IsNullOrEmpty(songinfo.Thumbnail) && File.Exists(songinfo.Thumbnail) && new FileInfo(songinfo.Thumbnail).Length > 0)
+            var stream = ImageResize.LoadImageResized(songinfo.Cover);
+            if (stream != null)
             {
-                using (var file = ImageResize.LoadImageResized(songinfo.Thumbnail))
-                {
-                    try
-                    {
-                        mediaId = this.m_api.UploadMedia(new UploadMediaOptions { Media = new MediaFile { Content = file } }).Media_Id;
-                    }
-                    catch
-                    { }
-                }
-
                 try
                 {
-                    File.Delete(songinfo.Thumbnail);
+                    mediaId = this.m_api.UploadMedia(new UploadMediaOptions { Media = new MediaFile { Content = stream } }).Media_Id;
                 }
                 catch
                 { }

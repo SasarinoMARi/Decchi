@@ -82,6 +82,9 @@
       <HintPath>ExternalLibrarys\MahApps.Metro-1.1.2\System.Windows.Interactivity.dll</HintPath>
     </Reference>
     <Reference Include="System.Xaml" />
+    <Reference Include="TagLib.Portable">
+      <HintPath>ExternalLibrarys\TagLib.Portable-1.0.3\TagLib.Portable.dll</HintPath>
+    </Reference>
     <Reference Include="TweetSharp, Version=3.0.0.1, Culture=neutral, PublicKeyToken=c148cfba29ed1a4d, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>ExternalLibrarys\TweetMoaSharp.3.0.0.12\TweetSharp.dll</HintPath>
@@ -113,9 +116,11 @@
       <DependentUpon>InputCaptcha.xaml</DependentUpon>
     </Compile>
     <Compile Include="PublishingModule\Twitter\TweeterCommunicator.cs" />
+    <Compile Include="Utilities\Abstraction.cs" />
     <Compile Include="Utilities\GlobalKeyboardHook.cs" />
     <Compile Include="Uncommit\TwitterToken.cs" />
-    <Compile Include="Utilities\ImageResize.cs" />
+    <Compile Include="Utilities\ImageResized.cs" />
+    <Compile Include="Utilities\DetectOpenedFile.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config">
@@ -163,6 +168,9 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="ExternalLibrarys\Hardcodet.NotifyIcon.Wpf-1.0.5\Hardcodet.Wpf.TaskbarNotification.dll" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="ExternalLibrarys\TagLib.Portable-1.0.3\TagLib.Portable.dll" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

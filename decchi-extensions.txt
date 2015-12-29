@@ -1,10 +1,1 @@
-use littleEndian
-
-| 1 Header | 2 Length | n Body | 1 Header | ....
-
-Header
-
-0 Title
-1 Artist
-2 Album
-3 Thumbnail
+title=||album=||artist=||path=

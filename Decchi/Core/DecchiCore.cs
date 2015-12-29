@@ -89,13 +89,24 @@ namespace Decchi.Core
             int i;
 
             var playingCount = 0;
+            SongInfo.Clear();
             Parallel.ForEach(SongInfo.SongInfos, e => { e.GetCurrentPlayingSong(); if (e.Loaded) Interlocked.Increment(ref playingCount); } );
-
+            
+            /*
+            for (i = 0; i < SongInfo.SongInfos.Length; ++i)
+            {
+                SongInfo.SongInfos[i].GetCurrentPlayingSong();
+            
+                if (SongInfo.SongInfos[i].Loaded)
+                    Interlocked.Increment(ref playingCount);
+            }
+            */
+            
             if (playingCount >= 2)
             {
                 // 두 개 이상의 곡이 재생중인 경우
 
-                TwitterCommunicator.Instance.Publish(MainWindow.Instance.Dispatcher.Invoke<SongInfo>(() => ShowSelectWindow()));
+                TwitterCommunicator.Instance.Publish(MainWindow.Instance.Dispatcher.Invoke<SongInfo>(ShowSelectWindow));
             }
             else if (playingCount == 0)
             {
@@ -114,6 +125,7 @@ namespace Decchi.Core
                 }
             }
 
+            SongInfo.Clear();
             MainWindow.Instance.Dispatcher.Invoke(new Func<bool, bool>(MainWindow.Instance.SetButtonState), true);
         }
 
