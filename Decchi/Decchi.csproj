@@ -119,7 +119,7 @@
     <Compile Include="Utilities\Abstraction.cs" />
     <Compile Include="Utilities\GlobalKeyboardHook.cs" />
     <Compile Include="Uncommit\TwitterToken.cs" />
-    <Compile Include="Utilities\ImageResized.cs" />
+    <Compile Include="Utilities\ImageResize.cs" />
     <Compile Include="Utilities\DetectOpenedFile.cs" />
   </ItemGroup>
   <ItemGroup>
