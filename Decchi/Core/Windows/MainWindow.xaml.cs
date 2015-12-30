@@ -21,17 +21,12 @@ namespace Decchi.Core.Windows
             MainWindow.m_instance = this;
 
             InitializeComponent( );
-
-            this.ctlVersion.Text = Program.Version.ToString();
-
             this.ctlElements.Visibility = Visibility.Hidden;
-
+            this.ctlVersion.Text = Program.Version.ToString();
+            
             this.ctlFormat.Text = Globals.Instance.PublishFormat;
-
             this.m_formatOK = ( Brush ) this.FindResource( "BlackColorBrush" );
             this.m_formatErr = Brushes.Red;
-
-            this.WindowStartupLocation = WindowStartupLocation.CenterScreen;
 
             if (Globals.Instance.TrayStart)
             {

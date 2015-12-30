@@ -8,6 +8,8 @@ namespace Decchi
     // https://msdn.microsoft.com/en-us/library/ms182161.aspx
     internal static class NativeMethods
     {
+        public delegate IntPtr WndProc(IntPtr hWnd, int msg, IntPtr wParam, IntPtr lParam);
+
         /// <summary>
         /// 클래스 이름과 타이틀로 윈도우 핸들 값을 얻어옵니다
         /// </summary>
@@ -42,16 +44,26 @@ namespace Decchi
         [DllImport("user32.dll")]
         public static extern IntPtr GetShellWindow();
 
-        [DllImport("user32.dll", SetLastError = true)]
-        public static extern int GetWindowRect(IntPtr hwnd, out RECT rc);
+        [DllImport("user32.dll")]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        public static extern bool GetWindowRect(IntPtr hwnd, out RECT rc);
 
-        [DllImport("user32.dll", SetLastError=true)]
+        [DllImport("user32.dll")]
         public static extern int GetWindowThreadProcessId(IntPtr hWnd, out int processId);
+
+        [DllImport("user32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
+        public static extern ushort RegisterClass([In] ref WNDCLASS pcWndClassEx);
+
+        [DllImport("user32.dll", CharSet = CharSet.Unicode)]
+        public static extern IntPtr CreateWindowEx(int dwExStyle, string lpClassName, string lpWindowName, int dwStyle, int x, int y, int nWidth, int nHeight, IntPtr hWndParent, IntPtr hMenu, IntPtr hInstance, IntPtr lpParam);
+
+        [DllImport("user32.dll")]
+        public static extern IntPtr DefWindowProc(IntPtr hWnd, int msg, IntPtr wParam, IntPtr lParam);
 
         [DllImport("kernel32.dll")]
         public static extern IntPtr OpenProcess(ProcessAccessFlags dwDesiredAccess, [MarshalAs(UnmanagedType.Bool)] bool bInheritHandle, int dwProcessId);
 
-        [DllImport("kernel32.dll", SetLastError = true)]
+        [DllImport("kernel32.dll")]
         [return: MarshalAs(UnmanagedType.Bool)]
         public static extern bool DuplicateHandle(IntPtr hSourceProcessHandle, ushort hSourceHandle, IntPtr hTargetProcessHandle, out IntPtr lpTargetHandle, uint dwDesiredAccess, [MarshalAs(UnmanagedType.Bool)] bool bInheritHandle, uint dwOptions);
 
@@ -59,9 +71,10 @@ namespace Decchi
         public static extern IntPtr GetCurrentProcess();
 
         [DllImport("kernel32.dll")]
-        public static extern int CloseHandle(IntPtr hObject);
+        [return: MarshalAs(UnmanagedType.Bool)]
+        public static extern bool CloseHandle(IntPtr hObject);
 
-        [DllImport("kernel32.dll", SetLastError = true)]
+        [DllImport("kernel32.dll")]
         public static extern int QueryDosDevice(string lpDeviceName, [Out] StringBuilder lpTargetPath, int ucchMax);
 
         [DllImport("ntdll.dll")]
@@ -70,11 +83,12 @@ namespace Decchi
         [DllImport("ntdll.dll")]
         public static extern int NtQueryObject(IntPtr ObjectHandle, ObjectInformationClass ObjectInformationClass, IntPtr ObjectInformation, int ObjectInformationLength, ref int returnLength);
 
-        public const int WM_GETTEXTLENGTH	= 0x000E;
-        public const int WM_GETTEXT			= 0x000D;
+        public const int WM_GETTEXTLENGTH = 0x000E;
+        public const int WM_GETTEXT = 0x000D;
         public const int STATUS_INFO_LENGTH_MISMATCH = -1073741820; //0xC0000004;
         public const int DUPLICATE_SAME_ACCESS = 0x2;
         public const int MAX_PATH = 260;
+        public const int ERROR_CLASS_ALREADY_EXISTS = 1410;
 
         [Flags]
         public enum ProcessAccessFlags : uint
@@ -98,6 +112,22 @@ namespace Decchi
             ObjectTypeInformation       = 2,
             ObjectAllTypesInformation   = 3,
             ObjectHandleInformation     = 4
+        }
+
+        [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
+        public struct WNDCLASS
+        {
+            public int		style;
+            [MarshalAs(UnmanagedType.FunctionPtr)]
+            public WndProc	lpfnWndProc;
+            public int		cbClsExtra;
+            public int		cbWndExtra;
+            public IntPtr	hInstance;
+            public IntPtr	hIcon;
+            public IntPtr	hCursor;
+            public IntPtr	hbrBackground;
+            public string	lpszMenuName;
+            public string	lpszClassName;
         }
 
         [StructLayout(LayoutKind.Sequential)]
@@ -214,11 +244,12 @@ namespace Decchi
             {
                 if (hWnd != desktopHandle && hWnd != shellHandle)
                 {
-                    NativeMethods.GetWindowRect(hWnd, out appBounds);
-
-                    screenBounds = Screen.FromHandle(hWnd).Bounds;
-                    if ((appBounds.Bottom - appBounds.Top) == screenBounds.Height && (appBounds.Right - appBounds.Left) == screenBounds.Width)
-                        return true;
+                    if (NativeMethods.GetWindowRect(hWnd, out appBounds))
+                    {
+                        screenBounds = Screen.FromHandle(hWnd).Bounds;
+                        if ((appBounds.Bottom - appBounds.Top) == screenBounds.Height && (appBounds.Right - appBounds.Left) == screenBounds.Width)
+                            return true;
+                    }
                 }
             }
 

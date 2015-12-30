@@ -4,6 +4,7 @@ using System.IO;
 using System.Net;
 using System.Net.Cache;
 using System.Reflection;
+using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 using System.Threading;
 using Decchi.Core.Windows;
@@ -13,42 +14,15 @@ namespace Decchi.Core
 {
     static class Program
     {
-        public const string MutextName = "E6EB2FB5-1079-4ECD-97C2-7CEB04765320-";
+        public const string lpClassName = "{E6EB2FB5-1079-4ECD-97C2-7CEB04765320}";
 
         [STAThread]
         static void Main()
         {
-            int i = 0;
-            var procs = Process.GetProcesses();
-            int runningId = 0;
-            
-            for (i = 0; i < procs.Length; ++i)
+            var hwnd = NativeMethods.FindWindow(lpClassName, null);
+            if (hwnd == IntPtr.Zero)
             {
-                using (procs[i])
-                {
-                    if (runningId == 0)
-                    {
-                        try
-                        {
-                            Mutex newinstanceMutex = Mutex.OpenExisting(MutextName + procs[i].Id);
-
-                            try
-                            {
-                                newinstanceMutex.ReleaseMutex();
-                            }
-                            catch { }
-
-                            runningId = procs[i].Id;
-                        }
-                        catch { }
-                    }
-                }
-            }
-
-            if (runningId == 0)
-            {
-                var mutex = new Mutex(true, MutextName + Process.GetCurrentProcess().Id);
-                mutex.ReleaseMutex();
+                CreateCustonWindow();
 
                 HttpWebRequest.DefaultCachePolicy   = new RequestCachePolicy(RequestCacheLevel.NoCacheNoStore);
                 HttpWebRequest.DefaultWebProxy      = null;
@@ -58,14 +32,30 @@ namespace Decchi.Core
             }
             else
             {
-                using (var proc = Process.GetProcessById(runningId))
-                {
-                    var hwnd = proc.MainWindowHandle;
+                int pid;
+                NativeMethods.GetWindowThreadProcessId(hwnd, out pid);
 
+                using (var proc = Process.GetProcessById(pid))
+                {
+                    hwnd = proc.MainWindowHandle;
                     if (hwnd != IntPtr.Zero && !NativeMethods.IsIconic(hwnd))
                         NativeMethods.SetForegroundWindow(hwnd);
                 }
             }
+        }
+
+        private static NativeMethods.WndProc m_wndProc;
+        private static void CreateCustonWindow()
+        {
+            var wndClass            = new NativeMethods.WNDCLASS();
+            wndClass.lpszClassName  = Program.lpClassName;
+            wndClass.lpfnWndProc    = (m_wndProc = NativeMethods.DefWindowProc);
+
+            if (NativeMethods.RegisterClass(ref wndClass) == 0 && 
+                Marshal.GetLastWin32Error() != NativeMethods.ERROR_CLASS_ALREADY_EXISTS)
+                return;
+
+            NativeMethods.CreateWindowEx(0, Program.lpClassName, String.Empty, 0, 0, 0, 0, 0, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero);
         }
 
         static Program()
