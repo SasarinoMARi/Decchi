@@ -15,7 +15,7 @@ namespace Decchi
     /// <summary>
     /// 이 클래스는 싱글턴으로 설계되었습니다
     /// </summary>
-    public class Globals : DependencyObject
+    public sealed class Globals : DependencyObject
     {
         /// <summary>
         /// 기본 브라우저에서 url을 엽니다.

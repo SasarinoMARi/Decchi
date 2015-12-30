@@ -60,38 +60,44 @@
                                            Width="150"
                                            Theme="Inverse"
                                            AnimateOpacity="True">
-                <StackPanel>
-                    <GroupBox Header="부팅시 뎃찌 실행"
-                              ToolTip="켬퓨터를 키자마자 뎃찌를 실행해요!">
-                        <MahApps.Metro.Controls:ToggleSwitch IsChecked="{Binding Source={x:Static Decchi:Globals.Instance}, Path=WinStartup, Mode=TwoWay}"/>
-                    </GroupBox>
-                    <GroupBox Header="최소화로 시작"
-                              ToolTip="뎃찌를 키면 바로 최소화해요!">
-                        <MahApps.Metro.Controls:ToggleSwitch IsChecked="{Binding Source={x:Static Decchi:Globals.Instance}, Path=TrayStart, Mode=TwoWay}"/>
-                    </GroupBox>
-                    <GroupBox Header="단축키 사용"
-                              ToolTip="어디서든 키보드 입력 한번으로 뎃찌!! 할 수 있어요!">
-                        <StackPanel>
-                            <MahApps.Metro.Controls:ToggleSwitch x:Name="ctlUseShortcut"
-                                                                 IsChecked="{Binding Source={x:Static Decchi:Globals.Instance}, Path=UseShortcut, Mode=TwoWay}"/>
-                            <TextBox x:Name="ctlShortcut"
-                                     Grid.Row="1"
-                                     Text="{Binding Source={x:Static Decchi:Globals.Instance}, Path=Shortcut, Mode=OneWay}"
-                                     IsEnabled="{Binding ElementName=ctlUseShortcut, Path=IsChecked}"
-                                     IsReadOnly="True"
-                                     PreviewKeyUp="ctlShortcut_PreviewKeyUp"
-                                     TextAlignment="Center"
-                                     GotFocus="ctlShortcut_GotFocus"
-                                     UndoLimit="0"
-                                     LostFocus="ctlShortcut_LostFocus"/>
-                        </StackPanel>
-                    </GroupBox>
-                    <GroupBox Header="전체화면에서 사용안함"
-                              ToolTip="전체화면일때 뎃찌!! 하지 않아요"
-                              IsEnabled="{Binding ElementName=ctlUseShortcut, Path=IsChecked}">
-                        <MahApps.Metro.Controls:ToggleSwitch IsChecked="{Binding Source={x:Static Decchi:Globals.Instance}, Path=SkipFullscreen, Mode=TwoWay}"/>
-                    </GroupBox>
-                </StackPanel>
+                <Grid Margin="0 0 0 5">
+                    <StackPanel>
+                        <GroupBox Header="부팅시 뎃찌 실행"
+                                  ToolTip="켬퓨터를 키자마자 뎃찌를 실행해요!">
+                            <MahApps.Metro.Controls:ToggleSwitch IsChecked="{Binding Source={x:Static Decchi:Globals.Instance}, Path=WinStartup, Mode=TwoWay}"/>
+                        </GroupBox>
+                        <GroupBox Header="최소화로 시작"
+                                  ToolTip="뎃찌를 키면 바로 최소화해요!">
+                            <MahApps.Metro.Controls:ToggleSwitch IsChecked="{Binding Source={x:Static Decchi:Globals.Instance}, Path=TrayStart, Mode=TwoWay}"/>
+                        </GroupBox>
+                        <GroupBox Header="단축키 사용"
+                                  ToolTip="어디서든 키보드 입력 한번으로 뎃찌!! 할 수 있어요!">
+                            <StackPanel>
+                                <MahApps.Metro.Controls:ToggleSwitch x:Name="ctlUseShortcut"
+                                                                     IsChecked="{Binding Source={x:Static Decchi:Globals.Instance}, Path=UseShortcut, Mode=TwoWay}"/>
+                                <TextBox x:Name="ctlShortcut"
+                                         Grid.Row="1"
+                                         Text="{Binding Source={x:Static Decchi:Globals.Instance}, Path=Shortcut, Mode=OneWay}"
+                                         IsEnabled="{Binding ElementName=ctlUseShortcut, Path=IsChecked}"
+                                         IsReadOnly="True"
+                                         TextAlignment="Center"
+                                         UndoLimit="0"
+                                         PreviewKeyUp="ctlShortcut_PreviewKeyUp"
+                                         GotFocus="ctlShortcut_GotFocus"
+                                         LostFocus="ctlShortcut_LostFocus"/>
+                            </StackPanel>
+                        </GroupBox>
+                        <GroupBox Header="전체화면에서 사용안함"
+                                  ToolTip="전체화면일때 뎃찌!! 하지 않아요"
+                                  IsEnabled="{Binding ElementName=ctlUseShortcut, Path=IsChecked}">
+                            <MahApps.Metro.Controls:ToggleSwitch IsChecked="{Binding Source={x:Static Decchi:Globals.Instance}, Path=SkipFullscreen, Mode=TwoWay}"/>
+                        </GroupBox>
+                    </StackPanel>
+
+                    <TextBlock HorizontalAlignment="Center"
+					           VerticalAlignment="Bottom"
+                               Text="Sasarino MARi"/>
+                </Grid>
             </MahApps.Metro.Controls:Flyout>
         </MahApps.Metro.Controls:FlyoutsControl>
     </MahApps.Metro.Controls:MetroWindow.Flyouts>
@@ -134,13 +140,6 @@
 				<ColumnDefinition Width="4*" />
 				<ColumnDefinition Width="1*" />
 			</Grid.ColumnDefinitions>
-
-			<TextBlock Grid.ColumnSpan="3"
-					   Text="@SasarinoMari"
-					   HorizontalAlignment="Right"
-					   VerticalAlignment="Top"
-                       Visibility="Hidden"
-                       />
 
             <StackPanel Grid.Column="1"
 						HorizontalAlignment="Stretch"

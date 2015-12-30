@@ -86,6 +86,10 @@ namespace Decchi.ParsingModule
                                         cur.m_wndClass = val;
                                         break;
 
+                                    case "wndclasstop":
+                                        cur.m_wndClassTop = val == "1";
+                                        break;
+
                                     case "regex":
                                         cur.m_regex = new Regex(val, RegexOptions.IgnoreCase | RegexOptions.Compiled | RegexOptions.Singleline);
                                         break;
@@ -112,10 +116,6 @@ namespace Decchi.ParsingModule
                                         cur.m_pipeName = val;
                                         break;
                                     */
-
-                                    case "wndclasstop":
-                                        cur.m_wndClassTop = val == "1";
-                                        break;
                                 }
                             }
                         }
