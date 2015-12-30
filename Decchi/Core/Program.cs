@@ -75,9 +75,11 @@ namespace Decchi.Core
 
             Version = m_assembly.GetName().Version;
             ExePath = Path.GetFullPath(m_assembly.Location);
+            ExeDir  = Path.GetDirectoryName(ExePath);
         }
-        
+
         public  static readonly string      ExePath;
+        public  static readonly string      ExeDir;
         public  static readonly Version     Version;
         private static readonly Assembly    m_assembly;
         private static readonly string[]    m_resources;

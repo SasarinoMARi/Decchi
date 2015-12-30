@@ -117,6 +117,7 @@
     </Compile>
     <Compile Include="PublishingModule\Twitter\TweeterCommunicator.cs" />
     <Compile Include="Utilities\Abstraction.cs" />
+    <Compile Include="Utilities\UnmanagedMemory.cs" />
     <Compile Include="Utilities\GlobalKeyboardHook.cs" />
     <Compile Include="Uncommit\TwitterToken.cs" />
     <Compile Include="Utilities\ImageResize.cs" />

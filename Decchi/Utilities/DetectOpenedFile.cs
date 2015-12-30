@@ -41,13 +41,9 @@ namespace Decchi.Utilities
         private static NativeMethods.SYSTEM_HANDLE_INFORMATION[] GetOpenedFiles(int pid)
         {
             var nHandleInfoSize = 0x10000;
-            var ipHandlePointer = IntPtr.Zero;
-
-            var lstHandles = new List<NativeMethods.SYSTEM_HANDLE_INFORMATION>();
-
-            try
+            
+            using (var ipHandlePointer = new UnmanagedMemory(nHandleInfoSize))
             {
-                ipHandlePointer = Marshal.AllocHGlobal(nHandleInfoSize);
                 var nLength = 0;
                 IntPtr ipHandle;
 
@@ -55,8 +51,7 @@ namespace Decchi.Utilities
                 while (NativeMethods.NtQuerySystemInformation(16, ipHandlePointer, nHandleInfoSize, ref nLength) == NativeMethods.STATUS_INFO_LENGTH_MISMATCH)
                 {
                     nHandleInfoSize = nLength;
-                    Marshal.FreeHGlobal(ipHandlePointer);
-                    ipHandlePointer = Marshal.AllocHGlobal(nLength);
+                    ipHandlePointer.Reallocate(nLength);
                 }
 
                 long lHandleCount;
@@ -71,6 +66,7 @@ namespace Decchi.Utilities
                     ipHandle = IntPtr.Add(ipHandlePointer, 4);
                 }
 
+                var lstHandles = new List<NativeMethods.SYSTEM_HANDLE_INFORMATION>();
                 for (long lIndex = 0; lIndex < lHandleCount; lIndex++)
                 {
                     var shHandle = new NativeMethods.SYSTEM_HANDLE_INFORMATION();
@@ -88,16 +84,8 @@ namespace Decchi.Utilities
                     lstHandles.Add(shHandle);
                 }
 
+                return lstHandles.ToArray();
             }
-            catch
-            { }
-            finally
-            {
-                if (ipHandlePointer != IntPtr.Zero)
-                    Marshal.FreeHGlobal(ipHandlePointer);
-            }
-
-            return lstHandles.ToArray();
         }
 
         private static string GetFilePath(NativeMethods.SYSTEM_HANDLE_INFORMATION systemHandleInformation, int pid)
@@ -108,79 +96,69 @@ namespace Decchi.Utilities
             var objObjectName = new NativeMethods.OBJECT_NAME_INFORMATION();
             var strObjectName = "";
             var nLength = 0;
-            IntPtr ipTemp, ipHandle;
-
-            if (!NativeMethods.DuplicateHandle(ipProcessHwnd, systemHandleInformation.Handle, NativeMethods.GetCurrentProcess(), out ipHandle, 0, false, NativeMethods.DUPLICATE_SAME_ACCESS))
-                return null;
-            
-            var ipBasic = Marshal.AllocHGlobal(Marshal.SizeOf(objBasic));
-            NativeMethods.NtQueryObject(ipHandle, NativeMethods.ObjectInformationClass.ObjectBasicInformation, ipBasic, Marshal.SizeOf(objBasic), ref nLength);
-            objBasic = (NativeMethods.OBJECT_BASIC_INFORMATION)Marshal.PtrToStructure(ipBasic, objBasic.GetType());
-            Marshal.FreeHGlobal(ipBasic);
-
-            var ipObjectType = Marshal.AllocHGlobal(objBasic.TypeInformationLength);
-            nLength = objBasic.TypeInformationLength;
-            while (NativeMethods.NtQueryObject(ipHandle, NativeMethods.ObjectInformationClass.ObjectTypeInformation, ipObjectType, nLength, ref nLength) == NativeMethods.STATUS_INFO_LENGTH_MISMATCH)
-            {
-                Marshal.FreeHGlobal(ipObjectType);
-                if (nLength == 0) return null;
-                ipObjectType = Marshal.AllocHGlobal(nLength);
-            }
-            objObjectType = (NativeMethods.OBJECT_TYPE_INFORMATION)Marshal.PtrToStructure(ipObjectType, typeof(NativeMethods.OBJECT_TYPE_INFORMATION));
-
-            ipTemp = IsX64 ? new IntPtr(objObjectType.Name.Buffer.ToInt64() >> 32) : objObjectType.Name.Buffer;
-
-            var strObjectTypeName = Marshal.PtrToStringUni(ipTemp, objObjectType.Name.Length >> 1);
-            Marshal.FreeHGlobal(ipObjectType);
-
-            if (strObjectTypeName != "File")
-                return null;
-
-            nLength = objBasic.NameInformationLength;
-
-            var ipObjectName = Marshal.AllocHGlobal(nLength);
-            while (NativeMethods.NtQueryObject(ipHandle,NativeMethods.ObjectInformationClass.ObjectNameInformation, ipObjectName, nLength, ref nLength) == NativeMethods.STATUS_INFO_LENGTH_MISMATCH)
-            {
-                Marshal.FreeHGlobal(ipObjectName);
-                if (nLength == 0) return null;
-                ipObjectName = Marshal.AllocHGlobal(nLength);
-            }
-            objObjectName = (NativeMethods.OBJECT_NAME_INFORMATION)Marshal.PtrToStructure(ipObjectName, typeof(NativeMethods.OBJECT_NAME_INFORMATION));
-
-            ipTemp = IsX64 ? new IntPtr(objObjectName.Name.Buffer.ToInt64() >> 32) : objObjectName.Name.Buffer;
-            if (ipTemp != IntPtr.Zero)
-            {
-                var baTemp = new byte[nLength];
-                try
-                {
-                    Marshal.Copy(ipTemp, baTemp, 0, nLength);
-
-                    strObjectName = Marshal.PtrToStringUni(ipTemp);
-                }
-                catch (AccessViolationException)
-                {
-                    return null;
-                }
-                finally
-                {
-                    NativeMethods.CloseHandle(ipHandle);
-                    Marshal.FreeHGlobal(ipObjectName);
-                }
-            }
-            else
-            {
-                NativeMethods.CloseHandle(ipHandle);
-                Marshal.FreeHGlobal(ipObjectName);
-            }
+            IntPtr ipTemp, ipHandle = IntPtr.Zero;
 
             try
             {
-                return GetRegularFileNameFromDevice(strObjectName);
+                if (!NativeMethods.DuplicateHandle(ipProcessHwnd, systemHandleInformation.Handle, NativeMethods.GetCurrentProcess(), out ipHandle, 0, false, NativeMethods.DUPLICATE_SAME_ACCESS))
+                    return null;
+
+                using (var ipBasic = new UnmanagedMemory(Marshal.SizeOf(objBasic)))
+                {
+                    NativeMethods.NtQueryObject(ipHandle, NativeMethods.ObjectInformationClass.ObjectBasicInformation, ipBasic, ipBasic.Length, ref nLength);
+                    objBasic = (NativeMethods.OBJECT_BASIC_INFORMATION)Marshal.PtrToStructure(ipBasic, typeof(NativeMethods.OBJECT_BASIC_INFORMATION));
+                }
+
+                //////////////////////////////////////////////////
+                using (var ipObjectType = new UnmanagedMemory(objBasic.TypeInformationLength))
+                {
+                    nLength = objBasic.TypeInformationLength;
+                    while (NativeMethods.NtQueryObject(ipHandle, NativeMethods.ObjectInformationClass.ObjectTypeInformation, ipObjectType, nLength, ref nLength) == NativeMethods.STATUS_INFO_LENGTH_MISMATCH)
+                    {
+                        if (nLength == 0) return null;
+                        ipObjectType.Reallocate(nLength);
+                    }
+                    objObjectType = (NativeMethods.OBJECT_TYPE_INFORMATION)Marshal.PtrToStructure(ipObjectType, typeof(NativeMethods.OBJECT_TYPE_INFORMATION));
+
+                    ipTemp = IsX64 ? new IntPtr(objObjectType.Name.Buffer.ToInt64() >> 32) : objObjectType.Name.Buffer;
+
+                    if (Marshal.PtrToStringUni(ipTemp, objObjectType.Name.Length >> 1) != "File") return null;
+                }
+
+                //////////////////////////////////////////////////
+
+                nLength = objBasic.NameInformationLength;
+
+                using (var ipObjectName = new UnmanagedMemory(nLength))
+                {
+                    while (NativeMethods.NtQueryObject(ipHandle, NativeMethods.ObjectInformationClass.ObjectNameInformation, ipObjectName, nLength, ref nLength) == NativeMethods.STATUS_INFO_LENGTH_MISMATCH)
+                    {
+                        if (nLength == 0) return null;
+                        ipObjectName.Reallocate(nLength);
+                    }
+                    objObjectName = (NativeMethods.OBJECT_NAME_INFORMATION)Marshal.PtrToStructure(ipObjectName, typeof(NativeMethods.OBJECT_NAME_INFORMATION));
+
+                    ipTemp = IsX64 ? new IntPtr(objObjectName.Name.Buffer.ToInt64() >> 32) : objObjectName.Name.Buffer;
+                    if (ipTemp != IntPtr.Zero)
+                    {
+                        strObjectName = Marshal.PtrToStringUni(ipTemp);
+
+                        return GetRegularFileNameFromDevice(strObjectName);
+                    }
+                }
             }
             catch
+            { }
+            finally
             {
-                return null;
+                if (ipProcessHwnd != IntPtr.Zero)
+                    NativeMethods.CloseHandle(ipProcessHwnd);
+
+                if (ipHandle != IntPtr.Zero)
+                    NativeMethods.CloseHandle(ipHandle);
             }
+
+            return null;
         }
 
         private static string GetRegularFileNameFromDevice(string strRawName)

@@ -40,7 +40,11 @@ namespace Decchi
         private class PropAttr : Attribute
         { }
 
-        private const string SettingFilePath = "publish.ini"; // 설정 파일 주소
+        private static readonly string SettingFilePath; // 설정 파일 주소
+        static Globals()
+        {
+            SettingFilePath = Path.Combine(Program.ExeDir, "publish.ini");
+        }
 
         private static Globals m_instance;
         public  static Globals   Instance { get { return m_instance ?? (m_instance = new Globals()); } }
@@ -71,6 +75,8 @@ namespace Decchi
                     while ((line = reader.ReadLine()) != null)
                     {
                         splitedLine = line.Split('=');
+
+                        if (splitedLine.Length != 2) continue;
 
                         for (i = 0; i < props.Length; ++i)
                         {
