@@ -11,11 +11,11 @@ namespace Decchi.Utilities
 	public class GlobalKeyboardHook : IDisposable
 	{
         #region Instance Variables
-        private IList<Key> m_hookedKeys = new List<Key>();
+        private List<Key> m_hookedKeys = new List<Key>();
 		/// <summary>
 		/// The collections of keys to watch for
 		/// </summary>
-        public IList<Key> HookedKeys { get { return this.m_hookedKeys; } }
+        public List<Key> HookedKeys { get { return this.m_hookedKeys; } }
 		/// <summary>
 		/// Handle to the hook, need this to unhook and call the next hook
 		/// </summary>
@@ -86,6 +86,7 @@ namespace Decchi.Utilities
 		#endregion
 
 		#region Public Methods
+        private static IntPtr m_hLibrary = IntPtr.Zero;
 		/// <summary>
 		/// Installs the global hook
 		/// </summary>
@@ -93,8 +94,10 @@ namespace Decchi.Utilities
 		{
             if (hhook == IntPtr.Zero)
             {
-                IntPtr hInstance = NativeMethods.LoadLibrary("User32");
-                hhook = NativeMethods.SetWindowsHookEx(NativeMethods.WH_KEYBOARD_LL, khp, hInstance, 0);
+                if (m_hLibrary == IntPtr.Zero)
+                    m_hLibrary = NativeMethods.LoadLibrary("User32");
+
+                hhook = NativeMethods.SetWindowsHookEx(NativeMethods.WH_KEYBOARD_LL, khp, m_hLibrary, 0);
             }
 		}
 
@@ -153,6 +156,7 @@ namespace Decchi.Utilities
             /// </summary>
             public delegate IntPtr keyboardHookProc(int code, IntPtr wParam, ref keyboardHookStruct lParam);
 
+            [StructLayout(LayoutKind.Sequential)]
             public struct keyboardHookStruct
             {
                 public int vkCode;

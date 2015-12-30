@@ -101,9 +101,10 @@ namespace Decchi.Core
                 }
             }
 
-            for (int i = 0; i < SongInfo.Assemblies.Length; ++i)
-                if (eInfo.FullName == SongInfo.Assemblies[i].FullName)
-                    return SongInfo.Assemblies[i];
+            if (SongInfo.Assemblies != null)
+                for (int i = 0; i < SongInfo.Assemblies.Length; ++i)
+                    if (eInfo.FullName == SongInfo.Assemblies[i].FullName)
+                        return SongInfo.Assemblies[i];
 
             return null;
         }
