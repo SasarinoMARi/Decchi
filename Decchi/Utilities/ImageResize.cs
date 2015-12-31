@@ -127,7 +127,6 @@ namespace Decchi.Utilities
             if (formatsWithAlpha.Contains(image.PixelFormat))
             {
                 Bitmap bitmap = image as Bitmap;
-                BitmapData binaryImage = bitmap.LockBits(new Rectangle(Point.Empty, bitmap.Size), ImageLockMode.ReadOnly, PixelFormat.Format64bppArgb);
 
                 int x, y;
 

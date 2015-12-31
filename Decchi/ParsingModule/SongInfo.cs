@@ -213,7 +213,7 @@ namespace Decchi.ParsingModule
                 info.Loaded     = false;
 
                 info.Album      = null;
-                info.Artist     = null;
+                info.Title      = null;
                 info.Artist     = null;
                 info.LocalPath  = null;
                 if (info.Cover != null)

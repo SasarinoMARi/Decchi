@@ -6,7 +6,6 @@ using System.Net.Cache;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
-using System.Threading;
 using Decchi.Core.Windows;
 using Decchi.ParsingModule;
 
