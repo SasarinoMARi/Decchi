@@ -6,6 +6,7 @@
 									xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
                                     xmlns:tray="http://www.hardcodet.net/taskbar"
 									xmlns:MahApps.Metro.Controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
+									xmlns:MahApps.Metro.Controls.Dialogs="clr-namespace:MahApps.Metro.Controls.Dialogs;assembly=MahApps.Metro"
 									xmlns:Decchi="clr-namespace:Decchi"
 									xmlns:Decchi.Core.Windows.Converter="clr-namespace:Decchi.Core.Windows.Converter"
 									Icon="/Decchi;component/icon.ico"
@@ -21,18 +22,18 @@
 									Activated="Window_Activated"
                                     StateChanged="MetroWindow_StateChanged">
 	<MahApps.Metro.Controls:MetroWindow.Resources>
-		<ResourceDictionary>
+        <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="/Decchi;component/Core/Windows/Icons/SettingIcon.xaml" />
                 <ResourceDictionary Source="/Decchi;component/Core/Windows/Icons/HomeIcon.xaml" />
             </ResourceDictionary.MergedDictionaries>
-            
+
             <Decchi.Core.Windows.Converter:Visibility2Boolean x:Key="ProfileLoading" WhenTrue="Hidden" WhenFalse="Visible" />
-			<Decchi.Core.Windows.Converter:Boolean2Visibility x:Key="Bool2Visible" TrueVisibility="Visible" FalseVisibility="Hidden" />
-			<Decchi.Core.Windows.Converter:InvertBoolean x:Key="InvertBoolean"/>
+            <Decchi.Core.Windows.Converter:Boolean2Visibility x:Key="Bool2Visible" TrueVisibility="Visible" FalseVisibility="Hidden" />
+            <Decchi.Core.Windows.Converter:InvertBoolean x:Key="InvertBoolean"/>
             <Decchi.Core.Windows.Converter:InvertVisibility x:Key="InvertVisibility"/>
-		</ResourceDictionary>
-	</MahApps.Metro.Controls:MetroWindow.Resources>
+        </ResourceDictionary>
+    </MahApps.Metro.Controls:MetroWindow.Resources>
 
 
     <MahApps.Metro.Controls:MetroWindow.RightWindowCommands>
@@ -152,7 +153,7 @@
                         </RadialGradientBrush>
                     </Ellipse.OpacityMask>
                     <Ellipse.Fill>
-                        <ImageBrush x:Name="ctlProfile"
+                        <ImageBrush x:Name="ctlProfileImage"
                                     Stretch="UniformToFill" />
                     </Ellipse.Fill>
                 </Ellipse>

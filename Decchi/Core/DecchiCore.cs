@@ -73,9 +73,9 @@ namespace Decchi.Core
         /// <summary>
         /// 정의된 퍼블리싱 모듈들의 로그인 처리
         /// </summary>
-        public static void Login()
+        public static bool Login()
         {
-            TwitterCommunicator.Instance.Login();
+            return TwitterCommunicator.Instance.Login();
         }
 
         /// <summary>
@@ -105,37 +105,31 @@ namespace Decchi.Core
             if (playingCount >= 2)
             {
                 // 두 개 이상의 곡이 재생중인 경우
-
-                TwitterCommunicator.Instance.Publish(MainWindow.Instance.Dispatcher.Invoke<SongInfo>(ShowSelectWindow));
-            }
-            else if (playingCount == 0)
-            {
-                // 재생중인 곡이 없는 경우
+                //TwitterCommunicator.Instance.Publish(MainWindow.Instance.Dispatcher.Invoke<SongInfo>(ShowSelectWindow));
+                MainWindow.Instance.Dispatcher.Invoke(new Action(MainWindow.Instance.ShowSelectWindow));
             }
             else
             {
-                // 하나의 곡이 재생중인 경우
-                for (i = 0; i < SongInfo.SongInfos.Length; ++i)
+                if (playingCount == 0)
                 {
-                    if (SongInfo.SongInfos[i].Loaded)
+                    // 재생중인 곡이 없는 경우
+                }
+                else
+                {
+                    // 하나의 곡이 재생중인 경우
+                    for (i = 0; i < SongInfo.SongInfos.Length; ++i)
                     {
-                        TwitterCommunicator.Instance.Publish(SongInfo.SongInfos[i]);
-                        break;
+                        if (SongInfo.SongInfos[i].Loaded)
+                        {
+                            TwitterCommunicator.Instance.Publish(SongInfo.SongInfos[i]);
+                            break;
+                        }
                     }
                 }
+
+                SongInfo.Clear();
+                MainWindow.Instance.Dispatcher.Invoke(new Func<bool, bool>(MainWindow.Instance.SetButtonState), true);
             }
-
-            SongInfo.Clear();
-            MainWindow.Instance.Dispatcher.Invoke(new Func<bool, bool>(MainWindow.Instance.SetButtonState), true);
-        }
-
-        private static SongInfo ShowSelectWindow()
-        {
-            var window = new ClientSelectWindow();
-            window.Owner = MainWindow.Instance;
-            window.ShowDialog();
-
-            return window.SongInfo;
         }
     }
 }

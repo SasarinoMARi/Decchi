@@ -1,7 +1,4 @@
-﻿using System;
-using System.IO;
-using Decchi.Core.Windows;
-using Decchi.ParsingModule;
+﻿using Decchi.ParsingModule;
 using Decchi.Utilities;
 using TweetSharp;
 
@@ -28,57 +25,24 @@ namespace Decchi.PublishingModule.Twitter
         }
 
         private TwitterService m_api;
+        public TwitterService Api { get { return m_api; } }
 
         public bool Login()
         {
-            try
+            var token  = Globals.Instance.TwitterToken;
+            var secret = Globals.Instance.TwitterSecret;
+
+            if (string.IsNullOrEmpty(token) || string.IsNullOrEmpty(secret))
             {
-                this.m_api = null;
-
-                var token  = Globals.Instance.TwitterToken;
-                var secret = Globals.Instance.TwitterSecret;
-
-                if (string.IsNullOrEmpty(token) || string.IsNullOrEmpty(secret))
-                    NewAuth();
-                else
-                    this.m_api = new TwitterService(Consumer_Key, Consumer_Secret, token, secret);
-
-                return this.m_api != null;
-            }
-            catch
-            {
+                this.m_api = new TwitterService(Consumer_Key, Consumer_Secret);
                 return false;
             }
+            else
+            {
+                this.m_api = new TwitterService(Consumer_Key, Consumer_Secret, token, secret);
+                return true;
+            }
         }
-
-        /// <summary>
-        /// 새로이 트위터 인증 절차를 진행합니다.
-        /// </summary>
-        /// <returns></returns>
-        private void NewAuth()
-        {
-            this.m_api = new TwitterService(Consumer_Key, Consumer_Secret);
-
-            var token = this.m_api.GetRequestToken();
-
-            Globals.OpenWebSite(this.m_api.GetAuthorizationUri(token).ToString());
-
-            var window = new InputCaptcha();
-            window.Owner = MainWindow.Instance;
-
-            MainWindow.Instance.Dispatcher.Invoke(new Func<bool?>(window.ShowDialog));
-
-            var key = window.Password.Trim();
-
-            var access = this.m_api.GetAccessToken(token, key);
-
-            Globals.Instance.TwitterToken  = access.Token;
-            Globals.Instance.TwitterSecret = access.TokenSecret;
-            Globals.Instance.SaveSettings();
-
-            this.m_api.AuthenticateWith(access.Token, access.TokenSecret);
-        }
-
 
         /// <summary>
         /// 트윗을 게시합니다.
@@ -97,12 +61,15 @@ namespace Decchi.PublishingModule.Twitter
             var stream = ImageResize.LoadImageResized(songinfo.Cover);
             if (stream != null)
             {
-                try
+                using (stream)
                 {
-                    mediaId = this.m_api.UploadMedia(new UploadMediaOptions { Media = new MediaFile { Content = stream } }).Media_Id;
+                    try
+                    {
+                        mediaId = this.m_api.UploadMedia(new UploadMediaOptions { Media = new MediaFile { Content = stream } }).Media_Id;
+                    }
+                    catch
+                    { }
                 }
-                catch
-                { }
             }
 
             var option = new SendTweetOptions { Status = text };

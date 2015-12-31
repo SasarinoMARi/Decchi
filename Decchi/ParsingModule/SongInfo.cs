@@ -8,6 +8,8 @@ using System.Net;
 using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Windows.Media.Imaging;
+using Decchi.Core.Windows;
 using Decchi.Utilities;
 
 namespace Decchi.ParsingModule
@@ -79,7 +81,7 @@ namespace Decchi.ParsingModule
                                 switch (key)
                                 {
                                     case "clienticon":
-                                        cur.ClientIcon = BaseURL + val;
+                                        cur.ClientIcon = (BitmapImage)MainWindow.Instance.Dispatcher.Invoke(new Func<string, BitmapImage>(GetBitmapImage), BaseURL + val);
                                         break;
 
                                     case "wndclass":
@@ -132,6 +134,24 @@ namespace Decchi.ParsingModule
                 return false;
             }
         }
+        private static BitmapImage GetBitmapImage(string url)
+        {
+            try
+            {
+                var image = new BitmapImage();
+                image.CacheOption = BitmapCacheOption.OnDemand;
+                image.CreateOptions = BitmapCreateOptions.DelayCreation;
+                image.BeginInit();
+                image.UriSource = new Uri(url);
+                image.EndInit();
+
+                return image;
+            }
+            catch
+            {
+                return null;
+            }
+        }
         private static void GetMethod(SongInfo cur, byte[] assemblyData)
         {
             try
@@ -181,7 +201,7 @@ namespace Decchi.ParsingModule
         }
 
         public  string      Client      { get; private set; }
-        public  string      ClientIcon  { get; private set; }
+        public  BitmapImage ClientIcon  { get; private set; }
         private string      m_wndClass;
         private bool        m_wndClassTop;
         private Regex       m_regex;
@@ -218,7 +238,12 @@ namespace Decchi.ParsingModule
                 info.LocalPath  = null;
                 if (info.Cover != null)
                 {
-                    info.Cover.Dispose();
+                    try
+                    {
+                        info.Cover.Dispose();	
+                    }
+                    catch
+                    { }
                     info.Cover = null;
                 }
             }

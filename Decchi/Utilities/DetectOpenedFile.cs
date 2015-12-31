@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Text;
+using Decchi.Utilities.InteropServices;
 
 namespace Decchi.Utilities
 {
@@ -18,6 +19,8 @@ namespace Decchi.Utilities
             int pid;
             if (NativeMethods.GetWindowThreadProcessId(hwnd, out pid) == 0 && pid != 0) return null;
 
+            var ipProcessHwnd = NativeMethods.OpenProcess(NativeMethods.ProcessAccessFlags.All, false, pid);
+
             var handles = GetOpenedFiles(pid);
             int i, j;
 
@@ -26,15 +29,21 @@ namespace Decchi.Utilities
 
             for (i = 0; i < handles.Length; ++i)
             {
-                path = GetFilePath(handles[i], pid);
+                path = GetFilePath(handles[i], ipProcessHwnd);
                 if (string.IsNullOrEmpty(path)) continue;
 
                 ext = Path.GetExtension(path);
                 for (j = 0; j < exts.Length; ++j)
+                {
                     if (ext == exts[j])
+                    {
+                        NativeMethods.CloseHandle(ipProcessHwnd);
                         return path;
+                    }
+                }
             }
 
+            NativeMethods.CloseHandle(ipProcessHwnd);
             return null;
         }
 
@@ -88,9 +97,8 @@ namespace Decchi.Utilities
             }
         }
 
-        private static string GetFilePath(NativeMethods.SYSTEM_HANDLE_INFORMATION systemHandleInformation, int pid)
+        private static string GetFilePath(NativeMethods.SYSTEM_HANDLE_INFORMATION systemHandleInformation, IntPtr ipProcessHwnd)
         {
-            var ipProcessHwnd = NativeMethods.OpenProcess(NativeMethods.ProcessAccessFlags.All, false, pid);
             var objBasic      = new NativeMethods.OBJECT_BASIC_INFORMATION();
             var objObjectType = new NativeMethods.OBJECT_TYPE_INFORMATION();
             var objObjectName = new NativeMethods.OBJECT_NAME_INFORMATION();
@@ -103,10 +111,10 @@ namespace Decchi.Utilities
                 if (!NativeMethods.DuplicateHandle(ipProcessHwnd, systemHandleInformation.Handle, NativeMethods.GetCurrentProcess(), out ipHandle, 0, false, NativeMethods.DUPLICATE_SAME_ACCESS))
                     return null;
 
-                using (var ipBasic = new UnmanagedMemory(Marshal.SizeOf(objBasic)))
+                using (var ipBasic = new UnmanagedStruct<NativeMethods.OBJECT_BASIC_INFORMATION>())
                 {
                     NativeMethods.NtQueryObject(ipHandle, NativeMethods.ObjectInformationClass.ObjectBasicInformation, ipBasic, ipBasic.Length, ref nLength);
-                    objBasic = (NativeMethods.OBJECT_BASIC_INFORMATION)Marshal.PtrToStructure(ipBasic, typeof(NativeMethods.OBJECT_BASIC_INFORMATION));
+                    objBasic = ipBasic.PtrToStructure();
                 }
 
                 //////////////////////////////////////////////////
@@ -151,9 +159,6 @@ namespace Decchi.Utilities
             { }
             finally
             {
-                if (ipProcessHwnd != IntPtr.Zero)
-                    NativeMethods.CloseHandle(ipProcessHwnd);
-
                 if (ipHandle != IntPtr.Zero)
                     NativeMethods.CloseHandle(ipHandle);
             }
@@ -163,16 +168,18 @@ namespace Decchi.Utilities
 
         private static string GetRegularFileNameFromDevice(string strRawName)
         {
+            var sbTargetPath = new StringBuilder(NativeMethods.MAX_PATH);
             string strFileName = strRawName;
+            string strTargetPath;
 
             var drives = Environment.GetLogicalDrives();
             for (int i = 0; i < drives.Length; ++i)
             {
-                var sbTargetPath = new StringBuilder(NativeMethods.MAX_PATH);
+                sbTargetPath.Remove(0, sbTargetPath.Length - 1);
                 if (NativeMethods.QueryDosDevice(drives[i].Substring(0, 2), sbTargetPath, NativeMethods.MAX_PATH) == 0)
                     return strRawName;
 
-                string strTargetPath = sbTargetPath.ToString();
+                strTargetPath = sbTargetPath.ToString();
                 if (strFileName.StartsWith(strTargetPath))
                 {
                     strFileName = strFileName.Replace(strTargetPath, drives[i].Substring(0, 2));

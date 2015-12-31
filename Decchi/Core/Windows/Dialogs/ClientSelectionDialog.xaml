@@ -1,0 +1,82 @@
+﻿<MahApps.Metro.Controls.Dialogs:BaseMetroDialog xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                                                xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                                                xmlns:MahApps.Metro.Controls.Dialogs="clr-namespace:MahApps.Metro.Controls.Dialogs;assembly=MahApps.Metro"
+                                                xmlns:MahApps.Metro.Controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
+                                                xmlns:Decchi.Core.Windows.Dialogs="clr-namespace:Decchi.Core.Windows.Dialogs"
+                                                x:Class="Decchi.Core.Windows.Dialogs.ClientSelectionDialog"
+                                                KeyDown="BaseMetroDialog_KeyDown">
+    <Grid Margin="0 10 0 0">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto"
+                           MinHeight="20"/>
+            <RowDefinition Height="180" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        
+        <TextBlock Grid.Row="0"
+                   Margin="0 5 0 0"
+                   FontSize="{DynamicResource DialogMessageFontSize}"
+                   Text="클라이언트를 선택해주세요"
+                   TextWrapping="Wrap"
+                   Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Decchi.Core.Windows.Dialogs:VerifierDialog, Mode=FindAncestor}, UpdateSourceTrigger=PropertyChanged}" />
+
+        <ListBox Grid.Row="1"
+                 x:Name="ctlList"
+				 ScrollViewer.VerticalScrollBarVisibility="Visible"
+                 Margin="0 5 0 0"
+                 SelectionChanged="ctlList_SelectionChanged">
+            <ListBox.ItemContainerStyle>
+                <Style TargetType="ListBoxItem">
+                    <Setter Property="Height" Value="36" />
+
+                    <Style.Triggers>
+                        <Trigger Property="IsSelected" Value="True" >
+                            <Setter Property="TextBlock.Foreground" Value="{StaticResource BlackColorBrush}" />
+                        </Trigger>
+
+                        <Trigger Property="IsSelected" Value="False" >
+                            <Setter Property="TextBlock.Foreground" Value="{StaticResource GrayBrush3}" />
+                        </Trigger>
+                    </Style.Triggers>
+                </Style>
+            </ListBox.ItemContainerStyle>
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <StackPanel Orientation="Horizontal">
+                        <Image Width="32"
+							   Height="32"
+							   VerticalAlignment="Center"
+                               Source="{Binding Path=ClientIcon}" />
+
+                        <TextBlock Text="{Binding Path=Client}"
+								   VerticalAlignment="Center"
+								   Margin="5 0 0 0"/>
+                    </StackPanel>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
+
+        <StackPanel Grid.Row="2"
+                    Orientation="Horizontal"
+                    HorizontalAlignment="Right"
+                    Height="85">
+            <Button x:Name="ctlOK"
+                    Height="35"
+                    MinWidth="80"
+                    IsEnabled="False"
+                    Style="{DynamicResource AccentedDialogSquareButton}"
+                    Content="확인"
+                    Margin="0 0 5 0"
+                    KeyDown="ctlOK_KeyDown"
+                    Click="ctlOK_Click"/>
+            
+            <Button x:Name="ctlCancel"
+                    Height="35"
+                    MinWidth="80"
+                    Content="취소"
+                    Margin="5 0 5 0"
+                    KeyDown="ctlCancel_KeyDown"
+                    Click="ctlCancel_Click"/>
+        </StackPanel>
+    </Grid>
+</MahApps.Metro.Controls.Dialogs:BaseMetroDialog>
