@@ -91,7 +91,7 @@ namespace Decchi.Core.Windows
 
                 var key = (string)await MainWindow.Instance.ShowBaseMetroDialog(new VerifierDialog(this));
 
-                if (key == null)
+                if (string.IsNullOrEmpty(key))
                 {
                     await this.ShowMessageAsync("X(", "트위에 로그인 하지 못했어요");
 
