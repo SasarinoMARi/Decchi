@@ -1,6 +1,9 @@
-﻿using Decchi.ParsingModule;
+﻿using System;
+using System.IO;
+using System.Text;
+using System.Text.RegularExpressions;
+using Decchi.ParsingModule;
 using Decchi.Utilities;
-using TweetSharp;
 
 namespace Decchi.PublishingModule.Twitter
 {
@@ -24,8 +27,7 @@ namespace Decchi.PublishingModule.Twitter
             }
         }
 
-        private TwitterService m_api;
-        public TwitterService Api { get { return m_api; } }
+        public OAuth OAuth { get; private set; }
 
         public bool Login()
         {
@@ -34,12 +36,12 @@ namespace Decchi.PublishingModule.Twitter
 
             if (string.IsNullOrEmpty(token) || string.IsNullOrEmpty(secret))
             {
-                this.m_api = new TwitterService(Consumer_Key, Consumer_Secret);
+                this.OAuth = new OAuth(Consumer_Key, Consumer_Secret);
                 return false;
             }
             else
             {
-                this.m_api = new TwitterService(Consumer_Key, Consumer_Secret, token, secret);
+                this.OAuth = new OAuth(Consumer_Key, Consumer_Secret, token, secret);
                 return true;
             }
         }
@@ -61,25 +63,63 @@ namespace Decchi.PublishingModule.Twitter
             var stream = ImageResize.LoadImageResized(songinfo.Cover);
             if (stream != null)
             {
-                using (stream)
+                try
                 {
-                    try
+                    var req = OAuth.MakeRequest("POST", "https://upload.twitter.com/1.1/media/upload.json");
+
+                    using (stream)
                     {
-                        mediaId = this.m_api.UploadMedia(new UploadMediaOptions { Media = new MediaFile { Content = stream } }).Media_Id;
+                        var buff = new byte[4096];
+                        var read = 0;
+
+                        var boundary = Guid.NewGuid().ToString("N") + Guid.NewGuid().ToString("N");
+                        var bef = Encoding.UTF8.GetBytes(string.Format("--{0}\r\nContent-Type: application/octet-stream\r\nContent-Disposition: form-data; name=\"media\";\r\n\r\n", boundary));
+                        var aft = Encoding.UTF8.GetBytes(string.Format("\r\n\r\n--{0}--\r\n", boundary));
+
+                        req.ContentType = "multipart/form-data; boundary=" + boundary;
+
+                        using (var writer = new BinaryWriter(req.GetRequestStream()))
+                        {
+                            writer.Write(bef);
+                            while ((read = stream.Read(buff, 0, 4096)) > 0)
+                                writer.Write(buff, 0, read);
+                            writer.Write(aft);
+                        }
                     }
-                    catch
-                    { }
+
+                    using (var res = req.GetResponse())
+                    using (var reader = new StreamReader(res.GetResponseStream()))
+                        mediaId = Regex.Match(reader.ReadToEnd(), "\"media_id_string\"[ \t]*:[ \t]*\"([^\"]+)\"").Groups[1].Value;
+                }
+                catch
+                {
+                    mediaId = null;
                 }
             }
 
-            var option = new SendTweetOptions { Status = text };
+            //////////////////////////////////////////////////
 
-            if (!string.IsNullOrEmpty(mediaId))
-                option.MediaIds = new string[] { mediaId };
+            object obj;
+            if (mediaId != null)
+                obj = new { status = text, media_ids = mediaId };
+            else
+                obj = new { status = text };
 
-            var d = this.m_api.SendTweet(option);
+            try
+            {
+                var buff = Encoding.UTF8.GetBytes(OAuth.ToString(obj));
 
-            return d != null;
+                var req = OAuth.MakeRequest("POST", "https://api.twitter.com/1.1/statuses/update.json", obj);
+                req.GetRequestStream().Write(buff, 0, buff.Length);
+
+                using (var res = req.GetResponse())
+                using (var reader = new StreamReader(res.GetResponseStream()))
+                    return reader.ReadToEnd() != null;
+            }
+            catch
+            {
+                return false;
+            }
         }
 
         private TwitterUser me;
@@ -97,7 +137,11 @@ namespace Decchi.PublishingModule.Twitter
                 {
                     try
                     {
-                        me = this.m_api.VerifyCredentials(new VerifyCredentialsOptions { IncludeEntities = false, SkipStatus = true });
+                        var req = OAuth.MakeRequest("GET", "https://api.twitter.com/1.1/account/verify_credentials.json");
+
+                        using (var res = req.GetResponse())
+                        using (var reader = new StreamReader(res.GetResponseStream()))
+                            me = TwitterUser.Parse(reader.ReadToEnd());
                     }
                     catch
                     { }

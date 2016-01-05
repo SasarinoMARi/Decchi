@@ -158,6 +158,8 @@ namespace Decchi
                         reg.DeleteValue("Decchi");
                 }
             }
+            else if (e.Property == DetectLocalFileProp)
+                Globals.Instance.m_detectLocalFile = (bool)e.NewValue;
         }
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -215,12 +217,13 @@ namespace Decchi
             get { return (bool)this.GetValue(WinStartupProp); }
             set { this.SetValue(WinStartupProp, value); }
         }
-        
-        private static readonly DependencyProperty DetectLocalFileProp = DependencyProperty.Register("DetectLocalFile", typeof(bool), typeof(Globals), new FrameworkPropertyMetadata(false));
+
+        private static readonly DependencyProperty DetectLocalFileProp = DependencyProperty.Register("DetectLocalFile", typeof(bool), typeof(Globals), new FrameworkPropertyMetadata(false, Globals.PropertyChangedCallback));
+        private bool m_detectLocalFile;
         [PropAttr]
         public bool DetectLocalFile
         {
-            get { return (bool)this.GetValue(DetectLocalFileProp); }
+            get { return this.m_detectLocalFile; }
             set { this.SetValue(DetectLocalFileProp, value); }
         }
 

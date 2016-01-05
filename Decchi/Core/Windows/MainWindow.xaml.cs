@@ -9,7 +9,6 @@ using Decchi.ParsingModule;
 using Decchi.PublishingModule.Twitter;
 using Hardcodet.Wpf.TaskbarNotification;
 using MahApps.Metro.Controls.Dialogs;
-using TweetSharp;
 
 namespace Decchi.Core.Windows
 {
@@ -90,9 +89,9 @@ namespace Decchi.Core.Windows
             // 왜인지 몰라도 Login 함수에 async 시켜서 실행하면 씹고 다음라인 실행하더라
             if (!DecchiCore.Login())
             {
-                var token = TwitterCommunicator.Instance.Api.GetRequestToken();
+                var requestToken = await Task.Run(new Func<OAuth.TokenPair>(TwitterCommunicator.Instance.OAuth.RequestToken));
 
-                Globals.OpenWebSite(TwitterCommunicator.Instance.Api.GetAuthorizationUri(token).ToString());
+                Globals.OpenWebSite("https://api.twitter.com/oauth/authorize?oauth_token=" + requestToken.Token);
 
                 var key = (string)await MainWindow.Instance.ShowBaseMetroDialog(new VerifierDialog(this));
 
@@ -105,13 +104,14 @@ namespace Decchi.Core.Windows
                     return;
                 }
 
-                var access = TwitterCommunicator.Instance.Api.GetAccessToken(token, key);
+                TwitterCommunicator.Instance.OAuth.User.Token  = requestToken.Token;
+                TwitterCommunicator.Instance.OAuth.User.Secret = requestToken.Secret;
 
-                Globals.Instance.TwitterToken  = access.Token;
-                Globals.Instance.TwitterSecret = access.TokenSecret;
+                var userToken = await Task.Run(new Func<OAuth.TokenPair>(() => TwitterCommunicator.Instance.OAuth.AccessToken(key)));
+
+                Globals.Instance.TwitterToken  = TwitterCommunicator.Instance.OAuth.User.Token  = userToken.Token;
+                Globals.Instance.TwitterSecret = TwitterCommunicator.Instance.OAuth.User.Secret = userToken.Secret;
                 Globals.Instance.SaveSettings();
-
-                TwitterCommunicator.Instance.Api.AuthenticateWith(access.Token, access.TokenSecret);
             }
 
             // 두개 병렬처리
