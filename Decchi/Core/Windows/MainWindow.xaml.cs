@@ -93,7 +93,7 @@ namespace Decchi.Core.Windows
 
                 if (string.IsNullOrEmpty(key))
                 {
-                    await this.ShowMessageAsync("X(", "트위에 로그인 하지 못했어요");
+                    await this.ShowMessageAsync("X(", "트위터에 로그인 하지 못했어요");
 
                     this.Close();
 
