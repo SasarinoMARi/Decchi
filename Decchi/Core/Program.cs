@@ -100,9 +100,6 @@ namespace Decchi.Core
         
         public static bool CheckNewVersion()
         {
-            if (DateTime.Now < Globals.Instance.LastUpdateCheck.AddDays(1))
-                return false;
-
             try
             {
                 var tag = "0.0.0.0";
@@ -115,8 +112,6 @@ namespace Decchi.Core
                     tag = Regex.Match(reader.ReadToEnd(), "\"tag_name\"[ \t]*:[ \t]*\"([^\"]+)\"").Groups[1].Value;
 
                 var tagName = new Version(tag);
-
-                Globals.Instance.LastUpdateCheck = DateTime.Now;
 
                 MainWindow.Instance.Dispatcher.Invoke(Globals.Instance.SaveSettings);
 

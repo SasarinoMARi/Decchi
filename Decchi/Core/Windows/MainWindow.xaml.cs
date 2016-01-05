@@ -38,6 +38,11 @@ namespace Decchi.Core.Windows
             }
         }
 
+        private void ctlUpdate_Click(object sender, RoutedEventArgs e)
+        {
+            Globals.OpenWebSite("https://github.com/Usagination/Decchi/releases/latest");
+        }
+
         private void ctlHomepage_Click(object sender, RoutedEventArgs e)
         {
             Globals.OpenWebSite("http://usagination.github.io/Decchi/");
@@ -156,10 +161,7 @@ namespace Decchi.Core.Windows
 
             // 업데이트를 확인함
             if (await Task.Run(new Func<bool>(Program.CheckNewVersion)))
-            {
-                await this.ShowMessageAsync("XD", "새로운 업데이트가 있어요");
-                Globals.OpenWebSite("https://github.com/Usagination/Decchi/releases/latest");
-            }
+                this.ctlUpdate.Visibility = Visibility.Visible;
         }
 
         public async void ShowSelectWindow()

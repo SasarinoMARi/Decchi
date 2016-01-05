@@ -163,9 +163,6 @@ namespace Decchi
         ////////////////////////////////////////////////////////////////////////////////////////////////////
 
         [PropAttr]
-        public DateTime LastUpdateCheck { get; set; }
-
-        [PropAttr]
         public string TwitterToken { get; set; }
         
         [PropAttr]
