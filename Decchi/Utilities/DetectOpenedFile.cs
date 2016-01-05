@@ -27,23 +27,27 @@ namespace Decchi.Utilities
             string path;
             string ext;
 
-            for (i = 0; i < handles.Length; ++i)
+            try
             {
-                path = GetFilePath(handles[i], ipProcessHwnd);
-                if (string.IsNullOrEmpty(path)) continue;
-
-                ext = Path.GetExtension(path);
-                for (j = 0; j < exts.Length; ++j)
+                for (i = 0; i < handles.Length; ++i)
                 {
-                    if (ext == exts[j])
-                    {
-                        NativeMethods.CloseHandle(ipProcessHwnd);
-                        return path;
-                    }
+                    path = GetFilePath(handles[i], ipProcessHwnd);
+                    if (string.IsNullOrEmpty(path)) continue;
+
+                    ext = Path.GetExtension(path);
+                    for (j = 0; j < exts.Length; ++j)
+                        if (ext == exts[j])
+                            return path;
                 }
             }
+            catch
+            {
+            }
+            finally
+            {
+                NativeMethods.CloseHandle(ipProcessHwnd);
+            }
 
-            NativeMethods.CloseHandle(ipProcessHwnd);
             return null;
         }
 
@@ -51,50 +55,57 @@ namespace Decchi.Utilities
         {
             var nHandleInfoSize = 0x10000;
             
-            using (var ipHandlePointer = new UnmanagedMemory(nHandleInfoSize))
+            try
             {
-                var nLength = 0;
-                IntPtr ipHandle;
+                using (var ipHandlePointer = new UnmanagedMemory(nHandleInfoSize))
+                {
+                    var nLength = 0;
+                    IntPtr ipHandle;
 
-                // CNST_SYSTEM_HANDLE_INFORMATION = 16;
-                while (NativeMethods.NtQuerySystemInformation(16, ipHandlePointer, nHandleInfoSize, ref nLength) == NativeMethods.STATUS_INFO_LENGTH_MISMATCH)
-                {
-                    nHandleInfoSize = nLength;
-                    ipHandlePointer.Reallocate(nLength);
-                }
+                    // CNST_SYSTEM_HANDLE_INFORMATION = 16;
+                    while (NativeMethods.NtQuerySystemInformation(16, ipHandlePointer, nHandleInfoSize, ref nLength) == NativeMethods.STATUS_INFO_LENGTH_MISMATCH)
+                    {
+                        nHandleInfoSize = nLength;
+                        ipHandlePointer.Reallocate(nLength);
+                    }
 
-                long lHandleCount;
-                if (IsX64)
-                {
-                    lHandleCount = Marshal.ReadInt64(ipHandlePointer);
-                    ipHandle = IntPtr.Add(ipHandlePointer, 8);
-                }
-                else
-                {
-                    lHandleCount = Marshal.ReadInt32(ipHandlePointer);
-                    ipHandle = IntPtr.Add(ipHandlePointer, 4);
-                }
-
-                var lstHandles = new List<NativeMethods.SYSTEM_HANDLE_INFORMATION>();
-                for (long lIndex = 0; lIndex < lHandleCount; lIndex++)
-                {
-                    var shHandle = new NativeMethods.SYSTEM_HANDLE_INFORMATION();
+                    long lHandleCount;
                     if (IsX64)
                     {
-                        shHandle = (NativeMethods.SYSTEM_HANDLE_INFORMATION)Marshal.PtrToStructure(ipHandle, typeof(NativeMethods.SYSTEM_HANDLE_INFORMATION));
-                        ipHandle = IntPtr.Add(ipHandle, Marshal.SizeOf(shHandle) + 8);
+                        lHandleCount = Marshal.ReadInt64(ipHandlePointer);
+                        ipHandle = IntPtr.Add(ipHandlePointer, 8);
                     }
                     else
                     {
-                        ipHandle = IntPtr.Add(ipHandle, Marshal.SizeOf(shHandle) + 0);
-                        shHandle = (NativeMethods.SYSTEM_HANDLE_INFORMATION)Marshal.PtrToStructure(ipHandle, typeof(NativeMethods.SYSTEM_HANDLE_INFORMATION));
+                        lHandleCount = Marshal.ReadInt32(ipHandlePointer);
+                        ipHandle = IntPtr.Add(ipHandlePointer, 4);
                     }
-                    if (shHandle.ProcessID != pid) continue;
-                    lstHandles.Add(shHandle);
-                }
 
-                return lstHandles.ToArray();
+                    var lstHandles = new List<NativeMethods.SYSTEM_HANDLE_INFORMATION>();
+                    for (long lIndex = 0; lIndex < lHandleCount; lIndex++)
+                    {
+                        var shHandle = new NativeMethods.SYSTEM_HANDLE_INFORMATION();
+                        if (IsX64)
+                        {
+                            shHandle = (NativeMethods.SYSTEM_HANDLE_INFORMATION)Marshal.PtrToStructure(ipHandle, typeof(NativeMethods.SYSTEM_HANDLE_INFORMATION));
+                            ipHandle = IntPtr.Add(ipHandle, Marshal.SizeOf(shHandle) + 8);
+                        }
+                        else
+                        {
+                            ipHandle = IntPtr.Add(ipHandle, Marshal.SizeOf(shHandle) + 0);
+                            shHandle = (NativeMethods.SYSTEM_HANDLE_INFORMATION)Marshal.PtrToStructure(ipHandle, typeof(NativeMethods.SYSTEM_HANDLE_INFORMATION));
+                        }
+                        if (shHandle.ProcessID != pid) continue;
+                        lstHandles.Add(shHandle);
+                    }
+
+                    return lstHandles.ToArray();
+                }
             }
+            catch
+            { }
+
+            return new NativeMethods.SYSTEM_HANDLE_INFORMATION[0];
         }
 
         private static string GetFilePath(NativeMethods.SYSTEM_HANDLE_INFORMATION systemHandleInformation, IntPtr ipProcessHwnd)
