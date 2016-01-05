@@ -268,7 +268,7 @@ namespace Decchi.ParsingModule
 
             //////////////////////////////////////////////////
             // 열린 파일 감지
-            if (hwnd != IntPtr.Zero)
+            if (hwnd != IntPtr.Zero && Globals.Instance.DetectLocalFile)
                 this.LocalPath = DetectOpenedFile.GetOpenedFile(hwnd);
 
             //////////////////////////////////////////////////

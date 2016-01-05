@@ -218,6 +218,14 @@ namespace Decchi
             get { return (bool)this.GetValue(WinStartupProp); }
             set { this.SetValue(WinStartupProp, value); }
         }
+        
+        private static readonly DependencyProperty DetectLocalFileProp = DependencyProperty.Register("DetectLocalFile", typeof(bool), typeof(Globals), new FrameworkPropertyMetadata(false));
+        [PropAttr]
+        public bool DetectLocalFile
+        {
+            get { return (bool)this.GetValue(DetectLocalFileProp); }
+            set { this.SetValue(DetectLocalFileProp, value); }
+        }
 
         public struct ShortcutInfo
         {
