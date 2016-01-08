@@ -46,8 +46,24 @@ namespace Decchi
             SettingFilePath = Path.Combine(Program.ExeDir, "publish.ini");
         }
 
+        private static object m_sync = new object();
         private static Globals m_instance;
-        public  static Globals   Instance { get { return m_instance ?? (m_instance = new Globals()); } }
+        public  static Globals   Instance
+        {
+            get
+            {
+                lock (m_sync)
+                {
+                    if (m_instance == null)
+                    {
+                        m_instance = new Globals();
+                        m_instance.LoadSettings();
+                    }
+
+                    return m_instance;
+                }
+            }
+        }
 
         private static PropertyInfo[] GetProperties()
         {
@@ -59,6 +75,10 @@ namespace Decchi
         }
 
         private Globals()
+        {
+        }
+
+        private void LoadSettings()
         {
             if (File.Exists(SettingFilePath))
             {
@@ -85,7 +105,7 @@ namespace Decchi
                                 obj = String2Object(splitedLine[1], props[i].PropertyType);
                                 if (obj != null)
                                     props[i].SetValue(this, obj);
-                                    
+
                                 break;
                             }
                         }
@@ -160,6 +180,10 @@ namespace Decchi
             }
             else if (e.Property == DetectLocalFileProp)
                 Globals.Instance.m_detectLocalFile = (bool)e.NewValue;
+            else if (e.Property == SkipFullscreenProp)
+                Globals.Instance.m_skipFullscreen = (bool)e.NewValue;
+            else if (e.Property == DetectChromeUrlProp)
+                Globals.Instance.m_detectChromeUrl = (bool)e.NewValue;
         }
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -195,10 +219,11 @@ namespace Decchi
         }
 
         private static readonly DependencyProperty SkipFullscreenProp = DependencyProperty.Register("SkipFullscreen", typeof(bool), typeof(Globals), new FrameworkPropertyMetadata(true, Globals.PropertyChangedCallback));
+        private bool m_skipFullscreen;
         [PropAttr]
         public bool SkipFullscreen
         {
-            get { return (bool)this.GetValue(SkipFullscreenProp); }
+            get { return m_skipFullscreen; }
             set { this.SetValue(SkipFullscreenProp, value); }
         }
 
@@ -225,6 +250,15 @@ namespace Decchi
         {
             get { return this.m_detectLocalFile; }
             set { this.SetValue(DetectLocalFileProp, value); }
+        }
+
+        private static readonly DependencyProperty DetectChromeUrlProp = DependencyProperty.Register("DetectChromeUrl", typeof(bool), typeof(Globals), new FrameworkPropertyMetadata(false, Globals.PropertyChangedCallback));
+        private bool m_detectChromeUrl;
+        [PropAttr]
+        public bool DetectChromeUrl
+        {
+            get { return this.m_detectChromeUrl; }
+            set { this.SetValue(DetectChromeUrlProp, value); }
         }
 
         public struct ShortcutInfo

@@ -51,6 +51,7 @@ namespace Decchi.Utilities
             return null;
         }
 
+        const uint NtStatus_InfoLengthMismatch = 0xC0000004;
         private static NativeMethods.SYSTEM_HANDLE_INFORMATION[] GetOpenedFiles(int pid)
         {
             var nHandleInfoSize = 0x10000;
@@ -63,7 +64,7 @@ namespace Decchi.Utilities
                     IntPtr ipHandle;
 
                     // CNST_SYSTEM_HANDLE_INFORMATION = 16;
-                    while (NativeMethods.NtQuerySystemInformation(16, ipHandlePointer, nHandleInfoSize, ref nLength) == NativeMethods.STATUS_INFO_LENGTH_MISMATCH)
+                    while (NativeMethods.NtQuerySystemInformation(16, ipHandlePointer, nHandleInfoSize, out nLength) == NtStatus_InfoLengthMismatch)
                     {
                         nHandleInfoSize = nLength;
                         ipHandlePointer.Reallocate(nLength);
@@ -108,6 +109,7 @@ namespace Decchi.Utilities
             return new NativeMethods.SYSTEM_HANDLE_INFORMATION[0];
         }
 
+        const int DUPLICATE_SAME_ACCESS = 0x2;
         private static string GetFilePath(NativeMethods.SYSTEM_HANDLE_INFORMATION systemHandleInformation, IntPtr ipProcessHwnd)
         {
             var objBasic      = new NativeMethods.OBJECT_BASIC_INFORMATION();
@@ -119,12 +121,12 @@ namespace Decchi.Utilities
 
             try
             {
-                if (!NativeMethods.DuplicateHandle(ipProcessHwnd, systemHandleInformation.Handle, NativeMethods.GetCurrentProcess(), out ipHandle, 0, false, NativeMethods.DUPLICATE_SAME_ACCESS))
+                if (!NativeMethods.DuplicateHandle(ipProcessHwnd, systemHandleInformation.Handle, NativeMethods.GetCurrentProcess(), out ipHandle, 0, false, DUPLICATE_SAME_ACCESS))
                     return null;
 
                 using (var ipBasic = new UnmanagedStruct<NativeMethods.OBJECT_BASIC_INFORMATION>())
                 {
-                    NativeMethods.NtQueryObject(ipHandle, NativeMethods.ObjectInformationClass.ObjectBasicInformation, ipBasic, ipBasic.Length, ref nLength);
+                    NativeMethods.NtQueryObject(ipHandle, NativeMethods.ObjectInformationClass.ObjectBasicInformation, ipBasic, ipBasic.Length, out nLength);
                     objBasic = ipBasic.PtrToStructure();
                 }
 
@@ -132,7 +134,7 @@ namespace Decchi.Utilities
                 using (var ipObjectType = new UnmanagedMemory(objBasic.TypeInformationLength))
                 {
                     nLength = objBasic.TypeInformationLength;
-                    while (NativeMethods.NtQueryObject(ipHandle, NativeMethods.ObjectInformationClass.ObjectTypeInformation, ipObjectType, nLength, ref nLength) == NativeMethods.STATUS_INFO_LENGTH_MISMATCH)
+                    while (NativeMethods.NtQueryObject(ipHandle, NativeMethods.ObjectInformationClass.ObjectTypeInformation, ipObjectType, nLength, out nLength) == NtStatus_InfoLengthMismatch)
                     {
                         if (nLength == 0) return null;
                         ipObjectType.Reallocate(nLength);
@@ -150,7 +152,7 @@ namespace Decchi.Utilities
 
                 using (var ipObjectName = new UnmanagedMemory(nLength))
                 {
-                    while (NativeMethods.NtQueryObject(ipHandle, NativeMethods.ObjectInformationClass.ObjectNameInformation, ipObjectName, nLength, ref nLength) == NativeMethods.STATUS_INFO_LENGTH_MISMATCH)
+                    while (NativeMethods.NtQueryObject(ipHandle, NativeMethods.ObjectInformationClass.ObjectNameInformation, ipObjectName, nLength, out nLength) == NtStatus_InfoLengthMismatch)
                     {
                         if (nLength == 0) return null;
                         ipObjectName.Reallocate(nLength);
@@ -177,9 +179,10 @@ namespace Decchi.Utilities
             return null;
         }
 
+        const int MAX_PATH = 260;
         private static string GetRegularFileNameFromDevice(string strRawName)
         {
-            var sbTargetPath = new StringBuilder(NativeMethods.MAX_PATH);
+            var sbTargetPath = new StringBuilder(MAX_PATH);
             string strFileName = strRawName;
             string strTargetPath;
 
@@ -187,7 +190,7 @@ namespace Decchi.Utilities
             for (int i = 0; i < drives.Length; ++i)
             {
                 sbTargetPath.Remove(0, sbTargetPath.Length - 1);
-                if (NativeMethods.QueryDosDevice(drives[i].Substring(0, 2), sbTargetPath, NativeMethods.MAX_PATH) == 0)
+                if (NativeMethods.QueryDosDevice(drives[i].Substring(0, 2), sbTargetPath, MAX_PATH) == 0)
                     return strRawName;
 
                 strTargetPath = sbTargetPath.ToString();

@@ -94,7 +94,6 @@
     <Compile Include="Core\DecchiCore.cs" />
     <Compile Include="Core\Windows\Converter\Boolean2Visibility.cs" />
     <Compile Include="Core\Windows\Converter\InvertBoolean.cs" />
-    <Compile Include="Core\Windows\Converter\InvertVisibility.cs" />
     <Compile Include="Core\Windows\Dialogs\ClientSelectionDialog.xaml.cs">
       <DependentUpon>ClientSelectionDialog.xaml</DependentUpon>
     </Compile>

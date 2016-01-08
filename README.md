@@ -86,8 +86,8 @@
 
 - 사용된 오픈소스
 
- - [MahApps.Metro](Decchi\ExternalLibrarys\Hardcodet.NotifyIcon.Wpf-1.0.5) (입맛에 맞게 수정됨. 소스코드 포함)
+ - [MahApps.Metro v1.1.2](Decchi/ExternalLibrarys/MahApps.Metro-1.1.2) (입맛에 맞게 수정됨. 소스코드 포함)
 
- - [Hardcodet.NotifyIcon](Decchi\ExternalLibrarys\Hardcodet.NotifyIcon.Wpf-1.0.5)
+ - [Hardcodet.NotifyIcon v1.0.5](Decchi/ExternalLibrarys/Hardcodet.NotifyIcon.Wpf-1.0.5)
 
- - [TabLib.Portable](Decchi\ExternalLibrarys\TagLib.Portable-1.0.3)
+ - [TabLib.Portable v1.0.3](Decchi/ExternalLibrarys/TagLib.Portable-1.0.3)

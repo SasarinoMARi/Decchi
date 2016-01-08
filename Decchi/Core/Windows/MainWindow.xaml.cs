@@ -14,12 +14,11 @@ namespace Decchi.Core.Windows
 {
     public partial class MainWindow : MahApps.Metro.Controls.MetroWindow
     {
-        private static MainWindow   m_instance;
-        public  static MainWindow     Instance { get { return m_instance; } }
+        public static MainWindow Instance { get; private set; } 
 
         public MainWindow( )
         {
-            MainWindow.m_instance = this;
+            MainWindow.Instance = this;
 
             InitializeComponent( );
             this.ctlElements.Visibility = Visibility.Hidden;

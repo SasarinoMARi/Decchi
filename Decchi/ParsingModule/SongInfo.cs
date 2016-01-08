@@ -20,7 +20,7 @@ namespace Decchi.ParsingModule
         /// <summary>
         /// Dll 에 아래 함수를 public 으로 넣어두면 자동으로 인식합니다
         /// </summary>
-        private delegate bool DllParse(out string title, out string album, out string artist, out Stream cover);
+        private delegate bool DllParse(out string title, out string album, out string artist, out Stream cover, long option);
 
         public static SongInfo[]    SongInfos   { get; private set; }
         public static Assembly[]    Assemblies  { get; private set; } 
@@ -334,7 +334,7 @@ namespace Decchi.ParsingModule
                 string title, album, artist;
                 Stream stream;
 
-                bool succ = m_parse.Invoke(out title, out album, out artist, out stream);
+                bool succ = m_parse.Invoke(out title, out album, out artist, out stream, Globals.Instance.DetectChromeUrl ? 1 : 0);
 
                 if (succ)
                 {

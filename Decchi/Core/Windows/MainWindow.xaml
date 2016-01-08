@@ -11,8 +11,8 @@
 									xmlns:Decchi.Core.Windows.Converter="clr-namespace:Decchi.Core.Windows.Converter"
 									Icon="/Decchi;component/icon.ico"
 									Title="뎃찌"
-									Height="500"
-									Width="310"
+									Height="450"
+									Width="270"
 									ResizeMode="CanMinimize"
 									BorderBrush="{DynamicResource AccentColorBrush}"
 									BorderThickness="1"
@@ -21,7 +21,7 @@
                                     ShowMaxRestoreButton="False"
 									Activated="Window_Activated"
                                     StateChanged="MetroWindow_StateChanged">
-	<MahApps.Metro.Controls:MetroWindow.Resources>
+    <MahApps.Metro.Controls:MetroWindow.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="/Decchi;component/Core/Windows/Icons/SettingIcon.xaml" />
@@ -32,7 +32,6 @@
             <Decchi.Core.Windows.Converter:Visibility2Boolean x:Key="ProfileLoading" WhenTrue="Hidden" WhenFalse="Visible" />
             <Decchi.Core.Windows.Converter:Boolean2Visibility x:Key="Bool2Visible" TrueVisibility="Visible" FalseVisibility="Hidden" />
             <Decchi.Core.Windows.Converter:InvertBoolean x:Key="InvertBoolean"/>
-            <Decchi.Core.Windows.Converter:InvertVisibility x:Key="InvertVisibility"/>
         </ResourceDictionary>
     </MahApps.Metro.Controls:MetroWindow.Resources>
 
@@ -110,6 +109,10 @@
                                       ToolTip="로컬 파일을 인식해서 트윗해요! 아직 조금 불안정해요!">
                                 <MahApps.Metro.Controls:ToggleSwitch IsChecked="{Binding Source={x:Static Decchi:Globals.Instance}, Path=DetectLocalFile, Mode=TwoWay}"/>
                             </GroupBox>
+                            <GroupBox Header="크롬 링크 인식"
+                                      ToolTip="크롬 링크를 인식해서 추가해줘요!">
+                                <MahApps.Metro.Controls:ToggleSwitch IsChecked="{Binding Source={x:Static Decchi:Globals.Instance}, Path=DetectChromeUrl, Mode=TwoWay}"/>
+                            </GroupBox>
                         </StackPanel>
 
                         <StackPanel Margin="0 5 0 0">
@@ -133,7 +136,7 @@
                           IconSource="/Decchi;component/icon.ico"
                           TrayLeftMouseUp="ctlTray_TrayLeftMouseUp"/>
         
-		<MahApps.Metro.Controls:ProgressRing Width="128"
+        <MahApps.Metro.Controls:ProgressRing Width="128"
                                              Height="128"
 											 IsActive="{Binding ElementName=ctlElements, Path=Visibility, Converter={StaticResource ProfileLoading}}" />
         
@@ -141,7 +144,7 @@
                    HorizontalAlignment="Right"
                    Foreground="{DynamicResource GrayBrush5}"/>
 		
-		<Grid x:Name="ctlElements">
+        <Grid x:Name="ctlElements">
             <Grid.Style>
                 <Style TargetType="FrameworkElement">
                     <Style.Triggers>
@@ -160,11 +163,11 @@
                     </Style.Triggers>
                 </Style>
             </Grid.Style>
-			<Grid.ColumnDefinitions>
-				<ColumnDefinition Width="1*" />
-				<ColumnDefinition Width="4*" />
-				<ColumnDefinition Width="1*" />
-			</Grid.ColumnDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="1*" />
+                <ColumnDefinition Width="4*" />
+                <ColumnDefinition Width="1*" />
+            </Grid.ColumnDefinitions>
 
             <StackPanel Grid.Column="1"
 						HorizontalAlignment="Stretch"
@@ -232,6 +235,6 @@
 					     KeyDown="ctlFormat_KeyDown"
 					     LostFocus="ctlFormat_LostFocus"/>
             </StackPanel>
-		</Grid>
-	</Grid>
+        </Grid>
+    </Grid>
 </MahApps.Metro.Controls:MetroWindow>

@@ -55,6 +55,7 @@ namespace Decchi.Core
             }
         }
 
+        private const int ERROR_CLASS_ALREADY_EXISTS = 1410;
         private static NativeMethods.WndProc m_wndProc;
         private static void CreateCustonWindow()
         {
@@ -63,7 +64,7 @@ namespace Decchi.Core
             wndClass.lpfnWndProc    = (m_wndProc = NativeMethods.DefWindowProc);
 
             if (NativeMethods.RegisterClass(ref wndClass) == 0 && 
-                Marshal.GetLastWin32Error() != NativeMethods.ERROR_CLASS_ALREADY_EXISTS)
+                Marshal.GetLastWin32Error() != ERROR_CLASS_ALREADY_EXISTS)
                 return;
 
             NativeMethods.CreateWindowEx(0, Program.lpClassName, String.Empty, 0, 0, 0, 0, 0, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero);

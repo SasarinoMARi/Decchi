@@ -60,6 +60,8 @@ namespace Decchi.Utilities.InteropServices
             {
                 this.Length = size;
                 this.Handle = Marshal.AllocHGlobal(this.Length);
+
+                NativeMethods.RtlZeroMemory(this.Handle, new IntPtr(size));
             }
             catch (Exception e)
             {
@@ -97,16 +99,7 @@ namespace Decchi.Utilities.InteropServices
     {
         public UnmanagedStruct()
         {
-            try
-            {
-                this.Length = Marshal.SizeOf(typeof(T));
-                this.Handle = Marshal.AllocHGlobal(this.Length);
-            }
-            catch (Exception e)
-            {
-                this.Free();
-                throw e;
-            }
+            this.Reallocate();
         }
         public UnmanagedStruct(T obj)
             : this()
@@ -122,6 +115,8 @@ namespace Decchi.Utilities.InteropServices
             {
                 this.Length = Marshal.SizeOf(typeof(T));
                 this.Handle = Marshal.AllocHGlobal(this.Length);
+
+                NativeMethods.RtlZeroMemory(this.Handle, new IntPtr(this.Length));
             }
             catch (Exception e)
             {

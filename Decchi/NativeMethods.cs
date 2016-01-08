@@ -79,20 +79,20 @@ namespace Decchi
         public static extern bool CloseHandle(IntPtr hObject);
 
         [DllImport("kernel32.dll")]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        public static extern bool DuplicateHandle(IntPtr hSourceProcessHandle, IntPtr hSourceHandle, IntPtr hTargetProcessHandle, [Out] out IntPtr lpTargetHandle, int dwDesiredAccess, [In, MarshalAs(UnmanagedType.Bool)] bool bInheritHandle, int dwOptions);
+
+        [DllImport("kernel32.dll")]
         public static extern int QueryDosDevice(string lpDeviceName, [Out] StringBuilder lpTargetPath, int ucchMax);
 
-        [DllImport("ntdll.dll")]
-        public static extern int NtQuerySystemInformation(int SystemInformationClass, IntPtr SystemInformation, int SystemInformationLength, ref int returnLength);
+        [DllImport("Kernel32.dll")]
+        public static extern void RtlZeroMemory(IntPtr dest, IntPtr size);
 
         [DllImport("ntdll.dll")]
-        public static extern int NtQueryObject(IntPtr ObjectHandle, ObjectInformationClass ObjectInformationClass, IntPtr ObjectInformation, int ObjectInformationLength, ref int returnLength);
+        public static extern uint NtQuerySystemInformation(int SystemInformationClass, IntPtr SystemInformation, int SystemInformationLength, [Out] out int returnLength);
 
-        public const int WM_GETTEXTLENGTH = 0x000E;
-        public const int WM_GETTEXT = 0x000D;
-        public const int STATUS_INFO_LENGTH_MISMATCH = -1073741820; //0xC0000004;
-        public const int DUPLICATE_SAME_ACCESS = 0x2;
-        public const int MAX_PATH = 260;
-        public const int ERROR_CLASS_ALREADY_EXISTS = 1410;
+        [DllImport("ntdll.dll")]
+        public static extern uint NtQueryObject(IntPtr ObjectHandle, ObjectInformationClass ObjectInformationClass, IntPtr ObjectInformation, int ObjectInformationLength, [Out] out int returnLength);
 
         [Flags]
         public enum ProcessAccessFlags : uint
@@ -240,13 +240,16 @@ namespace Decchi
         }
 
         //////////////////////////////////////////////////
+        
+        private const int WM_GETTEXTLENGTH = 0x000E;
+        private const int WM_GETTEXT = 0x000D;
 
         public static string GetWindowTitle(IntPtr handle)
         {
-            var length = NativeMethods.SendMessage(handle, NativeMethods.WM_GETTEXTLENGTH, IntPtr.Zero, IntPtr.Zero).ToInt32() + 1;
+            var length = NativeMethods.SendMessage(handle, WM_GETTEXTLENGTH, IntPtr.Zero, IntPtr.Zero).ToInt32() + 1;
             var lpString = new StringBuilder(length);
 
-            NativeMethods.SendMessage(handle, NativeMethods.WM_GETTEXT, new IntPtr(length), lpString);
+            NativeMethods.SendMessage(handle, WM_GETTEXT, new IntPtr(length), lpString);
 
             return lpString.ToString();
         }
