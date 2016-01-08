@@ -34,7 +34,7 @@ namespace Decchi.PublishingModule.Twitter
             var token  = Globals.Instance.TwitterToken;
             var secret = Globals.Instance.TwitterSecret;
 
-            if (string.IsNullOrEmpty(token) || string.IsNullOrEmpty(secret))
+            if (string.IsNullOrWhiteSpace(token) || string.IsNullOrWhiteSpace(secret))
             {
                 this.OAuth = new OAuth(Consumer_Key, Consumer_Secret);
                 return false;
@@ -55,7 +55,7 @@ namespace Decchi.PublishingModule.Twitter
         {
             if (songinfo == null || !songinfo.Loaded) return false;
             
-            var text = songinfo.ToString();
+            var text = songinfo.ToString(songinfo.Cover != null);
             if (string.IsNullOrEmpty(text)) return false;
 
             string mediaId = null;
@@ -137,7 +137,9 @@ namespace Decchi.PublishingModule.Twitter
                 {
                     try
                     {
-                        var req = OAuth.MakeRequest("GET", "https://api.twitter.com/1.1/account/verify_credentials.json");
+                        var id = Globals.Instance.TwitterToken;
+                        id = id.Substring(0, id.IndexOf('-'));
+                        var req = OAuth.MakeRequest("GET", "https://api.twitter.com/1.1/users/show.json?user_id=" + id);
 
                         using (var res = req.GetResponse())
                         using (var reader = new StreamReader(res.GetResponseStream()))

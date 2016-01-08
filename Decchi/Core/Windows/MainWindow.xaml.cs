@@ -117,6 +117,7 @@ namespace Decchi.Core.Windows
             // 두개 병렬처리
             var thdSongInfo = Task.Run<bool>(new Func<bool>(SongInfo.InitSonginfo));
             var thdTwitter  = Task.Run<TwitterUser>(new Func<TwitterUser>(TwitterCommunicator.Instance.RefrashMe));
+            var thdUpdate   = Task.Run(new Func<bool>(Program.CheckNewVersion));
 
             await thdSongInfo;
             await thdTwitter;
@@ -160,7 +161,7 @@ namespace Decchi.Core.Windows
             this.ctlProfileImage.ImageSource = image;
 
             // 업데이트를 확인함
-            if (await Task.Run(new Func<bool>(Program.CheckNewVersion)))
+            if (await thdUpdate)
                 this.ctlUpdate.Visibility = Visibility.Visible;
         }
 
@@ -189,7 +190,7 @@ namespace Decchi.Core.Windows
 
         private void ctlFormat_LostFocus( object sender, RoutedEventArgs e )
         {
-            if ( string.IsNullOrEmpty( this.ctlFormat.Text ) )
+            if ( string.IsNullOrWhiteSpace( this.ctlFormat.Text ) )
             {
                 Globals.Instance.PublishFormat = this.ctlFormat.Text = SongInfo.defaultFormat;
                 Globals.Instance.SaveSettings();

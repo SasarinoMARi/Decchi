@@ -18,6 +18,7 @@
 									BorderThickness="1"
 									WindowStartupLocation="CenterScreen"
                                     ShowIconOnTitleBar="False"
+                                    ShowMaxRestoreButton="False"
 									Activated="Window_Activated"
                                     StateChanged="MetroWindow_StateChanged">
 	<MahApps.Metro.Controls:MetroWindow.Resources>
@@ -66,13 +67,14 @@
             <MahApps.Metro.Controls:Flyout x:Name="ctlSetting"
                                            Header="설정"
                                            Position="Right"
-                                           Width="160"
-                                           Theme="Inverse"
-                                           AnimateOpacity="True">
-                <ScrollViewer Margin="0 5 0 5">
+                                           Width="150"
+                                           Theme="Adapt"
+                                           AnimateOpacity="True"
+                                           IsModal="True">
+                <ScrollViewer Margin="0 0 0 5">
                     <DockPanel>
                         <StackPanel DockPanel.Dock="Top">
-                            <GroupBox Header="부팅시 뎃찌 실행"
+                            <GroupBox Header="뎃찌 자동 실행"
                                       ToolTip="켬퓨터를 키자마자 뎃찌를 실행해요!">
                                 <MahApps.Metro.Controls:ToggleSwitch IsChecked="{Binding Source={x:Static Decchi:Globals.Instance}, Path=WinStartup, Mode=TwoWay}"/>
                             </GroupBox>
@@ -95,12 +97,14 @@
                                              PreviewKeyUp="ctlShortcut_PreviewKeyUp"
                                              GotFocus="ctlShortcut_GotFocus"
                                              LostFocus="ctlShortcut_LostFocus"/>
+
+                                    <GroupBox Header="전제화면 아닐때만"
+                                              ToolTip="전체화면일때 단축키로 뎃찌!! 하지 않아요"
+                                              IsEnabled="{Binding ElementName=ctlUseShortcut, Path=IsChecked}"
+                                              Margin="0 5 0 0">
+                                        <MahApps.Metro.Controls:ToggleSwitch IsChecked="{Binding Source={x:Static Decchi:Globals.Instance}, Path=SkipFullscreen, Mode=TwoWay}"/>
+                                    </GroupBox>
                                 </StackPanel>
-                            </GroupBox>
-                            <GroupBox Header="전체화면에서 사용안함"
-                                      ToolTip="전체화면일때 뎃찌!! 하지 않아요"
-                                      IsEnabled="{Binding ElementName=ctlUseShortcut, Path=IsChecked}">
-                                <MahApps.Metro.Controls:ToggleSwitch IsChecked="{Binding Source={x:Static Decchi:Globals.Instance}, Path=SkipFullscreen, Mode=TwoWay}"/>
                             </GroupBox>
                             <GroupBox Header="로컬 파일 인식"
                                       ToolTip="로컬 파일을 인식해서 트윗해요! 아직 조금 불안정해요!">
@@ -108,10 +112,16 @@
                             </GroupBox>
                         </StackPanel>
 
-                        <TextBlock DockPanel.Dock="Bottom"
-                                   HorizontalAlignment="Center"
-                                   VerticalAlignment="Bottom"
-                                   Text="Sasarino MARi"/>
+                        <StackPanel Margin="0 5 0 0">
+                            <TextBlock DockPanel.Dock="Bottom"
+                                       HorizontalAlignment="Center"
+                                       VerticalAlignment="Bottom"
+                                       Text="Sasarino MARi"/>
+                            <TextBlock DockPanel.Dock="Bottom"
+                                       HorizontalAlignment="Center"
+                                       VerticalAlignment="Bottom"
+                                       Text="RyuaNerin"/>
+                        </StackPanel>
                     </DockPanel>
                 </ScrollViewer>
             </MahApps.Metro.Controls:Flyout>
@@ -132,25 +142,24 @@
                    Foreground="{DynamicResource GrayBrush5}"/>
 		
 		<Grid x:Name="ctlElements">
-			<Grid.Style>
-				<Style TargetType="FrameworkElement">
-					<Style.Triggers>
-						<Trigger Property="Visibility" Value="Visible">
-							<Trigger.EnterActions>
-								<BeginStoryboard>
-									<Storyboard>
-										<DoubleAnimation Storyboard.TargetProperty="Opacity"
-														 From="0.0"
-														 To="1.0"
-														 Duration="0:0:0.5"/>
-									</Storyboard>
-								</BeginStoryboard>
-							</Trigger.EnterActions>
-						</Trigger>
-					</Style.Triggers>
-				</Style>
-			</Grid.Style>
-
+            <Grid.Style>
+                <Style TargetType="FrameworkElement">
+                    <Style.Triggers>
+                        <Trigger Property="Visibility" Value="Visible">
+                            <Trigger.EnterActions>
+                                <BeginStoryboard>
+                                    <Storyboard>
+                                        <DoubleAnimation Storyboard.TargetProperty="Opacity"
+                                                         From="0.0"
+                                                         To="1.0"
+                                                         Duration="0:0:0.5"/>
+                                    </Storyboard>
+                                </BeginStoryboard>
+                            </Trigger.EnterActions>
+                        </Trigger>
+                    </Style.Triggers>
+                </Style>
+            </Grid.Style>
 			<Grid.ColumnDefinitions>
 				<ColumnDefinition Width="1*" />
 				<ColumnDefinition Width="4*" />

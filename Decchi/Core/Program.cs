@@ -19,12 +19,17 @@ namespace Decchi.Core
         static void Main()
         {
             var hwnd = NativeMethods.FindWindow(lpClassName, null);
+
             if (hwnd == IntPtr.Zero)
             {
                 CreateCustonWindow();
 
+                ServicePointManager.Expect100Continue = false;
+                ServicePointManager.UseNagleAlgorithm = false;
                 HttpWebRequest.DefaultCachePolicy   = new RequestCachePolicy(RequestCacheLevel.NoCacheNoStore);
+#if !DEBUG
                 HttpWebRequest.DefaultWebProxy      = null;
+#endif
 
                 AppDomain.CurrentDomain.AssemblyResolve += CurrentDomain_AssemblyResolve;
                 App.Main();
@@ -37,8 +42,15 @@ namespace Decchi.Core
                 using (var proc = Process.GetProcessById(pid))
                 {
                     hwnd = proc.MainWindowHandle;
-                    if (hwnd != IntPtr.Zero && !NativeMethods.IsIconic(hwnd))
+                    if (hwnd != IntPtr.Zero)
+                    {
+                        if (NativeMethods.IsIconic(hwnd))
+                            NativeMethods.ShowWindow(hwnd, NativeMethods.ShowWindowCommands.Restore);
+                        else
+                            NativeMethods.ShowWindow(hwnd, NativeMethods.ShowWindowCommands.Normal);
+
                         NativeMethods.SetForegroundWindow(hwnd);
+                    }
                 }
             }
         }

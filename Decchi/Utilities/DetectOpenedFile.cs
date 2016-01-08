@@ -141,7 +141,7 @@ namespace Decchi.Utilities
 
                     ipTemp = IsX64 ? new IntPtr(objObjectType.Name.Buffer.ToInt64() >> 32) : objObjectType.Name.Buffer;
 
-                    if (Marshal.PtrToStringUni(ipTemp, objObjectType.Name.Length >> 1) != "File") return null;
+                    if (ipTemp == IntPtr.Zero || Marshal.PtrToStringUni(ipTemp, objObjectType.Name.Length >> 1) != "File") return null;
                 }
 
                 //////////////////////////////////////////////////

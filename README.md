@@ -11,29 +11,24 @@
 
 ## 지원 클라이언트 및 파싱 구현 톺아보기
 
-|표시|설명|
-|:-:|---|
-|O|지원|
-|X|지원 안함|
-|F|컴퓨터에 저장된 파일일때만 지원|
-|**클라이언트 이름**|플레이어 기본 설정일 때 지원|
+### 로컬 파일 인식 설정
 
-- - -
+- 현재 컴퓨터에서 저장된 파일을 재생하는지 인식하고 성공하면 그 음악 파일을 통해서 트윗해요!
+
+### 기본 인식 (기본 설정에서 인식)
 
 |클라이언트 이름|곡 이름|아티스트 이름|앨범 이름|앨범 아트|
 |---|:-:|:-:|:-:|:-:|
-|Windows Media Player|O|O|X|F|
-|곰오디오|O|O|X|F|
+|Windows Media Player|O|O|||
+|곰오디오|O|O|||
 |iTunes|O|O|O|O|
-|알송|O|O|X|F|
-|Melon|O|O|X|F|
-|**Winamp**|O|O|X|F|
-|**AIMP3**|O|O|X|F|
-|**Foobar 2000**|O|O|O|F|
-|웹 브라우저에서 보는 유튜브|O|X|X|X|
-|웹 브라우저에서 보는 ニコニコ動画|O|X|X|X|
-
-
+|알송|O|O|||
+|Melon|O|O|||
+|Winamp|O|O|||
+|AIMP3|O|O|||
+|Foobar 2000|O|O|O||
+|웹 브라우저에서 보는 유튜브|O|||URL|
+|웹 브라우저에서 보는 ニコニコ動画|O|||URL|
 
 ## 설치
 
@@ -84,3 +79,15 @@
 |夜もすがら君想ふ|Chalili|-|곰오디오|***Chalili***의 ***夜もすがら君想ふ***을 듣고 있어요! ***#뎃찌NP*** - ***곰오디오***|
 |[beatmania IIDX 23 copula] STARLIGHT DANCEHALL SPA|-|-|Youtube|***[beatmania IIDX 23 copula] STARLIGHT DANCEHALL SPA***을 듣고 있어요! ***#뎃찌NP*** - ***Youtube***|
 |モンタージュガー|ヒトリエ|ルームシック・ガールズエスケープ|Alsong|***ヒトリエ***의 ***モンタージュガール*** (***ルームシック・ガールズエスケープ***)을 듣고 있어요! ***#뎃찌NP*** - ***Alsong***|
+
+## LICENSE
+
+- 뎃찌는 [MIT LICENSE](LICENSE.txt) 를 따라요
+
+- 사용된 오픈소스
+
+ - [MahApps.Metro](Decchi\ExternalLibrarys\Hardcodet.NotifyIcon.Wpf-1.0.5) (입맛에 맞게 수정됨. 소스코드 포함)
+
+ - [Hardcodet.NotifyIcon](Decchi\ExternalLibrarys\Hardcodet.NotifyIcon.Wpf-1.0.5)
+
+ - [TabLib.Portable](Decchi\ExternalLibrarys\TagLib.Portable-1.0.3)

@@ -492,11 +492,15 @@ namespace Decchi.ParsingModule
             }
         }
 
-        public override string ToString( )
+        public override string ToString()
+        {
+            return ToString(false);
+        }
+        public string ToString(bool withLink)
         {
             try
             {
-                return ToFormat(Globals.Instance.PublishFormat, this);
+                return ToFormat(Globals.Instance.PublishFormat, this, false, withLink ? 125 : 140);
             }
             catch
             {
@@ -504,7 +508,8 @@ namespace Decchi.ParsingModule
             }
         }
 
-        private static string ToFormat(string format, SongInfo info, bool checkFormat = false)
+        // 트윗수 길이 맞추는 작업은 나중에하기
+        private static string ToFormat(string format, SongInfo info, bool checkFormat = false, int length = 140)
         {
             StringBuilder			total	= !checkFormat ? new StringBuilder() : null;
             

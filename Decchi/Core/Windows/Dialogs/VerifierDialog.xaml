@@ -18,6 +18,7 @@
                    FontSize="{DynamicResource DialogMessageFontSize}"
                    Text="핀코드를 입력하세요"
                    TextWrapping="Wrap"
+                   HorizontalAlignment="Center"
                    Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Decchi.Core.Windows.Dialogs:VerifierDialog, Mode=FindAncestor}, UpdateSourceTrigger=PropertyChanged}" />
         
         <TextBox Grid.Row="1"
@@ -28,12 +29,13 @@
                  x:Name="ctlText"
                  MaxLength="7"
                  Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Decchi.Core.Windows.Dialogs:VerifierDialog, Mode=FindAncestor}, UpdateSourceTrigger=PropertyChanged}"
+                 TextAlignment="Center"
                  PreviewTextInput="ctlText_PreviewTextInput"
                  DataObject.Pasting="ctlText_DataObject_Pasting"/>
 
         <StackPanel Grid.Row="2"
                     Orientation="Horizontal"
-                    HorizontalAlignment="Right"
+                    HorizontalAlignment="Center"
                     Height="85">
             <Button x:Name="ctlOK"
                     Height="35"
@@ -48,7 +50,6 @@
                     Height="35"
                     MinWidth="80"
                     Content="취소"
-                    Margin="5 0 5 0"
                     Click="ctlCancel_Click"
                     KeyDown="ctlCancel_KeyDown"/>
         </StackPanel>

@@ -18,7 +18,8 @@
                    FontSize="{DynamicResource DialogMessageFontSize}"
                    Text="클라이언트를 선택해주세요"
                    TextWrapping="Wrap"
-                   Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Decchi.Core.Windows.Dialogs:VerifierDialog, Mode=FindAncestor}, UpdateSourceTrigger=PropertyChanged}" />
+                   Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Decchi.Core.Windows.Dialogs:VerifierDialog, Mode=FindAncestor}, UpdateSourceTrigger=PropertyChanged}"
+                   HorizontalAlignment="Center"/>
 
         <ListBox Grid.Row="1"
                  x:Name="ctlList"
@@ -58,7 +59,7 @@
 
         <StackPanel Grid.Row="2"
                     Orientation="Horizontal"
-                    HorizontalAlignment="Right"
+                    HorizontalAlignment="Center"
                     Height="85">
             <Button x:Name="ctlOK"
                     Height="35"
@@ -74,7 +75,6 @@
                     Height="35"
                     MinWidth="80"
                     Content="취소"
-                    Margin="5 0 5 0"
                     KeyDown="ctlCancel_KeyDown"
                     Click="ctlCancel_Click"/>
         </StackPanel>

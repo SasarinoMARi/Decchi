@@ -166,7 +166,7 @@ namespace Decchi
 
         [PropAttr]
         public string TwitterToken { get; set; }
-        
+
         [PropAttr]
         public string TwitterSecret { get; set; }
 
@@ -174,7 +174,7 @@ namespace Decchi
         [PropAttr]
         public  string PublishFormat
         {
-            get { return string.IsNullOrEmpty(this.m_publishFormat) ? (this.m_publishFormat = SongInfo.defaultFormat) : this.m_publishFormat; }
+            get { return string.IsNullOrWhiteSpace(this.m_publishFormat) ? SongInfo.defaultFormat : this.m_publishFormat; }
             set { this.m_publishFormat = value; }
         }
 

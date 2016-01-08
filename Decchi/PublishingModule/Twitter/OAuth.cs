@@ -50,6 +50,9 @@ namespace Decchi.PublishingModule.Twitter
             var uri = new Uri(url);
             var dic = new SortedDictionary<string, object>();
 
+            if (!string.IsNullOrEmpty(uri.Query))
+                OAuth.AddDictionary(dic, uri.Query);
+
             if (data != null)
                 OAuth.AddDictionary(dic, data);
 
@@ -69,7 +72,7 @@ namespace Decchi.PublishingModule.Twitter
             var hashData = string.Format(
                     "{0}&{1}&{2}",
                     method.ToUpper(),
-                    Uri.EscapeDataString(url),
+                    Uri.EscapeDataString(string.Format("{0}{1}{2}{3}", uri.Scheme, Uri.SchemeDelimiter, uri.Host, uri.AbsolutePath)),
                     Uri.EscapeDataString(OAuth.ToString(dic)));
 
             using (var hash = new HMACSHA1(Encoding.UTF8.GetBytes(hashKey)))
@@ -151,6 +154,46 @@ namespace Decchi.PublishingModule.Twitter
                 sb.Remove(sb.Length - 1, 1);
 
             return sb.ToString();
+        }
+
+        private static void AddDictionary(IDictionary<string, object> dic, string query)
+        {
+            if (!string.IsNullOrEmpty(query) || (query.Length > 1))
+            {
+                int read = 0;
+                int find = 0;
+
+                if (query[0] == '?')
+                    read = 1;
+
+                string key, val;
+
+                while (read < query.Length)
+                {
+                    find = query.IndexOf('=', read);
+                    key = query.Substring(read, find - read);
+                    read = find + 1;
+
+                    find = query.IndexOf('&', read);
+                    if (find > 0)
+                    {
+                        if (find - read == 1)
+                            val = null;
+                        else
+                            val = query.Substring(read, find - read);
+
+                        read = find + 1;
+                    }
+                    else
+                    {
+                        val = query.Substring(read);
+
+                        read = query.Length;
+                    }
+
+                    dic[key] = val;
+                }
+            }
         }
 
         private static void AddDictionary(IDictionary<string, object> dic, object values)
