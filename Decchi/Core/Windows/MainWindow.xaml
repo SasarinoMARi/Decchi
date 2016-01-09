@@ -64,69 +64,86 @@
     <MahApps.Metro.Controls:MetroWindow.Flyouts>
         <MahApps.Metro.Controls:FlyoutsControl>
             <MahApps.Metro.Controls:Flyout x:Name="ctlSetting"
-                                           Header="설정"
                                            Position="Right"
-                                           Width="150"
+                                           Width="160"
                                            Theme="Adapt"
                                            AnimateOpacity="True"
-                                           IsModal="True">
-                <ScrollViewer Margin="0 0 0 5">
-                    <DockPanel>
-                        <StackPanel DockPanel.Dock="Top">
-                            <GroupBox Header="뎃찌 자동 실행"
-                                      ToolTip="켬퓨터를 키자마자 뎃찌를 실행해요!">
-                                <MahApps.Metro.Controls:ToggleSwitch IsChecked="{Binding Source={x:Static Decchi:Globals.Instance}, Path=WinStartup, Mode=TwoWay}"/>
-                            </GroupBox>
-                            <GroupBox Header="최소화로 시작"
-                                      ToolTip="뎃찌를 키면 바로 최소화해요!">
-                                <MahApps.Metro.Controls:ToggleSwitch IsChecked="{Binding Source={x:Static Decchi:Globals.Instance}, Path=TrayStart, Mode=TwoWay}"/>
-                            </GroupBox>
-                            <GroupBox Header="단축키 사용"
-                                      ToolTip="어디서든 키보드 입력 한번으로 뎃찌!! 할 수 있어요!">
+                                           IsModal="True"
+                                           CloseButtonVisibility="Collapsed"
+                                           TitleVisibility="Collapsed">
+                <Grid Margin="0 0 0 5">
+                    <Grid.RowDefinitions>
+                        <RowDefinition/>
+                        <RowDefinition Height="auto"/>
+                    </Grid.RowDefinitions>
+                    
+                    <TabControl Margin="0">
+                        <TabItem Header="뎃찌">
+                            <ScrollViewer>
                                 <StackPanel>
-                                    <MahApps.Metro.Controls:ToggleSwitch x:Name="ctlUseShortcut"
-                                                                         IsChecked="{Binding Source={x:Static Decchi:Globals.Instance}, Path=UseShortcut, Mode=TwoWay}"/>
-                                    <TextBox x:Name="ctlShortcut"
-                                             Grid.Row="1"
-                                             Text="{Binding Source={x:Static Decchi:Globals.Instance}, Path=Shortcut, Mode=OneWay}"
-                                             IsEnabled="{Binding ElementName=ctlUseShortcut, Path=IsChecked}"
-                                             IsReadOnly="True"
-                                             TextAlignment="Center"
-                                             UndoLimit="0"
-                                             PreviewKeyUp="ctlShortcut_PreviewKeyUp"
-                                             GotFocus="ctlShortcut_GotFocus"
-                                             LostFocus="ctlShortcut_LostFocus"/>
-
-                                    <GroupBox Header="전제화면 아닐때만"
-                                              ToolTip="전체화면일때 단축키로 뎃찌!! 하지 않아요"
-                                              IsEnabled="{Binding ElementName=ctlUseShortcut, Path=IsChecked}"
-                                              Margin="0 5 0 0">
-                                        <MahApps.Metro.Controls:ToggleSwitch IsChecked="{Binding Source={x:Static Decchi:Globals.Instance}, Path=SkipFullscreen, Mode=TwoWay}"/>
+                                    <GroupBox Header="뎃찌 자동 실행"
+                                              ToolTip="켬퓨터를 키자마자 뎃찌를 실행해요!">
+                                        <MahApps.Metro.Controls:ToggleSwitch IsChecked="{Binding Source={x:Static Decchi:Globals.Instance}, Path=WinStartup, Mode=TwoWay}"/>
+                                    </GroupBox>
+                                    <GroupBox Header="최소화로 시작"
+                                              ToolTip="뎃찌를 키면 바로 최소화해요!">
+                                        <MahApps.Metro.Controls:ToggleSwitch IsChecked="{Binding Source={x:Static Decchi:Globals.Instance}, Path=TrayStart, Mode=TwoWay}"/>
                                     </GroupBox>
                                 </StackPanel>
-                            </GroupBox>
-                            <GroupBox Header="로컬 파일 인식"
-                                      ToolTip="로컬 파일을 인식해서 트윗해요! 아직 조금 불안정해요!">
-                                <MahApps.Metro.Controls:ToggleSwitch IsChecked="{Binding Source={x:Static Decchi:Globals.Instance}, Path=DetectLocalFile, Mode=TwoWay}"/>
-                            </GroupBox>
-                            <GroupBox Header="크롬 링크 인식"
-                                      ToolTip="크롬 링크를 인식해서 추가해줘요!">
-                                <MahApps.Metro.Controls:ToggleSwitch IsChecked="{Binding Source={x:Static Decchi:Globals.Instance}, Path=DetectChromeUrl, Mode=TwoWay}"/>
-                            </GroupBox>
-                        </StackPanel>
+                            </ScrollViewer>
+                        </TabItem>
+                        <TabItem Header="뎃찌!!">
+                            <ScrollViewer>
+                                <StackPanel>
+                                    <GroupBox Header="단축키 사용"
+                                                ToolTip="어디서든 키보드 입력 한번으로 뎃찌!! 할 수 있어요!">
+                                        <StackPanel>
+                                            <MahApps.Metro.Controls:ToggleSwitch x:Name="ctlUseShortcut"
+                                                                                    IsChecked="{Binding Source={x:Static Decchi:Globals.Instance}, Path=UseShortcut, Mode=TwoWay}"/>
+                                            <TextBox x:Name="ctlShortcut"
+                                                        Grid.Row="1"
+                                                        Text="{Binding Source={x:Static Decchi:Globals.Instance}, Path=Shortcut, Mode=OneWay}"
+                                                        IsEnabled="{Binding ElementName=ctlUseShortcut, Path=IsChecked}"
+                                                        IsReadOnly="True"
+                                                        TextAlignment="Center"
+                                                        UndoLimit="0"
+                                                        PreviewKeyUp="ctlShortcut_PreviewKeyUp"
+                                                        GotFocus="ctlShortcut_GotFocus"
+                                                        LostFocus="ctlShortcut_LostFocus"/>
 
-                        <StackPanel Margin="0 5 0 0">
-                            <TextBlock DockPanel.Dock="Bottom"
+                                            <GroupBox Header="전제화면 아닐때만"
+                                                        ToolTip="전체화면일때 단축키로 뎃찌!! 하지 않아요"
+                                                        IsEnabled="{Binding ElementName=ctlUseShortcut, Path=IsChecked}"
+                                                        Margin="0 5 0 0">
+                                                <MahApps.Metro.Controls:ToggleSwitch IsChecked="{Binding Source={x:Static Decchi:Globals.Instance}, Path=SkipFullscreen, Mode=TwoWay}"/>
+                                            </GroupBox>
+                                        </StackPanel>
+                                    </GroupBox>
+                                    <GroupBox Header="로컬 파일 인식"
+                                                ToolTip="로컬 파일을 인식해서 트윗해요! 아직 조금 불안정해요!">
+                                        <MahApps.Metro.Controls:ToggleSwitch IsChecked="{Binding Source={x:Static Decchi:Globals.Instance}, Path=DetectLocalFile, Mode=TwoWay}"/>
+                                    </GroupBox>
+                                    <GroupBox Header="크롬 링크 인식"
+                                              ToolTip="크롬 링크를 인식해서 추가해줘요!">
+                                        <MahApps.Metro.Controls:ToggleSwitch IsChecked="{Binding Source={x:Static Decchi:Globals.Instance}, Path=DetectChromeUrl, Mode=TwoWay}"/>
+                                    </GroupBox>
+                                </StackPanel>
+                            </ScrollViewer>
+                        </TabItem>
+                    </TabControl>
+
+
+                    <StackPanel Grid.Row="1"  Margin="0 5 0 0">
+                        <TextBlock DockPanel.Dock="Bottom"
                                        HorizontalAlignment="Center"
                                        VerticalAlignment="Bottom"
                                        Text="Sasarino MARi"/>
-                            <TextBlock DockPanel.Dock="Bottom"
+                        <TextBlock DockPanel.Dock="Bottom"
                                        HorizontalAlignment="Center"
                                        VerticalAlignment="Bottom"
                                        Text="RyuaNerin"/>
-                        </StackPanel>
-                    </DockPanel>
-                </ScrollViewer>
+                    </StackPanel>
+                </Grid>
             </MahApps.Metro.Controls:Flyout>
         </MahApps.Metro.Controls:FlyoutsControl>
     </MahApps.Metro.Controls:MetroWindow.Flyouts>

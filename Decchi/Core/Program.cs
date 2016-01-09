@@ -45,7 +45,10 @@ namespace Decchi.Core
                     if (hwnd != IntPtr.Zero)
                     {
                         if (NativeMethods.IsIconic(hwnd))
+                        {
+                            NativeMethods.ShowWindow(hwnd, NativeMethods.ShowWindowCommands.Show);
                             NativeMethods.ShowWindow(hwnd, NativeMethods.ShowWindowCommands.Restore);
+                        }
                         else
                             NativeMethods.ShowWindow(hwnd, NativeMethods.ShowWindowCommands.Normal);
 

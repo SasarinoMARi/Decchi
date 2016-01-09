@@ -357,7 +357,7 @@ namespace Decchi.ParsingModule
 
             //////////////////////////////////////////////////
             // 타이틀 파싱
-            if (hwnd != IntPtr.Zero)
+            if (hwnd != IntPtr.Zero && this.m_regex != null)
             {
                 var str = NativeMethods.GetWindowTitle(hwnd);
                 if (string.IsNullOrEmpty(str)) return false;
@@ -378,7 +378,8 @@ namespace Decchi.ParsingModule
                 return true;
             }
 
-            // Title
+            //////////////////////////////////////////////////
+            // Process 돌려가면서 일치하는 정규식을 찾는다.
             if (this.m_regex != null)
             {
                 var procs = Process.GetProcesses();
