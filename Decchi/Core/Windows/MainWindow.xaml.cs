@@ -94,7 +94,7 @@ namespace Decchi.Core.Windows
 
                 var key = (string)await MainWindow.Instance.ShowBaseMetroDialog(new VerifierDialog(this));
 
-                if (string.IsNullOrEmpty(key))
+                if (string.IsNullOrWhiteSpace(key))
                 {
                     await this.ShowMessageAsync("X(", "트위터에 로그인 하지 못했어요");
 
@@ -107,6 +107,14 @@ namespace Decchi.Core.Windows
                 TwitterCommunicator.Instance.OAuth.User.Secret = requestToken.Secret;
 
                 var userToken = await Task.Run(new Func<OAuth.TokenPair>(() => TwitterCommunicator.Instance.OAuth.AccessToken(key)));
+                if (userToken == null)
+                {
+                    await this.ShowMessageAsync("X(", "트위터에 로그인 하지 못했어요");
+
+                    this.Close();
+
+                    return;
+                }
 
                 Globals.Instance.TwitterToken  = TwitterCommunicator.Instance.OAuth.User.Token  = userToken.Token;
                 Globals.Instance.TwitterSecret = TwitterCommunicator.Instance.OAuth.User.Secret = userToken.Secret;
