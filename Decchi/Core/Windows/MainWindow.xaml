@@ -19,6 +19,7 @@
 									WindowStartupLocation="CenterScreen"
                                     ShowIconOnTitleBar="False"
                                     ShowMaxRestoreButton="False"
+                                    Topmost="{Binding Source={x:Static Decchi:Globals.Instance}, Path=TopMost, Mode=TwoWay}"
 									Activated="Window_Activated"
                                     StateChanged="MetroWindow_StateChanged">
     <MahApps.Metro.Controls:MetroWindow.Resources>
@@ -88,6 +89,10 @@
                                     <GroupBox Header="최소화로 시작"
                                               ToolTip="뎃찌를 키면 바로 최소화해요!">
                                         <MahApps.Metro.Controls:ToggleSwitch IsChecked="{Binding Source={x:Static Decchi:Globals.Instance}, Path=TrayStart, Mode=TwoWay}"/>
+                                    </GroupBox>
+                                    <GroupBox Header="데찌를 항상 위로"
+                                              ToolTip="뎃찌가 모든 창 위에 떠요!">
+                                        <MahApps.Metro.Controls:ToggleSwitch IsChecked="{Binding Source={x:Static Decchi:Globals.Instance}, Path=TopMost, Mode=TwoWay}"/>
                                     </GroupBox>
                                 </StackPanel>
                             </ScrollViewer>

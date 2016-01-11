@@ -261,6 +261,14 @@ namespace Decchi
             set { this.SetValue(DetectChromeUrlProp, value); }
         }
 
+        private static readonly DependencyProperty TopMostProp = DependencyProperty.Register("TopMost", typeof(bool), typeof(Globals), new FrameworkPropertyMetadata(false));
+        [PropAttr]
+        public bool TopMost
+        {
+            get { return (bool)this.GetValue(TopMostProp); }
+            set { this.SetValue(TopMostProp, value); }
+        }
+
         public struct ShortcutInfo
         {
             public static readonly ShortcutInfo Default = new ShortcutInfo(ModifierKeys.Control, Key.Q);
