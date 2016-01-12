@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
@@ -29,11 +30,14 @@ namespace Decchi.Core.Windows
             this.m_formatErr = Brushes.Red;
 
             if (Globals.Instance.TrayStart)
-            {
-                this.Hide();
-                this.ctlTray.ShowBalloonTip(this.Title, "트레이에서 실행 중이에요!", BalloonIcon.Info);
-                this.WindowState = WindowState.Minimized;
-            }
+                this.GoTray();
+
+            this.ctlTray.Visibility = Globals.Instance.TrayVisible ? Visibility.Visible : Visibility.Collapsed;
+        }
+
+        private void MetroWindow_Deactivated(object sender, EventArgs e)
+        {
+            this.ctlPlugins.IsOpen = this.ctlSetting.IsOpen = false;
         }
 
         private void ctlUpdate_Click(object sender, RoutedEventArgs e)
@@ -46,25 +50,81 @@ namespace Decchi.Core.Windows
             Globals.OpenWebSite("http://usagination.github.io/Decchi/");
         }
 
+        private void ctlPluginHelp_Click(object sender, RoutedEventArgs e)
+        {
+            this.ctlPlugins.IsOpen = false;
+            Globals.OpenWebSite("https://github.com/Usagination/Decchi/blob/master/README.md#뎃찌EXT");
+        }
+
+        private void ctlTrayVisible_IsCheckedChanged(object sender, EventArgs e)
+        {
+            this.ctlTray.Visibility = Globals.Instance.TrayVisible ? Visibility.Visible : Visibility.Collapsed;
+        }
+
         private void ctlTray_TrayLeftMouseUp(object sender, RoutedEventArgs e)
         {
-            this.Show();
-            this.WindowState = System.Windows.WindowState.Normal;
-            this.Focus();
+            this.FromTray();
+        }
+
+        private void MetroWindow_Closing(object sender, CancelEventArgs e)
+        {
+            if (Globals.Instance.TrayWhenClose)
+            {
+                this.GoTray();
+                e.Cancel = true;
+            }
         }
 
         private void MetroWindow_StateChanged(object sender, EventArgs e)
         {
-            if (this.WindowState == System.Windows.WindowState.Minimized)
-            {
-                this.Hide();
-                this.ctlTray.ShowBalloonTip(this.Title, "트레이에서 실행 중이에요!", BalloonIcon.Info);
-            }
+            if (Globals.Instance.TrayWhenMinimize && this.WindowState == WindowState.Minimized)
+                this.GoTray();
+        }
+
+        private void GoTray()
+        {
+            if (!Globals.Instance.TrayVisible)
+                this.ctlTray.Visibility = Visibility.Visible;
+
+            this.Hide();
+            this.ctlTray.ShowBalloonTip(this.Title, "트레이에서 실행 중이에요!", BalloonIcon.Info);
+        }
+
+        private void FromTray()
+        {
+            if (!Globals.Instance.TrayVisible)
+                this.ctlTray.Visibility = Visibility.Collapsed;
+
+            this.Show();
+            this.WindowState = WindowState.Normal;
+            this.Focus();
+        }
+
+        private void ctlTrayShow_Click(object sender, RoutedEventArgs e)
+        {
+            this.FromTray();
+        }
+
+        private void ctlTrayDecchi_Click(object sender, RoutedEventArgs e)
+        {
+            Task.Run(new Action(DecchiCore.Run));
+        }
+
+        private void ctlExit_Click(object sender, RoutedEventArgs e)
+        {
+            App.Current.Shutdown();
         }
 
         private void ctlShowSetting_Click(object sender, RoutedEventArgs e)
         {
             this.ctlSetting.IsOpen = !this.ctlSetting.IsOpen;
+            this.ctlPlugins.IsOpen = false;
+        }
+
+        private void ctlShowPlugin_Click(object sender, RoutedEventArgs e)
+        {
+            this.ctlSetting.IsOpen = false;
+            this.ctlPlugins.IsOpen = !this.ctlPlugins.IsOpen;
         }
 
         public bool SetButtonState( bool progress )
@@ -78,13 +138,9 @@ namespace Decchi.Core.Windows
         {
             Task.Run( new Action( DecchiCore.Run ) );
         }
-
-        private bool m_firstActivated = true;
-        private async void Window_Activated( object sender, EventArgs e )
+        
+        private async void MetroWindow_Loaded(object sender, RoutedEventArgs e)
         {
-            if ( !this.m_firstActivated ) return;
-            this.m_firstActivated = false;
-
             // 왜인지 몰라도 Login 함수에 async 시켜서 실행하면 씹고 다음라인 실행하더라
             if (!DecchiCore.Login())
             {
@@ -122,15 +178,12 @@ namespace Decchi.Core.Windows
             }
 
             // 두개 병렬처리
-            var thdSongInfo = Task.Run<bool>(new Func<bool>(SongInfo.InitSonginfo));
-            var thdTwitter  = Task.Run<TwitterUser>(new Func<TwitterUser>(TwitterCommunicator.Instance.RefrashMe));
+            var thdSongInfo = Task.Run(new Func<bool>(SongInfo.InitSonginfo));
+            var thdTwitter  = Task.Run(new Func<TwitterUser>(TwitterCommunicator.Instance.RefrashMe));
             var thdUpdate   = Task.Run(new Func<bool>(Program.CheckNewVersion));
 
-            await thdSongInfo;
-            await thdTwitter;
-
             // 서버에서 SongInfo 데이터를 가져옴
-            if (!thdSongInfo.Result)
+            if (!await thdSongInfo)
             {
                 await this.ShowMessageAsync("X(", "서버에 연결하지 못했어요");
 
@@ -140,7 +193,7 @@ namespace Decchi.Core.Windows
             }
 
             // 폼에 트위터 유저 정보 매핑
-            var me = thdTwitter.Result;
+            var me = await thdTwitter;
             if ( me == null )
             {
                 await this.ShowMessageAsync("X(", "트위터에서 정보를 가져오지 못했어요");
@@ -163,10 +216,16 @@ namespace Decchi.Core.Windows
             image.BeginInit();
             image.UriSource = new Uri(me.ProfileImageUrl.Replace("_normal", ""));
             image.EndInit();
-            image.DownloadCompleted += (ls, le) => { this.ctlElements.Visibility = Visibility.Visible; DecchiCore.Inited(); };
+            image.DownloadCompleted += (ls, le) =>
+            {
+                this.ctlShowPlugin.IsEnabled = this.ctlShowSetting.IsEnabled = true;
+                this.ctlElements.Visibility = Visibility.Visible;
+                DecchiCore.Inited();
+            };
 
             this.ctlProfileImage.ImageSource = image;
-
+            this.ctlPluginsList.ItemsSource = SongInfo.PluginInfos;
+            
             // 업데이트를 확인함
             if (await thdUpdate)
                 this.ctlUpdate.Visibility = Visibility.Visible;
@@ -245,6 +304,15 @@ namespace Decchi.Core.Windows
         private void ctlShortcut_LostFocus(object sender, RoutedEventArgs e)
         {
             DecchiCore.DisableKeyEvent = false;
+        }
+
+        private void ctlPluginInstall_MouseUp(object sender, MouseButtonEventArgs e)
+        {
+            this.ctlPlugins.IsOpen = false;
+
+            var songinfo = (sender as FrameworkElement).Tag as SongInfo;
+            
+            Globals.OpenWebSite(songinfo.PluginUrl);
         }
     }
 }

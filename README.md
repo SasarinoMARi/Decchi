@@ -80,6 +80,16 @@
 |[beatmania IIDX 23 copula] STARLIGHT DANCEHALL SPA|-|-|Youtube|***[beatmania IIDX 23 copula] STARLIGHT DANCEHALL SPA***을 듣고 있어요! ***#뎃찌NP*** - ***Youtube***|
 |モンタージュガー|ヒトリエ|ルームシック・ガールズエスケープ|Alsong|***ヒトリエ***의 ***モンタージュガール*** (***ルームシック・ガールズエスケープ***)을 듣고 있어요! ***#뎃찌NP*** - ***Alsong***|
 
+### 뎃찌EXT
+
+- 음악 플레이어에 데찌와 연동되는 확장 기능을 설치해서 더 정확하게 정보를 얻어올 수 있어요!
+
+- 확장 기능을 지원하는 플레이어에서만 사용할 수 있어요.
+
+- 현재 지원하는 플레이어
+
+ - Foobar 2000
+
 ## LICENSE
 
 - 뎃찌는 [MIT LICENSE](LICENSE.txt) 를 따라요

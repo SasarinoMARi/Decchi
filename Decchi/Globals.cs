@@ -76,6 +76,7 @@ namespace Decchi
 
         private Globals()
         {
+            LoadSettings();
         }
 
         private void LoadSettings()
@@ -180,10 +181,12 @@ namespace Decchi
             }
             else if (e.Property == DetectLocalFileProp)
                 Globals.Instance.m_detectLocalFile = (bool)e.NewValue;
-            else if (e.Property == SkipFullscreenProp)
-                Globals.Instance.m_skipFullscreen = (bool)e.NewValue;
+
             else if (e.Property == DetectChromeUrlProp)
                 Globals.Instance.m_detectChromeUrl = (bool)e.NewValue;
+
+            else if (e.Property == SkipFullscreenProp)
+                Globals.Instance.m_skipFullscreen = (bool)e.NewValue;
         }
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -218,7 +221,7 @@ namespace Decchi
             set { this.SetValue(ShortcutProp, value); }
         }
 
-        private static readonly DependencyProperty SkipFullscreenProp = DependencyProperty.Register("SkipFullscreen", typeof(bool), typeof(Globals), new FrameworkPropertyMetadata(true, Globals.PropertyChangedCallback));
+        private static readonly DependencyProperty SkipFullscreenProp = DependencyProperty.Register("SkipFullscreen", typeof(bool), typeof(Globals), new FrameworkPropertyMetadata(true));
         private bool m_skipFullscreen;
         [PropAttr]
         public bool SkipFullscreen
@@ -243,7 +246,7 @@ namespace Decchi
             set { this.SetValue(WinStartupProp, value); }
         }
 
-        private static readonly DependencyProperty DetectLocalFileProp = DependencyProperty.Register("DetectLocalFile", typeof(bool), typeof(Globals), new FrameworkPropertyMetadata(false, Globals.PropertyChangedCallback));
+        private static readonly DependencyProperty DetectLocalFileProp = DependencyProperty.Register("DetectLocalFile", typeof(bool), typeof(Globals), new FrameworkPropertyMetadata(false));
         private bool m_detectLocalFile;
         [PropAttr]
         public bool DetectLocalFile
@@ -252,7 +255,7 @@ namespace Decchi
             set { this.SetValue(DetectLocalFileProp, value); }
         }
 
-        private static readonly DependencyProperty DetectChromeUrlProp = DependencyProperty.Register("DetectChromeUrl", typeof(bool), typeof(Globals), new FrameworkPropertyMetadata(false, Globals.PropertyChangedCallback));
+        private static readonly DependencyProperty DetectChromeUrlProp = DependencyProperty.Register("DetectChromeUrl", typeof(bool), typeof(Globals), new FrameworkPropertyMetadata(false));
         private bool m_detectChromeUrl;
         [PropAttr]
         public bool DetectChromeUrl
@@ -267,6 +270,30 @@ namespace Decchi
         {
             get { return (bool)this.GetValue(TopMostProp); }
             set { this.SetValue(TopMostProp, value); }
+        }
+
+        private static readonly DependencyProperty TrayWhenMinimizeProp = DependencyProperty.Register("TrayWhenMinimize", typeof(bool), typeof(Globals), new FrameworkPropertyMetadata(false));
+        [PropAttr]
+        public bool TrayWhenMinimize
+        {
+            get { return (bool)this.GetValue(TrayWhenMinimizeProp); }
+            set { this.SetValue(TrayWhenMinimizeProp, value); }
+        }
+
+        private static readonly DependencyProperty TrayWhenCloseProp = DependencyProperty.Register("TrayWhenClose", typeof(bool), typeof(Globals), new FrameworkPropertyMetadata(true));
+        [PropAttr]
+        public bool TrayWhenClose
+        {
+            get { return (bool)this.GetValue(TrayWhenCloseProp); }
+            set { this.SetValue(TrayWhenCloseProp, value); }
+        }
+
+        private static readonly DependencyProperty TrayVisibleProp = DependencyProperty.Register("TrayVisible", typeof(bool), typeof(Globals), new FrameworkPropertyMetadata(false));
+        [PropAttr]
+        public bool TrayVisible
+        {
+            get { return (bool)this.GetValue(TrayVisibleProp); }
+            set { this.SetValue(TrayVisibleProp, value); }
         }
 
         public struct ShortcutInfo
