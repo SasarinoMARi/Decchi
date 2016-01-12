@@ -121,9 +121,6 @@
     <Compile Include="Utilities\DetectOpenedFile.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="App.config">
-      <SubType>Designer</SubType>
-    </None>
     <None Include="Uncommit\decchi.snk" />
   </ItemGroup>
   <ItemGroup>
@@ -141,6 +138,10 @@
     <Page Include="Core\Windows\Dialogs\VerifierDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Core\Windows\Icons\PluginIcon.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Core\Windows\Icons\UpdateIcon.xaml">
       <Generator>MSBuild:Compile</Generator>
