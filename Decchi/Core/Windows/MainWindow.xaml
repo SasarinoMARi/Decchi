@@ -42,8 +42,8 @@
             <Decchi.Core.Windows.Converter:VisibilityConverter x:Key="InvertVisibility" Visible="Collapsed" Hidden="Visible" Collapsed="Visible"/>
 
             <Storyboard x:Key="ToMini">
-                <DoubleAnimation Storyboard.TargetName="ctlWindow" Storyboard.TargetProperty="Width"  To="135" Duration="0:0:.2"/>
-                <DoubleAnimation Storyboard.TargetName="ctlWindow" Storyboard.TargetProperty="Height" To="90"  Duration="0:0:.2" BeginTime="0:0:0.2"/>
+                <DoubleAnimation Storyboard.TargetName="ctlWindow" Storyboard.TargetProperty="Width"  To="132" Duration="0:0:.2"/>
+                <DoubleAnimation Storyboard.TargetName="ctlWindow" Storyboard.TargetProperty="Height" To="80"  Duration="0:0:.2" BeginTime="0:0:0.2"/>
             </Storyboard>
             <Storyboard x:Key="ToNormal">
                 <DoubleAnimation Storyboard.TargetName="ctlWindow" Storyboard.TargetProperty="Height" To="380" Duration="0:0:.2"/>
@@ -109,7 +109,8 @@
                                            CloseButtonVisibility="Collapsed"
                                            Header="설정"
                                            TitleVisibility="Collapsed"
-                                           IsPinned="False">
+                                           IsPinned="False"
+                                           IsOpenChanged="ctlSettingFlyout_IsOpenChanged">
                 <Grid Margin="0 0 0 5">
                     <Grid.RowDefinitions>
                         <RowDefinition/>
@@ -249,7 +250,7 @@
         </MahApps.Metro.Controls:FlyoutsControl>
     </MahApps.Metro.Controls:MetroWindow.Flyouts>
 
-    <Grid Margin="5">
+    <Grid>
         <tray:TaskbarIcon x:Name="ctlTray"
                           IconSource="/Decchi;component/icon.ico"
                           TrayLeftMouseUp="ctlTray_TrayLeftMouseUp">
@@ -266,16 +267,21 @@
                 </ContextMenu>
             </tray:TaskbarIcon.ContextMenu>
         </tray:TaskbarIcon>
+        
+        <TextBlock x:Name="ctlVersion"
+                   HorizontalAlignment="Right"
+                   Margin="5"
+                   Foreground="{DynamicResource GrayBrush5}"/>
+
+        <!-- Normal Mode Components -->
 
         <MahApps.Metro.Controls:ProgressRing Width="128"
                                              Height="128"
-											 IsActive="{Binding ElementName=ctlElements, Path=Visibility, Converter={StaticResource Collapsed2True}}"/>
-
-        <TextBlock x:Name="ctlVersion"
-                   HorizontalAlignment="Right"
-                   Foreground="{DynamicResource GrayBrush5}"/>
+											 IsActive="{Binding ElementName=ctlElements, Path=Visibility, Converter={StaticResource Collapsed2True}}"
+                                             Visibility="{Binding Source={x:Static Decchi:Globals.Instance}, Path=MiniMode, Converter={StaticResource False2Visible}}"/>
         
-        <Grid x:Name="ctlElements">
+        <Grid x:Name="ctlElements"
+              Margin="5">
             <Grid.Style>
                 <Style TargetType="FrameworkElement">
                     <Style.Triggers>
@@ -337,6 +343,7 @@
 						Height="60"
                         Margin="0 20 0 0"
                         ToolTip="뎃찌!! 와 함께 #NowPlaying 을 게시해요"
+                        Focusable="False"
 						Click="ctlTweet_Click">
                     <Button.Content>
                         <Grid>
@@ -355,7 +362,6 @@
             <StackPanel Grid.ColumnSpan="3"
                         HorizontalAlignment="Stretch"
                         VerticalAlignment="Bottom">
-
                 <TextBox x:Name="ctlFormat"
 					     TextWrapping="NoWrap"
 					     ScrollViewer.CanContentScroll="True"
@@ -365,15 +371,22 @@
             </StackPanel>
         </Grid>
 
+        <!-- Mini Mode Components -->
+
+        <MahApps.Metro.Controls:ProgressRing Width="32"
+                                             Height="32"
+											 IsActive="{Binding ElementName=ctlElements, Path=Visibility, Converter={StaticResource Collapsed2True}}"
+                                             Visibility="{Binding Source={x:Static Decchi:Globals.Instance}, Path=MiniMode, Converter={StaticResource True2Visible}}"/>
 
         <Button x:Name="ctlTweetMini"
                 HorizontalAlignment="Stretch"
                 VerticalAlignment="Stretch"
-                Margin="0 0 0 0"
                 IsEnabled="{Binding ElementName=ctlTweet, Path=IsEnabled}"
                 Visibility="{Binding Source={x:Static Decchi:Globals.Instance}, Path=MiniMode, Converter={StaticResource True2Visible}}"
                 ToolTip="뎃찌!! 와 함께 #NowPlaying 을 게시해요"
-                Click="ctlTweet_Click">            
+                Focusable="False"
+                Margin="3"
+                Click="ctlTweet_Click">
             <Button.Content>
                 <Grid>
                     <MahApps.Metro.Controls:ProgressRing IsActive="{Binding ElementName=ctlTweet, Path=IsEnabled, Converter={StaticResource InvertBoolean}}"

@@ -29,7 +29,6 @@ namespace Decchi.Core.Windows
 
             this.m_toMini   = (Storyboard)this.Resources["ToMini"];
             this.m_toNormal = (Storyboard)this.Resources["ToNormal"];
-            this.m_toNormal.Completed += (ls, le) => Globals.Instance.MiniMode = false;
 
             this.ctlElements.Visibility = Visibility.Collapsed;
             this.ctlTweet.IsEnabled = false;
@@ -40,23 +39,35 @@ namespace Decchi.Core.Windows
             this.m_formatErr = Brushes.Red;
 
             var g = !Globals.Instance.MiniMode;
-            this.Width  = g ? 240 : 135;
-            this.Height = g ? 380 :  90;
+            this.Width  = g ? 240 : 132;
+            this.Height = g ? 380 : 80;
+            this.ShowMinButton = g;
 
             this.ctlTray.Visibility = Globals.Instance.TrayVisible ? Visibility.Visible : Visibility.Collapsed;
             if (Globals.Instance.TrayStart)
                 this.GoTray();
         }
 
+        private void ctlSettingFlyout_IsOpenChanged(object sender, RoutedEventArgs e)
+        {
+            Globals.Instance.SaveSettings();
+        }
+
         private void ctlToMiniMode_Click(object sender, RoutedEventArgs e)
         {
             this.ctlSettingFlyout.IsOpen = this.ctlPluginFlyout.IsOpen = false;
+
+            this.ShowMinButton = false;
             Globals.Instance.MiniMode = true;
+
             this.m_toMini.Begin();
         }
 
         private void ctlToNormalMode_Click(object sender, RoutedEventArgs e)
         {
+            this.ShowMinButton = true;
+            Globals.Instance.MiniMode = false;
+
             this.m_toNormal.Begin();
         }
 

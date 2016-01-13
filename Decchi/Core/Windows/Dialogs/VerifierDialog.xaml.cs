@@ -42,7 +42,7 @@ namespace Decchi.Core.Windows.Dialogs
             this.m_cancel.Dispose();
         }
 
-        public override Task<object> _WaitForButtonPressAsync()
+        public override Task<object> WaitForButtonPressAsync()
         {
             Dispatcher.BeginInvoke(new Action(() =>
             {

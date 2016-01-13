@@ -96,7 +96,7 @@
 
 - 사용된 오픈소스
 
- - [MahApps.Metro v1.1.2](Decchi/ExternalLibrarys/MahApps.Metro-1.1.2) (입맛에 맞게 수정됨. 소스코드 포함)
+ - [RyuaNerin/MahApps.Metro v1.2.2 (forked from MahApps/MahApps.Metro)](https://github.com/RyuaNerin/MahApps.Metro)
 
  - [Hardcodet.NotifyIcon v1.0.5](Decchi/ExternalLibrarys/Hardcodet.NotifyIcon.Wpf-1.0.5)
 
