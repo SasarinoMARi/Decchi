@@ -19,7 +19,7 @@
 									WindowStartupLocation="CenterScreen"
                                     ShowIconOnTitleBar="False"
                                     ShowMaxRestoreButton="False"
-                                    Topmost="{Binding Source={x:Static Decchi:Globals.Instance}, Path=TopMost}"
+                                    Topmost="{Binding Source={x:Static Decchi:Globals.Instance}, Path=TopMost, Mode=TwoWay}"
                                     StateChanged="MetroWindow_StateChanged"
                                     Closing="MetroWindow_Closing"
                                     Loaded="MetroWindow_Loaded"
