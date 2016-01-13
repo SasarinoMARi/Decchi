@@ -37,7 +37,8 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup>
-    <StartupObject>Decchi.Core.Program</StartupObject>
+    <StartupObject>
+    </StartupObject>
   </PropertyGroup>
   <PropertyGroup>
     <ApplicationIcon>icon.ico</ApplicationIcon>
@@ -92,6 +93,7 @@
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
     <Compile Include="Core\DecchiCore.cs" />
+    <Compile Include="Core\Windows\Converter\VisibilityConverter.cs" />
     <Compile Include="Core\Windows\Converter\Boolean2Visibility.cs" />
     <Compile Include="Core\Windows\Converter\InvertBoolean.cs" />
     <Compile Include="Core\Windows\Dialogs\ClientSelectionDialog.xaml.cs">
@@ -106,7 +108,6 @@
     <Compile Include="NativeMethods.cs" />
     <Compile Include="Core\Windows\Converter\Visibility2Boolean.cs" />
     <Compile Include="ParsingModule\SongInfo.cs" />
-    <Compile Include="Core\Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Globals.cs" />
     <Compile Include="PublishingModule\IPublisher.cs" />
@@ -139,7 +140,15 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Core\Windows\Icons\PlusIcon.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Core\Windows\Icons\PluginIcon.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Core\Windows\Icons\TwitterIcon.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

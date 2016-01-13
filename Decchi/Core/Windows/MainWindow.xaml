@@ -11,15 +11,15 @@
 									xmlns:Decchi.Core.Windows.Converter="clr-namespace:Decchi.Core.Windows.Converter"
 									Icon="/Decchi;component/icon.ico"
 									Title="뎃찌"
-									Height="450"
-									Width="270"
+									Width="240"
+									Height="380"
 									ResizeMode="CanMinimize"
 									BorderBrush="{DynamicResource AccentColorBrush}"
 									BorderThickness="1"
 									WindowStartupLocation="CenterScreen"
                                     ShowIconOnTitleBar="False"
                                     ShowMaxRestoreButton="False"
-                                    Topmost="{Binding Source={x:Static Decchi:Globals.Instance}, Path=TopMost, Mode=TwoWay}"
+                                    Topmost="{Binding Source={x:Static Decchi:Globals.Instance}, Path=TopMost}"
                                     StateChanged="MetroWindow_StateChanged"
                                     Closing="MetroWindow_Closing"
                                     Loaded="MetroWindow_Loaded"
@@ -31,14 +31,26 @@
                 <ResourceDictionary Source="/Decchi;component/Core/Windows/Icons/HomeIcon.xaml" />
                 <ResourceDictionary Source="/Decchi;component/Core/Windows/Icons/UpdateIcon.xaml" />
                 <ResourceDictionary Source="/Decchi;component/Core/Windows/Icons/PluginIcon.xaml" />
+                <ResourceDictionary Source="/Decchi;component/Core/Windows/Icons/PlusIcon.xaml" />
+                <ResourceDictionary Source="/Decchi;component/Core/Windows/Icons/TwitterIcon.xaml" />
             </ResourceDictionary.MergedDictionaries>
 
-            <Decchi.Core.Windows.Converter:Visibility2Boolean x:Key="ProfileLoading" WhenTrue="Hidden" WhenFalse="Visible" />
-            <Decchi.Core.Windows.Converter:Boolean2Visibility x:Key="Bool2Visible" TrueVisibility="Visible" FalseVisibility="Hidden" />
+            <Decchi.Core.Windows.Converter:Visibility2Boolean x:Key="Collapsed2True" True="Collapsed" False="Visible"/>
+            <Decchi.Core.Windows.Converter:Boolean2Visibility x:Key="True2Visible" True="Visible" False="Collapsed"/>
+            <Decchi.Core.Windows.Converter:Boolean2Visibility x:Key="False2Visible" True="Collapsed" False="Visible"/>
             <Decchi.Core.Windows.Converter:InvertBoolean x:Key="InvertBoolean"/>
+            <Decchi.Core.Windows.Converter:VisibilityConverter x:Key="InvertVisibility" Visible="Collapsed" Hidden="Visible" Collapsed="Visible"/>
+
+            <Storyboard x:Key="ToMini">
+                <DoubleAnimation Storyboard.TargetName="ctlWindow" Storyboard.TargetProperty="Width"  To="135" Duration="0:0:.2"/>
+                <DoubleAnimation Storyboard.TargetName="ctlWindow" Storyboard.TargetProperty="Height" To="90"  Duration="0:0:.2" BeginTime="0:0:0.2"/>
+            </Storyboard>
+            <Storyboard x:Key="ToNormal">
+                <DoubleAnimation Storyboard.TargetName="ctlWindow" Storyboard.TargetProperty="Height" To="380" Duration="0:0:.2"/>
+                <DoubleAnimation Storyboard.TargetName="ctlWindow" Storyboard.TargetProperty="Width"  To="240" Duration="0:0:.2" BeginTime="0:0:0.2"/>
+            </Storyboard>
         </ResourceDictionary>
     </MahApps.Metro.Controls:MetroWindow.Resources>
-
 
     <MahApps.Metro.Controls:MetroWindow.RightWindowCommands>
         <MahApps.Metro.Controls:WindowCommands>
@@ -53,6 +65,7 @@
             <Button x:Name="ctlShowPlugin"
                     Click="ctlShowPlugin_Click"
                     ToolTip="플레이어에 뎃찌!! 확장을 설치해요"
+                    Visibility="{Binding Source={x:Static Decchi:Globals.Instance}, Path=MiniMode, Converter={StaticResource False2Visible}}"
                     IsEnabled="False">
                 <Image Width="16"
                        Height="16"
@@ -61,23 +74,33 @@
             <Button x:Name="ctlShowSetting"
                     Click="ctlShowSetting_Click"
                     ToolTip="설정 창을 열어요"
+                    Visibility="{Binding Source={x:Static Decchi:Globals.Instance}, Path=MiniMode, Converter={StaticResource False2Visible}}"
                     IsEnabled="False">
                 <Image Width="16"
                        Height="16"
                        Source="{StaticResource SettingIcon}" />
             </Button>
             <Button Click="ctlHomepage_Click"
-                    ToolTip="뎃찌의 홈페이지를 열어요">
+                    ToolTip="뎃찌의 홈페이지를 열어요"
+                    Visibility="{Binding Source={x:Static Decchi:Globals.Instance}, Path=MiniMode, Converter={StaticResource False2Visible}}">
                 <Image Width="16"
                        Height="16"
                        Source="{StaticResource HomeIcon}" />
+            </Button>
+            <Button x:Name="ctlToNormalMode"
+                    Click="ctlToNormalMode_Click"
+                    ToolTip="보통 뎃찌로 돌아가요"
+                    Visibility="{Binding Source={x:Static Decchi:Globals.Instance}, Path=MiniMode, Converter={StaticResource True2Visible}}">
+                <Image Width="16"
+                       Height="16"
+                       Source="{StaticResource PlusIcon}" />
             </Button>
         </MahApps.Metro.Controls:WindowCommands>
     </MahApps.Metro.Controls:MetroWindow.RightWindowCommands>
 
     <MahApps.Metro.Controls:MetroWindow.Flyouts>
-        <MahApps.Metro.Controls:FlyoutsControl>
-            <MahApps.Metro.Controls:Flyout x:Name="ctlSetting"
+        <MahApps.Metro.Controls:FlyoutsControl Visibility="{Binding Source={x:Static Decchi:Globals.Instance}, Path=MiniMode, Converter={StaticResource False2Visible}}">
+            <MahApps.Metro.Controls:Flyout x:Name="ctlSettingFlyout"
                                            Position="Right"
                                            Width="167"
                                            Theme="Adapt"
@@ -97,18 +120,25 @@
                         <TabItem Header="뎃찌">
                             <ScrollViewer>
                                 <StackPanel>
+                                    <Button HorizontalAlignment="Stretch"
+                                            Content="작은 뎃찌로 변경"
+                                            Focusable="False"
+                                            Style="{StaticResource MetroAccentButton}"
+                                            Height="40"
+                                            Margin="3 0 3 3"
+                                            Click="ctlToMiniMode_Click"/>                                    
                                     <GroupBox Header="뎃찌 자동 실행"
                                               ToolTip="켬퓨터를 키자마자 뎃찌를 실행해요!">
                                         <MahApps.Metro.Controls:ToggleSwitch IsChecked="{Binding Source={x:Static Decchi:Globals.Instance}, Path=WinStartup, Mode=TwoWay}"/>
-                                    </GroupBox>
+                                    </GroupBox>                                    
                                     <GroupBox Header="최소화로 시작"
                                               ToolTip="뎃찌를 키면 바로 최소화해요!">
                                         <MahApps.Metro.Controls:ToggleSwitch IsChecked="{Binding Source={x:Static Decchi:Globals.Instance}, Path=TrayStart, Mode=TwoWay}"/>
-                                    </GroupBox>
+                                    </GroupBox>                                    
                                     <GroupBox Header="데찌를 항상 위로"
                                               ToolTip="뎃찌가 모든 창 위에 떠요!">
                                         <MahApps.Metro.Controls:ToggleSwitch IsChecked="{Binding Source={x:Static Decchi:Globals.Instance}, Path=TopMost, Mode=TwoWay}"/>
-                                    </GroupBox>
+                                    </GroupBox>                                    
                                     <GroupBox Header="트레이">
                                         <StackPanel>
                                             <GroupBox Header="트레이 항상 표시"
@@ -132,7 +162,7 @@
                                 </StackPanel>
                             </ScrollViewer>
                         </TabItem>
-                        
+
                         <TabItem Header="뎃찌!!">
                             <ScrollViewer>
                                 <StackPanel>
@@ -144,7 +174,7 @@
                                             <TextBox x:Name="ctlShortcut"
                                                      Grid.Row="1"
                                                      Text="{Binding Source={x:Static Decchi:Globals.Instance}, Path=Shortcut, Mode=OneWay}"
-                                                     IsEnabled="{Binding ElementName=ctlUseShortcut, Path=IsChecked}"
+                                                     IsEnabled="{Binding ElementName=ctlUseShortcut, Path=IsChecked, Mode=OneWay}"
                                                      IsReadOnly="True"
                                                      TextAlignment="Center"
                                                      UndoLimit="0"
@@ -154,7 +184,7 @@
 
                                             <GroupBox Header="전제화면 아닐때만"
                                                       ToolTip="전체화면일때 단축키로 뎃찌!! 하지 않아요"
-                                                      IsEnabled="{Binding ElementName=ctlUseShortcut, Path=IsChecked}"
+                                                      IsEnabled="{Binding ElementName=ctlUseShortcut, Path=IsChecked, Mode=OneWay}"
                                                       Margin="0 5 0 0">
                                                 <MahApps.Metro.Controls:ToggleSwitch IsChecked="{Binding Source={x:Static Decchi:Globals.Instance}, Path=SkipFullscreen, Mode=TwoWay}"/>
                                             </GroupBox>
@@ -174,7 +204,7 @@
                     </TabControl>
                 </Grid>
             </MahApps.Metro.Controls:Flyout>
-            <MahApps.Metro.Controls:Flyout x:Name="ctlPlugins"
+            <MahApps.Metro.Controls:Flyout x:Name="ctlPluginFlyout"
                                            Position="Right"
                                            Width="68"
                                            Theme="Adapt"
@@ -188,7 +218,7 @@
                         <RowDefinition Height="auto"/>
                         <RowDefinition/>
                     </Grid.RowDefinitions>
-                    
+
                     <Button HorizontalAlignment="Center"
                             Content="도움말"
                             Focusable="False"
@@ -239,12 +269,12 @@
 
         <MahApps.Metro.Controls:ProgressRing Width="128"
                                              Height="128"
-											 IsActive="{Binding ElementName=ctlElements, Path=Visibility, Converter={StaticResource ProfileLoading}}"/>
-        
+											 IsActive="{Binding ElementName=ctlElements, Path=Visibility, Converter={StaticResource Collapsed2True}}"/>
+
         <TextBlock x:Name="ctlVersion"
                    HorizontalAlignment="Right"
                    Foreground="{DynamicResource GrayBrush5}"/>
-		
+        
         <Grid x:Name="ctlElements">
             <Grid.Style>
                 <Style TargetType="FrameworkElement">
@@ -264,15 +294,17 @@
                     </Style.Triggers>
                 </Style>
             </Grid.Style>
+            
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="1*" />
-                <ColumnDefinition Width="4*" />
+                <ColumnDefinition Width="5*" />
                 <ColumnDefinition Width="1*" />
             </Grid.ColumnDefinitions>
 
             <StackPanel Grid.Column="1"
 						HorizontalAlignment="Stretch"
-						VerticalAlignment="Center">
+						VerticalAlignment="Center"
+                        Margin="0 0 0 20">
                 <Ellipse Height="{Binding RelativeSource={RelativeSource Self}, Path=ActualWidth}">
                     <Ellipse.OpacityMask>
                         <RadialGradientBrush>
@@ -303,18 +335,18 @@
                 <Button x:Name="ctlTweet"
 						HorizontalAlignment="Stretch"
 						Height="60"
-						Margin="0 20 0 0"
+                        Margin="0 20 0 0"
+                        ToolTip="뎃찌!! 와 함께 #NowPlaying 을 게시해요"
 						Click="ctlTweet_Click">
                     <Button.Content>
                         <Grid>
                             <MahApps.Metro.Controls:ProgressRing IsActive="{Binding ElementName=ctlTweet, Path=IsEnabled, Converter={StaticResource InvertBoolean}}"
-																 Width="48"
-																 Height="48" />
-                            <TextBlock x:Name="ctlTweetText"
-                                       Text="뎃찌!!"
-                                       ToolTip="뎃찌!! 와 함께 #NowPlaying 을 게시해요."
-									   FontSize="30"
-									   Visibility="{Binding ElementName=ctlTweet, Path=IsEnabled, Converter={StaticResource Bool2Visible}}"/>
+																 Width="32"
+																 Height="32" />
+                            <Image Width="32"
+                                   Height="32"
+                                   Source="{StaticResource TwitterIcon}"
+                                   Visibility="{Binding ElementName=ctlTweet, Path=IsEnabled, Converter={StaticResource True2Visible}}"/>
                         </Grid>
                     </Button.Content>
                 </Button>
@@ -323,11 +355,6 @@
             <StackPanel Grid.ColumnSpan="3"
                         HorizontalAlignment="Stretch"
                         VerticalAlignment="Bottom">
-                <TextBlock Text="{Binding ElementName=ctlShortcut, Path=Text, StringFormat='\{0\} 누르면 어디서든 트윗 가능!'}"
-						   Foreground="Red"
-						   TextAlignment="Center"
-                           Visibility="{Binding ElementName=ctlUseShortcut, Path=IsChecked, Converter={StaticResource Bool2Visible}}"
-                           Margin="0 0 0 5"/>
 
                 <TextBox x:Name="ctlFormat"
 					     TextWrapping="NoWrap"
@@ -337,5 +364,27 @@
 					     LostFocus="ctlFormat_LostFocus"/>
             </StackPanel>
         </Grid>
+
+
+        <Button x:Name="ctlTweetMini"
+                HorizontalAlignment="Stretch"
+                VerticalAlignment="Stretch"
+                Margin="0 0 0 0"
+                IsEnabled="{Binding ElementName=ctlTweet, Path=IsEnabled}"
+                Visibility="{Binding Source={x:Static Decchi:Globals.Instance}, Path=MiniMode, Converter={StaticResource True2Visible}}"
+                ToolTip="뎃찌!! 와 함께 #NowPlaying 을 게시해요"
+                Click="ctlTweet_Click">            
+            <Button.Content>
+                <Grid>
+                    <MahApps.Metro.Controls:ProgressRing IsActive="{Binding ElementName=ctlTweet, Path=IsEnabled, Converter={StaticResource InvertBoolean}}"
+                                                         Width="32"
+                                                         Height="32" />
+                    <Image Width="32"
+                           Height="32"
+                           Source="{StaticResource TwitterIcon}"
+                           Visibility="{Binding ElementName=ctlTweet, Path=IsEnabled, Converter={StaticResource True2Visible}}"/>
+                </Grid>
+            </Button.Content>
+        </Button>
     </Grid>
 </MahApps.Metro.Controls:MetroWindow>

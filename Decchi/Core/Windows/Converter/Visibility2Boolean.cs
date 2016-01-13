@@ -7,16 +7,16 @@ namespace Decchi.Core.Windows.Converter
 {
 	public sealed class Visibility2Boolean : IValueConverter
 	{
-		public Visibility WhenTrue	{ get; set; }
-		public Visibility WhenFalse	{ get; set; }
+		public Visibility True	{ get; set; }
+		public Visibility False	{ get; set; }
 
 		public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
 		{
-			return value is Visibility && (Visibility)value == this.WhenTrue ? true : false;
+			return value is Visibility && (Visibility)value == this.True ? true : false;
 		}
 		public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
 		{
-			return value is bool && (bool)value ? this.WhenTrue : this.WhenFalse;
+			return value is bool && (bool)value ? this.True : this.False;
 		}
 	}
 }

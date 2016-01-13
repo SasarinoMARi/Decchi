@@ -43,7 +43,7 @@ namespace Decchi
         private static readonly string SettingFilePath; // 설정 파일 주소
         static Globals()
         {
-            SettingFilePath = Path.Combine(Program.ExeDir, "publish.ini");
+            SettingFilePath = Path.Combine(App.ExeDir, "Decchi.ini");
         }
 
         private static object m_sync = new object();
@@ -55,31 +55,30 @@ namespace Decchi
                 lock (m_sync)
                 {
                     if (m_instance == null)
-                    {
                         m_instance = new Globals();
-                        m_instance.LoadSettings();
-                    }
 
                     return m_instance;
                 }
             }
         }
 
-        private static PropertyInfo[] GetProperties()
-        {
-            return
-                typeof(Globals)
-                .GetProperties(BindingFlags.SetProperty | BindingFlags.GetProperty | BindingFlags.Public | BindingFlags.Instance)
-                .Where(e => e.CustomAttributes.Any(ee => ee.AttributeType == typeof(PropAttr)))
-                .ToArray();
-        }
+        private PropertyInfo[] m_props;
 
         private Globals()
         {
+            if (!File.Exists(SettingFilePath) && File.Exists(Path.Combine(App.ExeDir, "publish.ini")))
+                File.Move(Path.Combine(App.ExeDir, "publish.ini"), SettingFilePath);
+
+            this.m_props = typeof(Globals)
+                           .GetProperties(BindingFlags.SetProperty | BindingFlags.GetProperty | BindingFlags.Public | BindingFlags.Instance)
+                           .Where(e => e.CustomAttributes.Any(ee => ee.AttributeType == typeof(PropAttr)))
+                           .OrderBy(e => e.Name)
+                           .ToArray();
+
             LoadSettings();
         }
 
-        private void LoadSettings()
+        public void LoadSettings()
         {
             if (File.Exists(SettingFilePath))
             {
@@ -87,8 +86,6 @@ namespace Decchi
 
                 using (var reader = new StreamReader(SettingFilePath))
                 {
-                    var props = GetProperties();
-
                     string      line;
                     string[]    splitedLine;
                     object      obj;
@@ -99,13 +96,13 @@ namespace Decchi
 
                         if (splitedLine.Length != 2) continue;
 
-                        for (i = 0; i < props.Length; ++i)
+                        for (i = 0; i < this.m_props.Length; ++i)
                         {
-                            if (props[i].Name == splitedLine[0])
+                            if (this.m_props[i].Name == splitedLine[0])
                             {
-                                obj = String2Object(splitedLine[1], props[i].PropertyType);
+                                obj = String2Object(splitedLine[1], this.m_props[i].PropertyType);
                                 if (obj != null)
-                                    props[i].SetValue(this, obj);
+                                    this.m_props[i].SetValue(this, obj);
 
                                 break;
                             }
@@ -121,12 +118,8 @@ namespace Decchi
         public void SaveSettings()
         {
             using (var writer = new StreamWriter(SettingFilePath))
-            {
-                var props = GetProperties();
-
-                for (int i = 0; i < props.Length; ++i)
-                    writer.WriteLine("{0}={1}", props[i].Name, Object2String(props[i].GetValue(this)));
-            }
+                for (int i = 0; i < this.m_props.Length; ++i)
+                    writer.WriteLine("{0}={1}", this.m_props[i].Name, Object2String(this.m_props[i].GetValue(this)));
         }
 
         private static string Object2String(object value)
@@ -171,7 +164,7 @@ namespace Decchi
                 if ((bool)e.NewValue)
                 {
                     using (var reg = Registry.CurrentUser.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", true))
-                        reg.SetValue("Decchi", Program.ExePath);
+                        reg.SetValue("Decchi", App.ExePath);
                 }
                 else
                 {
@@ -227,7 +220,7 @@ namespace Decchi
         public bool SkipFullscreen
         {
             get { return m_skipFullscreen; }
-            set { this.SetValue(SkipFullscreenProp, value); }
+            set { this.SetValue(SkipFullscreenProp, value); this.m_skipFullscreen = value; }
         }
 
         private static readonly DependencyProperty TrayStartProp = DependencyProperty.Register("TrayStart", typeof(bool), typeof(Globals), new FrameworkPropertyMetadata(false));
@@ -252,7 +245,7 @@ namespace Decchi
         public bool DetectLocalFile
         {
             get { return this.m_detectLocalFile; }
-            set { this.SetValue(DetectLocalFileProp, value); }
+            set { this.SetValue(DetectLocalFileProp, value); this.m_detectLocalFile = value; }
         }
 
         private static readonly DependencyProperty DetectChromeUrlProp = DependencyProperty.Register("DetectChromeUrl", typeof(bool), typeof(Globals), new FrameworkPropertyMetadata(false));
@@ -261,7 +254,7 @@ namespace Decchi
         public bool DetectChromeUrl
         {
             get { return this.m_detectChromeUrl; }
-            set { this.SetValue(DetectChromeUrlProp, value); }
+            set { this.SetValue(DetectChromeUrlProp, value); this.m_detectChromeUrl = value; }
         }
 
         private static readonly DependencyProperty TopMostProp = DependencyProperty.Register("TopMost", typeof(bool), typeof(Globals), new FrameworkPropertyMetadata(false));
@@ -294,6 +287,14 @@ namespace Decchi
         {
             get { return (bool)this.GetValue(TrayVisibleProp); }
             set { this.SetValue(TrayVisibleProp, value); }
+        }
+
+        private static readonly DependencyProperty MiniModeProp = DependencyProperty.Register("MiniMode", typeof(bool), typeof(Globals), new FrameworkPropertyMetadata(false));
+        [PropAttr]
+        public bool MiniMode
+        {
+            get { return (bool)this.GetValue(MiniModeProp); }
+            set { this.SetValue(MiniModeProp, value); }
         }
 
         public struct ShortcutInfo

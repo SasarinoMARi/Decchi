@@ -8,8 +8,6 @@ namespace Decchi
     // https://msdn.microsoft.com/en-us/library/ms182161.aspx
     internal static class NativeMethods
     {
-        public delegate IntPtr WndProc(IntPtr hWnd, int msg, IntPtr wParam, IntPtr lParam);
-
         /// <summary>
         /// 클래스 이름과 타이틀로 윈도우 핸들 값을 얻어옵니다
         /// </summary>
@@ -51,12 +49,6 @@ namespace Decchi
         [DllImport("user32.dll")]
         public static extern int GetWindowThreadProcessId(IntPtr hWnd, out int processId);
 
-        [DllImport("user32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
-        public static extern ushort RegisterClass([In] ref WNDCLASS pcWndClassEx);
-
-        [DllImport("user32.dll", CharSet = CharSet.Unicode)]
-        public static extern IntPtr CreateWindowEx(int dwExStyle, string lpClassName, string lpWindowName, int dwStyle, int x, int y, int nWidth, int nHeight, IntPtr hWndParent, IntPtr hMenu, IntPtr hInstance, IntPtr lpParam);
-
         [DllImport("user32.dll")]
         public static extern IntPtr DefWindowProc(IntPtr hWnd, int msg, IntPtr wParam, IntPtr lParam);
 
@@ -80,13 +72,16 @@ namespace Decchi
 
         [DllImport("kernel32.dll")]
         [return: MarshalAs(UnmanagedType.Bool)]
-        public static extern bool DuplicateHandle(IntPtr hSourceProcessHandle, IntPtr hSourceHandle, IntPtr hTargetProcessHandle, [Out] out IntPtr lpTargetHandle, int dwDesiredAccess, [In, MarshalAs(UnmanagedType.Bool)] bool bInheritHandle, int dwOptions);
+        public static extern bool DuplicateHandle(IntPtr hSourceProcessHandle, IntPtr hSourceHandle, IntPtr hTargetProcessHandle, [Out] out IntPtr lpTargetHandle, int dwDesiredAccess, [MarshalAs(UnmanagedType.Bool)] bool bInheritHandle, int dwOptions);
 
         [DllImport("kernel32.dll")]
         public static extern int QueryDosDevice(string lpDeviceName, [Out] StringBuilder lpTargetPath, int ucchMax);
 
         [DllImport("Kernel32.dll")]
         public static extern void RtlZeroMemory(IntPtr dest, IntPtr size);
+        
+        [DllImport("kernel32.Dll")]
+        internal static extern short GetVersionEx(ref OsVersioninfo o);
 
         [DllImport("ntdll.dll")]
         public static extern uint NtQuerySystemInformation(int SystemInformationClass, IntPtr SystemInformation, int SystemInformationLength, [Out] out int returnLength);
@@ -135,20 +130,21 @@ namespace Decchi
             ForceMinimize = 11
         }
 
-        [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
-        public struct WNDCLASS
+        [StructLayout(LayoutKind.Sequential, Pack = 1)]
+        public struct OsVersioninfo
         {
-            public int		style;
-            [MarshalAs(UnmanagedType.FunctionPtr)]
-            public WndProc	lpfnWndProc;
-            public int		cbClsExtra;
-            public int		cbWndExtra;
-            public IntPtr	hInstance;
-            public IntPtr	hIcon;
-            public IntPtr	hCursor;
-            public IntPtr	hbrBackground;
-            public string	lpszMenuName;
-            public string	lpszClassName;
+            public int      dwOSVersionInfoSize;
+            public int      dwMajorVersion;
+            public int      dwMinorVersion;
+            public int      dwBuildNumber;
+            public int      dwPlatformId;
+            [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 128)]
+            public string   szCSDVersion;
+            public ushort   wServicePackMajor;
+            public ushort   wServicePackMinor;
+            public ushort   wSuiteMask;
+            public byte     wProductType;
+            public byte     wReserved;
         }
 
         [StructLayout(LayoutKind.Sequential)]
@@ -278,6 +274,23 @@ namespace Decchi
             }
 
             return false;
+        }
+        
+        public static string GetOSServicePack()
+        {
+            try
+            {
+                var os = new OsVersioninfo();
+                os.dwOSVersionInfoSize = Marshal.SizeOf(typeof (OsVersioninfo));
+                GetVersionEx(ref os);
+
+                if (!string.IsNullOrWhiteSpace(os.szCSDVersion))
+                    return os.szCSDVersion.Trim();
+            }
+            catch
+            { }
+            
+            return "?";
         }
     }
 }

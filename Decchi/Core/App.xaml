@@ -3,8 +3,11 @@
 			 xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
 			 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 			 xmlns:System="clr-namespace:System;assembly=mscorlib"
+             xmlns:Decchi.Core.Windows.Converter="clr-namespace:Decchi.Core.Windows.Converter"
 			 StartupUri="Windows/MainWindow.xaml"
 			 ShutdownMode="OnMainWindowClose"
+             Startup="Application_Startup"
+             DispatcherUnhandledException="Application_DispatcherUnhandledException"
 			 Exit="Application_Exit">
     <Application.Resources>        
         <ResourceDictionary>            
@@ -21,6 +24,6 @@
 			
 			<FontFamily x:Key="ContentFontFamily">Malgun Gothic</FontFamily>
 			<System:Double x:Key="ContentFontSize">12</System:Double>
-		</ResourceDictionary>
+        </ResourceDictionary>
 	</Application.Resources>
 </Application>

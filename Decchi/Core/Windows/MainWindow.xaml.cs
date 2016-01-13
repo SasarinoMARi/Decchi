@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
 using Decchi.Core.Windows.Dialogs;
 using Decchi.ParsingModule;
@@ -15,29 +16,53 @@ namespace Decchi.Core.Windows
 {
     public partial class MainWindow : MahApps.Metro.Controls.MetroWindow
     {
-        public static MainWindow Instance { get; private set; } 
+        public static MainWindow Instance { get; private set; }
+
+        private Storyboard m_toMini;
+        private Storyboard m_toNormal;
 
         public MainWindow( )
         {
             MainWindow.Instance = this;
 
             InitializeComponent( );
-            this.ctlElements.Visibility = Visibility.Hidden;
-            this.ctlVersion.Text = Program.Version.ToString();
+
+            this.m_toMini   = (Storyboard)this.Resources["ToMini"];
+            this.m_toNormal = (Storyboard)this.Resources["ToNormal"];
+            this.m_toNormal.Completed += (ls, le) => Globals.Instance.MiniMode = false;
+
+            this.ctlElements.Visibility = Visibility.Collapsed;
+            this.ctlTweet.IsEnabled = false;
+            this.ctlVersion.Text = App.Version.ToString();
             
             this.ctlFormat.Text = Globals.Instance.PublishFormat;
             this.m_formatOK = ( Brush ) this.FindResource( "BlackColorBrush" );
             this.m_formatErr = Brushes.Red;
 
-            if (Globals.Instance.TrayStart)
-                this.GoTray();
+            var g = !Globals.Instance.MiniMode;
+            this.Width  = g ? 240 : 135;
+            this.Height = g ? 380 :  90;
 
             this.ctlTray.Visibility = Globals.Instance.TrayVisible ? Visibility.Visible : Visibility.Collapsed;
+            if (Globals.Instance.TrayStart)
+                this.GoTray();
+        }
+
+        private void ctlToMiniMode_Click(object sender, RoutedEventArgs e)
+        {
+            this.ctlSettingFlyout.IsOpen = this.ctlPluginFlyout.IsOpen = false;
+            Globals.Instance.MiniMode = true;
+            this.m_toMini.Begin();
+        }
+
+        private void ctlToNormalMode_Click(object sender, RoutedEventArgs e)
+        {
+            this.m_toNormal.Begin();
         }
 
         private void MetroWindow_Deactivated(object sender, EventArgs e)
         {
-            this.ctlPlugins.IsOpen = this.ctlSetting.IsOpen = false;
+            this.ctlPluginFlyout.IsOpen = this.ctlSettingFlyout.IsOpen = false;
         }
 
         private void ctlUpdate_Click(object sender, RoutedEventArgs e)
@@ -52,8 +77,8 @@ namespace Decchi.Core.Windows
 
         private void ctlPluginHelp_Click(object sender, RoutedEventArgs e)
         {
-            this.ctlPlugins.IsOpen = false;
-            Globals.OpenWebSite("https://github.com/Usagination/Decchi/blob/master/README.md#뎃찌EXT");
+            this.ctlPluginFlyout.IsOpen = false;
+            Globals.OpenWebSite("https://github.com/Usagination/Decchi/blob/master/README.md#뎃찌ext");
         }
 
         private void ctlTrayVisible_IsCheckedChanged(object sender, EventArgs e)
@@ -79,6 +104,8 @@ namespace Decchi.Core.Windows
         {
             if (Globals.Instance.TrayWhenMinimize && this.WindowState == WindowState.Minimized)
                 this.GoTray();
+            else if (!Globals.Instance.TrayVisible && this.WindowState == WindowState.Normal)
+                this.ctlTray.Visibility = Visibility.Collapsed;
         }
 
         private void GoTray()
@@ -117,14 +144,14 @@ namespace Decchi.Core.Windows
 
         private void ctlShowSetting_Click(object sender, RoutedEventArgs e)
         {
-            this.ctlSetting.IsOpen = !this.ctlSetting.IsOpen;
-            this.ctlPlugins.IsOpen = false;
+            this.ctlSettingFlyout.IsOpen = !this.ctlSettingFlyout.IsOpen;
+            this.ctlPluginFlyout.IsOpen = false;
         }
 
         private void ctlShowPlugin_Click(object sender, RoutedEventArgs e)
         {
-            this.ctlSetting.IsOpen = false;
-            this.ctlPlugins.IsOpen = !this.ctlPlugins.IsOpen;
+            this.ctlSettingFlyout.IsOpen = false;
+            this.ctlPluginFlyout.IsOpen = !this.ctlPluginFlyout.IsOpen;
         }
 
         public bool SetButtonState( bool progress )
@@ -180,17 +207,7 @@ namespace Decchi.Core.Windows
             // 두개 병렬처리
             var thdSongInfo = Task.Run(new Func<bool>(SongInfo.InitSonginfo));
             var thdTwitter  = Task.Run(new Func<TwitterUser>(TwitterCommunicator.Instance.RefrashMe));
-            var thdUpdate   = Task.Run(new Func<bool>(Program.CheckNewVersion));
-
-            // 서버에서 SongInfo 데이터를 가져옴
-            if (!await thdSongInfo)
-            {
-                await this.ShowMessageAsync("X(", "서버에 연결하지 못했어요");
-
-                this.Close();
-
-                return;
-            }
+            var thdUpdate   = Task.Run(new Func<bool>(App.CheckNewVersion));
 
             // 폼에 트위터 유저 정보 매핑
             var me = await thdTwitter;
@@ -218,12 +235,23 @@ namespace Decchi.Core.Windows
             image.EndInit();
             image.DownloadCompleted += (ls, le) =>
             {
-                this.ctlShowPlugin.IsEnabled = this.ctlShowSetting.IsEnabled = true;
+                this.ctlShowSetting.IsEnabled = true;
                 this.ctlElements.Visibility = Visibility.Visible;
                 DecchiCore.Inited();
             };
-
             this.ctlProfileImage.ImageSource = image;
+
+            // 서버에서 SongInfo 데이터를 가져옴
+            if (!await thdSongInfo)
+            {
+                await this.ShowMessageAsync("X(", "서버에 연결하지 못했어요");
+
+                this.Close();
+
+                return;
+            }
+            this.ctlTweet.IsEnabled = true;
+            this.ctlShowPlugin.IsEnabled = true;
             this.ctlPluginsList.ItemsSource = SongInfo.PluginInfos;
             
             // 업데이트를 확인함
@@ -308,7 +336,7 @@ namespace Decchi.Core.Windows
 
         private void ctlPluginInstall_MouseUp(object sender, MouseButtonEventArgs e)
         {
-            this.ctlPlugins.IsOpen = false;
+            this.ctlPluginFlyout.IsOpen = false;
 
             var songinfo = (sender as FrameworkElement).Tag as SongInfo;
             
