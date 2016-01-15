@@ -277,7 +277,7 @@ namespace Decchi
             set { this.SetValue(TrayWhenCloseProp, value); }
         }
 
-        private static readonly DependencyProperty TrayVisibleProp = DependencyProperty.Register("TrayVisible", typeof(bool), typeof(Globals), new FrameworkPropertyMetadata(false));
+        private static readonly DependencyProperty TrayVisibleProp = DependencyProperty.Register("TrayVisible", typeof(bool), typeof(Globals), new FrameworkPropertyMetadata(true));
         [PropAttr]
         public bool TrayVisible
         {
