@@ -26,8 +26,6 @@ namespace Decchi.Core.Windows
         private Storyboard m_toNormal;
         private string     m_newUrl;
 
-		private bool forceQuitFlag = false; // 트레이 옵션 여부 상관없이 종료
-
 		public MainWindow( )
         {
             MainWindow.Instance = this;
@@ -148,9 +146,6 @@ namespace Decchi.Core.Windows
 
             Process.Start(new ProcessStartInfo("cmd.exe", "/c " + batchPath) { CreateNoWindow = true, UseShellExecute = false, WindowStyle = ProcessWindowStyle.Hidden });
             Application.Current.Shutdown();
-
-			forceQuitFlag = true;
-			this.Close();
         }
 
         private void ctlHomepage_Click(object sender, RoutedEventArgs e)
@@ -176,7 +171,7 @@ namespace Decchi.Core.Windows
 
         private void MetroWindow_Closing(object sender, CancelEventArgs e)
         {
-            if (Globals.Instance.TrayWhenClose && !forceQuitFlag )
+            if (Globals.Instance.TrayWhenClose)
             {
                 this.GoTray();
                 e.Cancel = true;
@@ -265,8 +260,7 @@ namespace Decchi.Core.Windows
                 {
                     await this.ShowMessageAsync("X(", "트위터에 로그인 하지 못했어요");
 
-					forceQuitFlag = true;
-					this.Close();
+                    Application.Current.Shutdown();
 
                     return;
                 }
@@ -279,8 +273,7 @@ namespace Decchi.Core.Windows
                 {
                     await this.ShowMessageAsync("X(", "트위터에 로그인 하지 못했어요");
 
-					forceQuitFlag = true;
-                    this.Close();
+                    Application.Current.Shutdown();
 
                     return;
                 }
@@ -305,8 +298,7 @@ namespace Decchi.Core.Windows
                 Globals.Instance.TwitterSecret = null;
                 Globals.Instance.SaveSettings();
 
-				forceQuitFlag = true;
-				this.Close( );
+                Application.Current.Shutdown();
 
                 return;
             }
@@ -334,8 +326,7 @@ namespace Decchi.Core.Windows
             {
                 await this.ShowMessageAsync("X(", "서버에 연결하지 못했어요");
 
-				forceQuitFlag = true;
-				this.Close();
+                Application.Current.Shutdown();
 
                 return;
             }
