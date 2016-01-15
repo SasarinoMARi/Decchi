@@ -13,8 +13,6 @@ namespace Decchi.Core.Windows.Dialogs
 {
     public partial class ClientSelectionDialog : BaseMetroDialog
     {
-        public SongInfo SongInfo { get; private set; }
-
         private	List<SongInfo> m_songinfo;
         private TaskCompletionSource<object> m_tcs;
         private CancellationTokenRegistration m_cancel;
@@ -29,9 +27,8 @@ namespace Decchi.Core.Windows.Dialogs
             InitializeComponent();
 
             this.m_songinfo = new List<SongInfo>();
-            for (int i = 0; i < SongInfo.SongInfos.Length; ++i)
-                if (SongInfo.SongInfos[i].Loaded)
-                    this.m_songinfo.Add(SongInfo.SongInfos[i]);
+            for (int i = 0; i < SongInfo.LastResult.Length; ++i)
+                this.m_songinfo.Add(SongInfo.LastResult[i]);
 
             this.ctlList.ItemsSource = this.m_songinfo;
 

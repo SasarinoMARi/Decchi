@@ -16,7 +16,7 @@
         <TextBlock Grid.Row="0"
                    Margin="0 5 0 0"
                    FontSize="{DynamicResource DialogMessageFontSize}"
-                   Text="클라이언트를 선택해주세요"
+                   Text="플레이어를 선택하세요"
                    TextWrapping="Wrap"
                    Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Decchi.Core.Windows.Dialogs:VerifierDialog, Mode=FindAncestor}, UpdateSourceTrigger=PropertyChanged}"
                    HorizontalAlignment="Center"/>
@@ -47,9 +47,10 @@
                         <Image Width="32"
 							   Height="32"
 							   VerticalAlignment="Center"
-                               Source="{Binding Path=ClientIcon}" />
+                               Source="{Binding Path=Rule.ClientIcon}"
+                               ToolTip="{Binding Path=Rule.Client}"/>
 
-                        <TextBlock Text="{Binding Path=Client}"
+                        <TextBlock Text="{Binding Path=Title}"
 								   VerticalAlignment="Center"
 								   Margin="5 0 0 0"/>
                     </StackPanel>

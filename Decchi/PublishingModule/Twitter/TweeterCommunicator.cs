@@ -53,7 +53,7 @@ namespace Decchi.PublishingModule.Twitter
         /// <returns>트윗 성공 여부</returns>
         public bool Publish(SongInfo songinfo)
         {
-            if (songinfo == null || !songinfo.Loaded) return false;
+            if (songinfo == null) return false;
             
             var text = songinfo.ToString(songinfo.Cover != null);
             if (string.IsNullOrEmpty(text)) return false;

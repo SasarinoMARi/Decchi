@@ -30,6 +30,7 @@
                  MaxLength="7"
                  Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Decchi.Core.Windows.Dialogs:VerifierDialog, Mode=FindAncestor}, UpdateSourceTrigger=PropertyChanged}"
                  TextAlignment="Center"
+                 KeyDown="ctlText_KeyDown"
                  PreviewTextInput="ctlText_PreviewTextInput"
                  DataObject.Pasting="ctlText_DataObject_Pasting"/>
 

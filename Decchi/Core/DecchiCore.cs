@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using Decchi.Core.Windows;
@@ -85,49 +84,28 @@ namespace Decchi.Core
         {
             if (!(bool)MainWindow.Instance.Dispatcher.Invoke(new Func<bool, bool>(MainWindow.Instance.SetButtonState), false))
                 return;
-
-            int i;
-
-            var playingCount = 0;
-            SongInfo.Clear();
-            Parallel.ForEach(SongInfo.SongInfos, e => { e.GetCurrentPlayingSong(); if (e.Loaded) Interlocked.Increment(ref playingCount); } );
             
-            /*
-            for (i = 0; i < SongInfo.SongInfos.Length; ++i)
-            {
-                SongInfo.SongInfos[i].GetCurrentPlayingSong();
+            var infos = SongInfo.GetCurrentPlayingSong();
             
-                if (SongInfo.SongInfos[i].Loaded)
-                    Interlocked.Increment(ref playingCount);
-            }
-            */
-            
-            if (playingCount >= 2)
+            if (infos.Length >= 2)
             {
                 // 두 개 이상의 곡이 재생중인 경우
-                //TwitterCommunicator.Instance.Publish(MainWindow.Instance.Dispatcher.Invoke<SongInfo>(ShowSelectWindow));
                 MainWindow.Instance.Dispatcher.Invoke(new Action(MainWindow.Instance.ShowSelectWindow));
             }
             else
             {
-                if (playingCount == 0)
+                if (infos.Length == 0)
                 {
                     // 재생중인 곡이 없는 경우
                 }
                 else
                 {
                     // 하나의 곡이 재생중인 경우
-                    for (i = 0; i < SongInfo.SongInfos.Length; ++i)
-                    {
-                        if (SongInfo.SongInfos[i].Loaded)
-                        {
-                            TwitterCommunicator.Instance.Publish(SongInfo.SongInfos[i]);
-                            break;
-                        }
-                    }
+                    TwitterCommunicator.Instance.Publish(infos[0]);
                 }
 
                 SongInfo.Clear();
+
                 MainWindow.Instance.Dispatcher.Invoke(new Func<bool, bool>(MainWindow.Instance.SetButtonState), true);
             }
         }

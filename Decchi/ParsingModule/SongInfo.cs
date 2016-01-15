@@ -9,23 +9,44 @@ using System.Net.Cache;
 using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
+using System.Windows.Automation;
 using System.Windows.Media.Imaging;
 using Decchi.Core.Windows;
 using Decchi.Utilities;
+using NDde.Client;
 
 namespace Decchi.ParsingModule
 {
-    [DebuggerDisplay("{Client}")]
+    [DebuggerDisplay("{Client} : {Title}")]
     public sealed class SongInfo
     {
-        /// <summary>
-        /// Dll 에 아래 함수를 public 으로 넣어두면 자동으로 인식합니다
-        /// </summary>
-        private delegate bool DllParse(out string title, out string album, out string artist, out Stream cover, long option);
+        public const string Via = "#뎃찌NP";
+        public const string defaultFormat = "{/Artist/의 }{/Title/{ (/Album/)}을/를 }듣고 있어요! {/Via/} - {/Client/} #NowPlaying";
+
+        [DebuggerDisplay("{Client}")]
+        public sealed class SongInfoRule
+        {
+            public string       Client      { get; set; }
+            public BitmapImage  ClientIcon  { get; set; }
+            public string       WndClass    { get; set; }
+            public bool         WndClassTop { get; set; }
+            public string       UrlPart     { get; set; }
+            public Regex        Regex       { get; set; }
+            public Assembly     Assmbly     { get; set; }
+            public DllParse     Parse       { get; set; }
+            public DllParse2    Parse2      { get; set; }
+            public string       PluginUrl   { get; set; }
+            public string       PluginPipe  { get; set; }
+        }
+
+        // Dll 에 아래 함수를 public 으로 넣어두면 자동으로 인식합니다
+        public delegate bool DllParse(out string title, out string album, out string artist, out Stream thumbnail, long option);
+        public delegate IList<IDictionary<string, object>> DllParse2(long option);
         
-        public static SongInfo[]    SongInfos   { get; private set; }
-        public static SongInfo[]    PluginInfos { get; private set; }
-        public static Assembly[]    Assemblies  { get; private set; }
+        public static SongInfoRule[]    Rules      { get; private set; }
+        public static SongInfoRule[]    RulesWithP { get; private set; }
+        public static Assembly[]        Assemblies { get; private set; }
 
         public const string BaseURL = "https://raw.githubusercontent.com/Usagination/Decchi/songinfo/";
         public const string PluginBaseURI = "https://github.com/Usagination/Decchi/blob/songinfo/";
@@ -37,7 +58,7 @@ namespace Decchi.ParsingModule
         /// 
         /// wndClass        윈도우 핸들을 찾을때 사용하는 ClassName
         /// wndClassTop     wndclass 가 최상위 핸들이여야만 사용합니다
-        /// regex           파싱 정규식
+        /// urlpart         웹브라우저 인식할때 url 에 포함되어 있어야 하는거
         /// 
         /// 동적 라이브러리
         /// DLLExt          추가 라이브러리
@@ -52,8 +73,8 @@ namespace Decchi.ParsingModule
             try
             {
                 var asm = new List<Assembly>();
-                var lst = new List<SongInfo>();
-                var lstPlugin = new List<SongInfo>();
+                var lst = new List<SongInfoRule>();
+                var lstPlugin = new List<SongInfoRule>();
 
                 using (var wc = new WebClient())
                 {
@@ -61,7 +82,7 @@ namespace Decchi.ParsingModule
                     wc.BaseAddress = BaseURL;
                     wc.CachePolicy = new RequestCachePolicy(RequestCacheLevel.NoCacheNoStore);
 
-                    SongInfo cur = null;
+                    SongInfoRule cur = null;
                     string line, key, val;
                     int sep;
 
@@ -74,7 +95,7 @@ namespace Decchi.ParsingModule
 
                             if (line.StartsWith("["))
                             {
-                                cur = new SongInfo(line.Substring(1, line.Length - 2).Trim());
+                                cur = new SongInfoRule { Client = line.Substring(1, line.Length - 2).Trim() };
                                 lst.Add(cur);
                             }
                             else if ((sep = line.IndexOf('=')) > 0)
@@ -89,15 +110,19 @@ namespace Decchi.ParsingModule
                                         break;
 
                                     case "wndclass":
-                                        cur.m_wndClass = val;
+                                        cur.WndClass = val;
                                         break;
 
                                     case "wndclasstop":
-                                        cur.m_wndClassTop = val == "1";
+                                        cur.WndClassTop = val == "1";
+                                        break;
+
+                                    case "UrlPart":
+                                        cur.UrlPart = val;
                                         break;
 
                                     case "regex":
-                                        cur.m_regex = new Regex(val, RegexOptions.IgnoreCase | RegexOptions.Compiled | RegexOptions.Singleline);
+                                        cur.Regex = new Regex(val, RegexOptions.IgnoreCase | RegexOptions.Compiled | RegexOptions.Singleline);
                                         break;
 
                                     case "dll":
@@ -119,7 +144,7 @@ namespace Decchi.ParsingModule
                                         break;
 
                                     case "pluginpipe":
-                                        cur.m_pluginPipe = val;
+                                        cur.PluginPipe = val;
                                         break;
                                 }
                             }
@@ -127,9 +152,9 @@ namespace Decchi.ParsingModule
                     }
                 }
 
-                SongInfo.SongInfos  = lst.ToArray();
+                SongInfo.Rules      = lst.ToArray();
+                SongInfo.RulesWithP = lstPlugin.ToArray();
                 SongInfo.Assemblies = asm.ToArray();
-                SongInfo.PluginInfos = lstPlugin.ToArray();
 
                 return true;
             }
@@ -156,35 +181,38 @@ namespace Decchi.ParsingModule
                 return null;
             }
         }
-        private static void GetMethod(SongInfo cur, byte[] assemblyData)
+        private static void GetMethod(SongInfoRule cur, byte[] assemblyData)
         {
             try
             {
-                cur.m_assmbly = Assembly.Load(assemblyData);
-                if (cur.m_assmbly != null)
+                cur.Assmbly = Assembly.Load(assemblyData);
+                if (cur.Assmbly != null)
                 {
-                    MethodInfo dllParse = null;
+                    MethodInfo dllParse  = null;
+                    MethodInfo dllParse2 = null;
 
-                    foreach (var type in cur.m_assmbly.GetExportedTypes())
+                    foreach (var type in cur.Assmbly.GetExportedTypes())
                     {
-                        bool find = false;
-
                         foreach (var method in type.GetMethods())
                         {
-                            if (IsMethodCompatibleWithDelegate(method, typeof(DllParse)))
-                            {
+                            if (dllParse == null && IsMethodCompatibleWithDelegate(method, typeof(DllParse)))
                                 dllParse = method;
-                                find = true;
+
+                            if (dllParse2 == null && IsMethodCompatibleWithDelegate(method, typeof(DllParse2)))
+                                dllParse2 = method;
+
+                            if (dllParse != null && dllParse2 != null)
                                 break;
-                            }
                         }
 
-                        if (find)
+                        if (dllParse != null && dllParse2 != null)
                             break;
                     }
 
-                    if (dllParse != null)
-                        cur.m_parse = (DllParse)Delegate.CreateDelegate(typeof(DllParse), null, dllParse);
+                    if (dllParse2 != null)
+                        cur.Parse2 = (DllParse2)Delegate.CreateDelegate(typeof(DllParse2), null, dllParse2);
+                    else if (dllParse != null)
+                        cur.Parse  = (DllParse )Delegate.CreateDelegate(typeof(DllParse ), null, dllParse);
                 }
             }
             catch
@@ -199,229 +227,303 @@ namespace Decchi.ParsingModule
                 .SequenceEqual(method.GetParameters().Select(x => x.ParameterType));
         }
 
-        private SongInfo(string client)
+        public SongInfoRule Rule    { get; private set; } 
+        public string       Title   { get; private set; }
+        public string       Album   { get; private set; }
+        public string       Artist  { get; private set; }
+        public string       Local   { get; private set; }
+        public Stream       Cover   { get; private set; }
+
+        private SongInfo(SongInfoRule rule)
         {
-            this.Client = client;
+            this.Rule = rule;
         }
 
-        public  string      Client      { get; private set; }
-        public  BitmapImage ClientIcon  { get; private set; }
-        private string      m_wndClass;
-        private bool        m_wndClassTop;
-        private Regex       m_regex;
-        private Assembly    m_assmbly;
-        private DllParse    m_parse;
-        public  string      PluginUrl   { get; private set; }
-        private string      m_pluginPipe;
-        
-        public  bool        Loaded      { get; private set; }
-
-        public  string      Title       { get; private set; }
-        public  string      Album       { get; private set; }
-        public  string      Artist      { get; private set; }
-        public  string      LocalPath   { get; private set; }
-        public  Stream      Cover       { get; private set; }
-
-        public const string Via = "#뎃찌NP";
-        public const string defaultFormat = "{/Artist/의 }{/Title/{ (/Album/)}을/를 }듣고 있어요! {/Via/} - {/Client/} #NowPlaying";
-
-        public static void Clear()
+        public static IntPtr GetWindowHandle(SongInfoRule rule)
         {
-            SongInfo info;
-
-            for (int i = 0; i < SongInfos.Length; ++i)
-            {
-                info = SongInfos[i];
-                info.Loaded     = false;
-
-                info.Album      = null;
-                info.Title      = null;
-                info.Artist     = null;
-                info.LocalPath  = null;
-                if (info.Cover != null)
-                {
-                    try
-                    {
-                        info.Cover.Dispose();	
-                    }
-                    catch
-                    { }
-                    info.Cover = null;
-                }
-            }
-        }
-
-        public IntPtr GetWindowHandle()
-        {
-            var hwnd = NativeMethods.FindWindow(this.m_wndClass, null);
+            var hwnd = NativeMethods.FindWindow(rule.WndClass, null);
             if (hwnd == IntPtr.Zero) return IntPtr.Zero;
 
-            if (this.m_wndClassTop)
+            if (rule.WndClassTop)
                 return NativeMethods.GetParent(hwnd) == IntPtr.Zero ? hwnd : IntPtr.Zero;
             else
                 return hwnd;
         }
 
-        public bool GetCurrentPlayingSong( )
+        public static SongInfo[] LastResult { get; private set; }
+        public static SongInfo[] GetCurrentPlayingSong()
         {
-            this.Loaded = false;
+            var lst = new List<SongInfo>();
 
-            var hwnd = !string.IsNullOrEmpty(this.m_wndClass) ? GetWindowHandle() : IntPtr.Zero;
+            Parallel.ForEach(SongInfo.Rules, e => GetCurrentPlayingSong(lst, e));
 
-            //////////////////////////////////////////////////
-            // 파이프
-            if (m_pluginPipe != null)
+            return (LastResult = lst.ToArray());
+        }
+        public static void Clear()
+        {
+            for (int i = 0; i < LastResult.Length; ++i)
+                if (LastResult[i].Cover != null)
+                    LastResult[i].Cover.Dispose();
+        }
+
+        private static void GetCurrentPlayingSong(List<SongInfo> lst, SongInfoRule rule)
+        {
+            SongInfo si = null;
+            
+            #region 파이프
+            if (rule.PluginPipe != null)
             {
                 string data = null;
 
-                int read = 0;
-                using (var stream = new NamedPipeClientStream(".", this.m_pluginPipe, PipeDirection.In))
+                using (var stream = new NamedPipeClientStream(".", rule.PluginPipe, PipeDirection.In))
                 {
                     try
                     {
                         stream.Connect(1000);
+
+                        if (stream.IsConnected)
+                            using (var reader = new StreamReader(stream))
+                                data = reader.ReadToEnd();
                     }
                     catch
                     { }
-
-                    if (stream.IsConnected)
-                    {
-                        var buff = new byte[4096];
-                        read = stream.Read(buff, 0, 4096);
-
-                        if (read > 0)
-                            data = Encoding.UTF8.GetString(buff, 0, read);
-                    }
                 }
 
                 if (data != null)
                 {
-                    var split = data.Split(new string[] { "||" }, StringSplitOptions.RemoveEmptyEntries);
+                    lock (lst)
+                        lst.Add((si = new SongInfo(rule)));
+                    si.GetFromPipe(data);
+                    return;
+                }
+            }
+            #endregion
 
-                    int sep;
-                    string key, val;
-                    for (read = 0; read < split.Length; ++read)
-                    {
-                        if ((sep = split[read].IndexOf('=')) > 0)
-                        {
-                            key = split[read].Substring(0, sep).Trim();
-                            val = split[read].Substring(sep + 1).Trim();
+            IntPtr hwnd = IntPtr.Zero;
 
-                            switch (key.ToLower())
-                            {
-                                case "title":   this.Title      = val; break;
-                                case "album":   this.Album      = val; break;
-                                case "artist":  this.Artist     = val; break;
-                                case "path":    this.LocalPath  = val; break;
-                            }
-                        }
-                    }
-
-                    if (this.LocalPath != null) GetTagsFromFile();
-
-                    this.Loaded = true;
-                    return true;
-                }                
+            if (!string.IsNullOrWhiteSpace(rule.WndClass))
+            {
+                hwnd = GetWindowHandle(rule);
+                if (hwnd == IntPtr.Zero) return;
             }
 
-            //////////////////////////////////////////////////
-            // 열린 파일 감지
-            if (hwnd != IntPtr.Zero && Globals.Instance.DetectLocalFile && this.LocalPath == null)
-                this.LocalPath = DetectOpenedFile.GetOpenedFile(hwnd);
+            #region 로컬 파일 인식
+            if (hwnd != IntPtr.Zero && Globals.Instance.DetectLocalFile)
+            {
+                var local = DetectOpenedFile.GetOpenedFile(hwnd);
+                if (!string.IsNullOrEmpty(local) && File.Exists(local))
+                {
+                    si = new SongInfo(rule);
+                    si.Local = local;
+                }
+            }
+            #endregion
 
-            //////////////////////////////////////////////////
-            // 파일 경로에서 정보 얻어옴
-            if (!string.IsNullOrEmpty(this.LocalPath) && File.Exists(this.LocalPath))
-                GetTagsFromFile();
-
-            //////////////////////////////////////////////////
-            // 추가 DLL
-            if (m_parse != null)
+            #region 추가 DLL
+            if (rule.Parse != null)
             {
                 string title, album, artist;
                 Stream stream;
 
-                bool succ = m_parse.Invoke(out title, out album, out artist, out stream, Globals.Instance.DetectChromeUrl ? 1 : 0);
+                bool succ = rule.Parse.Invoke(out title, out album, out artist, out stream, 0);
 
                 if (succ)
                 {
-                    this.Title  = this.Title    ?? title;
-                    this.Album  = this.Album    ?? album;
-                    this.Artist = this.Artist   ?? artist;
+                    lock (lst)
+                        lst.Add(si ?? (si = new SongInfo(rule)));
+                    si.Title    = title;
+                    si.Album    = album;
+                    si.Artist   = artist;
+                    si.Cover    = stream;
 
-                    if (stream != null)
-                    {
-                        if (this.Cover == null)
-                            this.Cover = stream;
-                        else
-                            stream.Dispose();
-                    }
+                    si.GetTagsFromFile();
 
-                    this.Loaded = true;
-                    return true;
+                    return;
                 }
             }
+            else if (rule.Parse2 != null)
+            {
+                var lstResult = rule.Parse2.Invoke(0);
 
-            //////////////////////////////////////////////////
-            // 타이틀 파싱
-            if (hwnd != IntPtr.Zero && this.m_regex != null)
+                if (lstResult != null && lstResult.Count > 0)
+                {
+                    for (int i = 0; i < lstResult.Count; ++i)
+                    {
+                        lock (lst)
+                            lst.Add((si = new SongInfo(rule)));
+                        si.GetFromParseResult(lstResult[i]);
+                    }
+                    return;
+                }
+            }
+            #endregion
+
+            #region 타이틀 파싱
+            if (hwnd != IntPtr.Zero && rule.Regex != null)
             {
                 var str = NativeMethods.GetWindowTitle(hwnd);
-                if (string.IsNullOrEmpty(str)) return false;
+                if (string.IsNullOrEmpty(str)) return;
 
-                var match = this.m_regex.Match(str);
+                var match = rule.Regex.Match(str);
+                if (!match.Success) return;
 
-                if (!match.Success)
-                    return false;
+                if (si == null) si = new SongInfo(rule);
 
                 Group g;
+                si.Title    = si.Title  ?? ((g = match.Groups["title"])     != null ? g.Value : null);
+                si.Album    = si.Album  ?? ((g = match.Groups["aritis"])    != null ? g.Value : null);
+                si.Artist   = si.Artist ?? ((g = match.Groups["aritis"])    != null ? g.Value : null);
+                si.Local    = si.Local  ?? ((g = match.Groups["aritis"])    != null ? g.Value : null);
 
-                this.Artist     = this.Artist       ?? ((g = match.Groups["aritis"])  != null ? g.Value : null);
-                this.Title      = this.Title        ?? ((g = match.Groups["title"])   != null ? g.Value : null);
-                this.Album      = this.Album        ?? ((g = match.Groups["album"])   != null ? g.Value : null);
-                this.LocalPath  = this.LocalPath    ?? ((g = match.Groups["path"])    != null ? g.Value : null);
+                si.GetTagsFromFile();
 
-                this.Loaded = true;
-                return true;
+                if (!string.IsNullOrWhiteSpace(si.Title) ||
+                    !string.IsNullOrWhiteSpace(si.Album) ||
+                    !string.IsNullOrWhiteSpace(si.Artist))
+                    lock (lst)
+                        lst.Add(si);
+
+                return;
             }
+            #endregion
 
-            //////////////////////////////////////////////////
-            // Process 돌려가면서 일치하는 정규식을 찾는다.
-            if (this.m_regex != null)
+            //웹브라우저 파싱
+            if (hwnd == IntPtr.Zero && rule.Regex != null)
+                SongInfo.DetectWebBrowser(lst, rule);
+        }
+
+        private static void DetectWebBrowser(List<SongInfo> lst, SongInfoRule rule)
+        {
+            Match match;
+
+            IntPtr hwnd = IntPtr.Zero;
+            string title = null;
+            string url = null;
+
+            #region Chrome
+            while ((hwnd = NativeMethods.FindWindowEx(IntPtr.Zero, hwnd, "Chrome_WidgetWin_1", null)) != IntPtr.Zero)
             {
-                var procs = Process.GetProcesses();
+                title = NativeMethods.GetWindowTitle(hwnd);
+                if (string.IsNullOrWhiteSpace(title)) continue;
 
-                bool find = false;
+                Debug.WriteLine(title);
+                match = rule.Regex.Match(title);
+                if (!match.Success) continue;
+                
+                url = Globals.Instance.DetectWebUrl ? GetChromeUrl(hwnd) : null;
+                
+                AddWebBrowser(lst, rule, match, url);
+            }
+            #endregion
 
-                Match match;
-                Group g;
-
-                for (int i = 0; i < procs.Length; i++)
+            #region FireFox
+            if (NativeMethods.FindWindow("MozillaWindowClass", null) != IntPtr.Zero)
+            {
+                using (DdeClient dde = new DdeClient("FireFox", "WWW_GetWindowInfo"))
                 {
-                    using (procs[i])
+                    try
                     {
-                        if (!find)
-                        {
-                            match = this.m_regex.Match(procs[i].MainWindowTitle);
+                        dde.Connect();
+                        string[] text = dde.Request("URL", 1000).Trim(new char[] { '"' }).Split(new string[] { "\",\"" }, StringSplitOptions.RemoveEmptyEntries);
+                        title = text[1];
 
-                            if (!match.Success)
-                                return false;
+                        if (Globals.Instance.DetectWebUrl)
+                            url = text[0];
 
-                            this.Artist     = this.Artist       ?? ((g = match.Groups["aritis"])  != null ? g.Value : null);
-                            this.Title      = this.Title        ?? ((g = match.Groups["title"])   != null ? g.Value : null);
-                            this.Album      = this.Album        ?? ((g = match.Groups["album"])   != null ? g.Value : null);
-                            this.LocalPath  = this.LocalPath    ?? ((g = match.Groups["path"])    != null ? g.Value : null);
-
-                            this.Loaded = true;
-                            find = true;
-                        }
+                        dde.Disconnect();
                     }
+                    catch
+                    { }
                 }
 
-                return find;
+                match = rule.Regex.Match(title);
+                if (match.Success)
+                    AddWebBrowser(lst, rule, match, url);
+            }
+            #endregion
+        }
+        private static string GetChromeUrl(IntPtr handle)
+        {
+            try
+            {
+                var element = AutomationElement.FromHandle(handle);
+                if (element == null) return null;
+
+                var subtree = element.FindAll(TreeScope.Subtree, new PropertyCondition(AutomationElement.ControlTypeProperty, ControlType.Edit));
+                var pattern = (ValuePattern)subtree[0].GetCurrentPattern(ValuePattern.Pattern);
+
+                var vp = pattern.Current.Value as string;
+                if (!vp.StartsWith("http"))
+                    vp = "https://" + vp;
+
+                var uri = new Uri(vp);
+
+                if (uri.Host.IndexOf("youtube") >= 0)
+                    return uri.ToString();
+            }
+            catch
+            { }
+
+            return null;
+        }
+        private static void AddWebBrowser(List<SongInfo> lst, SongInfoRule rule, Match match, string url)
+        {
+            var si = new SongInfo(rule);
+
+            Group g;
+            si.Title    = (g = match.Groups["title"])   != null ? g.Value : null;
+            si.Album    = (g = match.Groups["album"])   != null ? g.Value : null;
+            si.Artist   = (g = match.Groups["aritis"])  != null ? g.Value : null;
+            si.Local    = (g = match.Groups["path"])    != null ? g.Value : null;
+
+            if (!string.IsNullOrWhiteSpace(si.Title) ||
+                !string.IsNullOrWhiteSpace(si.Album) ||
+                !string.IsNullOrWhiteSpace(si.Artist))
+            {
+                if (!string.IsNullOrWhiteSpace(url) && (string.IsNullOrWhiteSpace(rule.PluginUrl) || url.IndexOf(rule.PluginUrl) >= 0))
+                    si.Title = string.Format("{0} {1} ", si.Title, url);
+
+                lock (lst)
+                    lst.Add(si);
+            }
+        }
+
+
+        private void GetFromPipe(string str)
+        {
+            var split = str.Split(new string[] { "||" }, StringSplitOptions.RemoveEmptyEntries);
+
+            int sep;
+            string key, val;
+            for (int read = 0; read < split.Length; ++read)
+            {
+                if ((sep = split[read].IndexOf('=')) > 0)
+                {
+                    key = split[read].Substring(0, sep).Trim();
+                    val = split[read].Substring(sep + 1).Trim();
+
+                    switch (key.ToLower())
+                    {
+                        case "title":   this.Title  = val; break;
+                        case "album":   this.Album  = val; break;
+                        case "artist":  this.Artist = val; break;
+                        case "path":    this.Local  = val; break;
+                        case "cover":   this.Cover  = new MemoryStream(Convert.FromBase64String(val)); Cover.Position = 0; break;
+                    }
+                }
             }
 
-            return false;
+            this.GetTagsFromFile();
+        }
+        private void GetFromParseResult(IDictionary<string, object> dic)
+        {
+            if (dic.ContainsKey("title"))   this.Title  = dic["title"]  as string;
+            if (dic.ContainsKey("album"))   this.Album  = dic["album"]  as string;
+            if (dic.ContainsKey("artist"))  this.Artist = dic["artist"] as string;
+            if (dic.ContainsKey("path"))    this.Local  = dic["path"]   as string;
+            if (dic.ContainsKey("cover"))   this.Cover  = dic["cover"]  as Stream;
+
+            this.GetTagsFromFile();
         }
 
         private void GetTagsFromFile()
@@ -431,10 +533,10 @@ namespace Decchi.ParsingModule
             // (filename).jpg
             // (album).jpg
 
-            if (this.LocalPath != null && File.Exists(this.LocalPath))
+            if (!string.IsNullOrWhiteSpace(this.Local) && File.Exists(this.Local))
             {
                 // From MP3Tag
-                using (var abs = new Abstraction(this.LocalPath))
+                using (var abs = new Abstraction(this.Local))
                 {
                     try
                     {
@@ -442,11 +544,11 @@ namespace Decchi.ParsingModule
                         {
                             var tag = file.Tag;
 
-                            if (string.IsNullOrEmpty(this.Album)  && !string.IsNullOrEmpty(tag.Album))              this.Album  = tag.Album;
-                            if (string.IsNullOrEmpty(this.Artist) && !string.IsNullOrEmpty(tag.JoinedPerformers))   this.Artist = tag.JoinedPerformers;
-                            if (string.IsNullOrEmpty(this.Title)  && !string.IsNullOrEmpty(tag.Title))              this.Title  = tag.Title;
+                            if (string.IsNullOrWhiteSpace(this.Album)  && !string.IsNullOrWhiteSpace(tag.Album))              this.Album  = tag.Album;
+                            if (string.IsNullOrWhiteSpace(this.Artist) && !string.IsNullOrWhiteSpace(tag.JoinedPerformers))   this.Artist = tag.JoinedPerformers;
+                            if (string.IsNullOrWhiteSpace(this.Title)  && !string.IsNullOrWhiteSpace(tag.Title))              this.Title  = tag.Title;
 
-                            if (file.Tag.Pictures.Length > 0)
+                            if (file.Tag.Pictures.Length > 0 && this.Cover == null)
                             {
                                 this.Cover = new MemoryStream(file.Tag.Pictures[0].Data.Data, false);
                                 this.Cover.Position = 0;
@@ -460,7 +562,8 @@ namespace Decchi.ParsingModule
                 if (this.Cover == null)
                 {
                     // From Directory
-                    var path = Path.GetDirectoryName(this.LocalPath);
+                    var path = Path.GetDirectoryName(this.Local);
+                    var dirName = Path.GetFileName(path).ToLower();
                     var files = Directory.GetFiles(path, "*.*", SearchOption.TopDirectoryOnly);
                     string filename;
 
@@ -478,7 +581,7 @@ namespace Decchi.ParsingModule
                         filename = Path.GetFileNameWithoutExtension(files[i]).ToLower();
                         if (filename.IndexOf("cover") >= 0  ||
                             filename.IndexOf("front") >= 0  ||
-                            filename.IndexOf("folder") >= 0 ||
+                            filename.IndexOf(dirName) >= 0  ||
                             (string.IsNullOrEmpty(this.Title) && filename.IndexOf(this.Title) >= 0) ||
                             (string.IsNullOrEmpty(this.Album) && filename.IndexOf(this.Album) >= 0))
                             this.Cover = new FileStream(files[i], FileMode.Open, FileAccess.Read, FileShare.Read);
@@ -578,11 +681,11 @@ namespace Decchi.ParsingModule
                             else
                             {
                                 // b -> { } 안에 포멧 변환된게 있음
-                                str = Replace(str, "/Title/",   info.Title,     ref b);
-                                str = Replace(str, "/Artist/",  info.Artist,    ref b);
-                                str = Replace(str, "/Album/",   info.Album,     ref b);
-                                str = Replace(str, "/Client/",  info.Client,    ref b);
-                                str = Replace(str, "/Via/",     SongInfo.Via,   ref b);
+                                str = Replace(str, "/Title/",   info.Title,         ref b);
+                                str = Replace(str, "/Artist/",  info.Artist,        ref b);
+                                str = Replace(str, "/Album/",   info.Album,         ref b);
+                                str = Replace(str, "/Client/",  info.Rule.Client,   ref b);
+                                str = Replace(str, "/Via/",     SongInfo.Via,       ref b);
 
                                 if (b)
                                 {

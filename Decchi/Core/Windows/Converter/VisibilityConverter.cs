@@ -25,6 +25,8 @@ namespace Decchi.Core.Windows.Converter
 		}
 		public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
+            throw new NotImplementedException();
+            /*
             var visibility = (Visibility)value;
 
             if (visibility == this.Visible)
@@ -34,6 +36,7 @@ namespace Decchi.Core.Windows.Converter
                 return Visibility.Hidden;
 
             return Visibility.Collapsed;
+            */
 		}
 	}
 }

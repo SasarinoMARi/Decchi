@@ -4,13 +4,11 @@ using System.IO;
 using System.Net;
 using System.Net.Cache;
 using System.Reflection;
-using System.Runtime.InteropServices;
 using System.Security.AccessControl;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Threading;
-using Decchi.Core.Windows;
 using Decchi.ParsingModule;
 using Microsoft.Win32;
 
@@ -40,7 +38,7 @@ namespace Decchi.Core
 
             ServicePointManager.Expect100Continue = false;
             ServicePointManager.UseNagleAlgorithm = false;
-            HttpWebRequest.DefaultCachePolicy   = new RequestCachePolicy(RequestCacheLevel.NoCacheNoStore);
+            HttpWebRequest.DefaultCachePolicy = new RequestCachePolicy(RequestCacheLevel.NoCacheNoStore);
 #if !DEBUG
                 HttpWebRequest.DefaultWebProxy      = null;
 #endif
@@ -125,20 +123,24 @@ namespace Decchi.Core
             return null;
         }
 
-        public static bool CheckNewVersion()
+        public static bool CheckNewVersion(out string url)
         {
+            url = null;
+
             try
             {
-                var tag = "0.0.0.0";
+                string body;
 
                 var req = HttpWebRequest.Create("https://api.github.com/repos/Usagination/Decchi/releases/latest") as HttpWebRequest;
                 req.Timeout = 10000;
                 req.UserAgent = "Decchi";
                 using (var res = req.GetResponse())
                 using (var reader = new StreamReader(res.GetResponseStream()))
-                    tag = Regex.Match(reader.ReadToEnd(), "\"tag_name\"[ \t]*:[ \t]*\"([^\"]+)\"").Groups[1].Value;
+                    body = reader.ReadToEnd();
+                
+                var tagName = new Version(Regex.Match(body, "\"tag_name\"[ \t]*:[ \t]*\"([^\"]+)\"").Groups[1].Value);
 
-                var tagName = new Version(tag);
+                url = Regex.Match(body, "\"browser_download_url\"[ \t]*:[ \t]*\"([^\"]+)\"").Groups[1].Value;
 
                 return tagName > Version;
             }
@@ -152,8 +154,9 @@ namespace Decchi.Core
         private static void ShowCrashReport(Exception exception)
         {
             var date = DateTime.Now.ToString("yyyy-MM-dd-HH-mm-ss");
+            var file = string.Format("Crash-{0}.txt", date);
 
-            using (var writer = new StreamWriter(Path.Combine(App.ExeDir, string.Format("Crash-{0}.txt", date))))
+            using (var writer = new StreamWriter(Path.Combine(App.ExeDir, file)))
             {
                 writer.WriteLine("Decchi Crash Report");
                 writer.WriteLine("Date    : " + date);
@@ -166,7 +169,7 @@ namespace Decchi.Core
                 writer.WriteLine(exception.ToString());
             }
 
-            App.Current.Shutdown();
+            Decchi.Core.Windows.MainWindow.Instance.Dispatcher.Invoke(() => Decchi.Core.Windows.MainWindow.Instance.CrashReport(file));
         }
 
         private static string GetOSInfomation()

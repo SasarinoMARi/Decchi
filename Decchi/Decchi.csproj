@@ -70,6 +70,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>ExternalLibrarys\MahApps.Metro-1.2.2\MahApps.Metro.dll</HintPath>
     </Reference>
+    <Reference Include="NDde">
+      <HintPath>ExternalLibrarys\NDde-2.01.0563\NDde.dll</HintPath>
+    </Reference>
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
     <Reference Include="System" />
@@ -86,6 +89,8 @@
     <Reference Include="TagLib.Portable">
       <HintPath>ExternalLibrarys\TagLib.Portable-1.0.3\TagLib.Portable.dll</HintPath>
     </Reference>
+    <Reference Include="UIAutomationClient" />
+    <Reference Include="UIAutomationTypes" />
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
@@ -93,6 +98,7 @@
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
     <Compile Include="Core\DecchiCore.cs" />
+    <Compile Include="Core\Windows\Converter\Boolean2Double.cs" />
     <Compile Include="Core\Windows\Converter\VisibilityConverter.cs" />
     <Compile Include="Core\Windows\Converter\Boolean2Visibility.cs" />
     <Compile Include="Core\Windows\Converter\InvertBoolean.cs" />
@@ -178,6 +184,9 @@
   <ItemGroup>
     <EmbeddedResource Include="ExternalLibrarys\MahApps.Metro-1.2.2\MahApps.Metro.dll" />
     <EmbeddedResource Include="ExternalLibrarys\MahApps.Metro-1.2.2\System.Windows.Interactivity.dll" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="ExternalLibrarys\NDde-2.01.0563\NDde.dll" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

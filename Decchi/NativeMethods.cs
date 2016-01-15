@@ -17,6 +17,9 @@ namespace Decchi
         [DllImport("User32.dll", CharSet = CharSet.Unicode)]
         public static extern IntPtr FindWindow(string strClassName, string strWindowName);
 
+        [DllImport("user32.dll", CharSet = CharSet.Unicode)]
+        public static extern IntPtr FindWindowEx(IntPtr parentHandle, IntPtr childAfter, string className, string windowTitle);
+
         [DllImport("user32.dll")]
         public static extern IntPtr GetParent(IntPtr hwnd);
 

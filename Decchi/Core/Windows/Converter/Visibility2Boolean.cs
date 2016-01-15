@@ -15,8 +15,9 @@ namespace Decchi.Core.Windows.Converter
 			return value is Visibility && (Visibility)value == this.True ? true : false;
 		}
 		public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
-		{
-			return value is bool && (bool)value ? this.True : this.False;
+        {
+            throw new NotImplementedException();
+            //return value is bool && (bool)value ? this.True : this.False;
 		}
 	}
 }

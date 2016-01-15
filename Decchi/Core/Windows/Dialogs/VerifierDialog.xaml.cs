@@ -58,6 +58,11 @@ namespace Decchi.Core.Windows.Dialogs
                 this.m_tcs.TrySetResult(null);
         }
 
+        private void ctlText_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter)
+                this.m_tcs.TrySetResult(this.ctlText.Text);
+        }
         private void ctlText_PreviewTextInput(object sender, TextCompositionEventArgs e)
         {
             e.Handled = !IsNumbericText(e.Text);

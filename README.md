@@ -17,18 +17,30 @@
 
 ### 기본 인식 (기본 설정에서 인식)
 
-|클라이언트 이름|곡 이름|아티스트 이름|앨범 이름|앨범 아트|
+- 지원하는 클라이언트
+
+ |클라이언트 이름|곡 이름|아티스트 이름|앨범 이름|앨범 아트|
 |---|:-:|:-:|:-:|:-:|
 |Windows Media Player|O|O|||
 |곰오디오|O|O|||
 |iTunes|O|O|O|O|
 |알송|O|O|||
-|Melon|O|O|||
+|멜론|O|O|||
 |Winamp|O|O|||
 |AIMP3|O|O|||
 |Foobar 2000|O|O|O||
-|웹 브라우저에서 보는 유튜브|O|||URL|
-|웹 브라우저에서 보는 ニコニコ動画|O|||URL|
+|(웹 브라우저) 유튜브|O||||
+|(웹 브라우저) ニコニコ動画|O||||
+
+- 지원하는 웹 브라우저
+ - `X` 지원안함
+ - `O` 지원
+ - `U` `웹 링크 인식` 옵션 지원
+
+ |브라우저 이름|현재 탭|다른 탭|다른 창|
+|---|:-:|:-:|:-:|
+|Chrome|`U`|X|O|
+|FireFox|`U`|X|O|
 
 ## 설치
 
@@ -101,3 +113,5 @@
  - [Hardcodet.NotifyIcon v1.0.5](Decchi/ExternalLibrarys/Hardcodet.NotifyIcon.Wpf-1.0.5)
 
  - [TabLib.Portable v1.0.3](Decchi/ExternalLibrarys/TagLib.Portable-1.0.3)
+
+ - [NDde-2.01.0563](Decchi/ExternalLibrarys/NDde-2.01.0563)

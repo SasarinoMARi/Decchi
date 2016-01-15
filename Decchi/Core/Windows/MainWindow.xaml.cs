@@ -1,5 +1,9 @@
 ﻿using System;
 using System.ComponentModel;
+using System.Diagnostics;
+using System.IO;
+using System.Net;
+using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
@@ -20,21 +24,22 @@ namespace Decchi.Core.Windows
 
         private Storyboard m_toMini;
         private Storyboard m_toNormal;
+        private string     m_newUrl;
 
         public MainWindow( )
         {
             MainWindow.Instance = this;
 
             InitializeComponent( );
+            this.ctlVersion.Text = App.Version.ToString();
+            this.ctlFormat.Text = Globals.Instance.PublishFormat;
 
             this.m_toMini   = (Storyboard)this.Resources["ToMini"];
             this.m_toNormal = (Storyboard)this.Resources["ToNormal"];
 
             this.ctlElements.Visibility = Visibility.Collapsed;
             this.ctlTweet.IsEnabled = false;
-            this.ctlVersion.Text = App.Version.ToString();
             
-            this.ctlFormat.Text = Globals.Instance.PublishFormat;
             this.m_formatOK = ( Brush ) this.FindResource( "BlackColorBrush" );
             this.m_formatErr = Brushes.Red;
 
@@ -76,9 +81,72 @@ namespace Decchi.Core.Windows
             this.ctlPluginFlyout.IsOpen = this.ctlSettingFlyout.IsOpen = false;
         }
 
-        private void ctlUpdate_Click(object sender, RoutedEventArgs e)
+        private async void ctlUpdate_Click(object sender, RoutedEventArgs e)
         {
-            Globals.OpenWebSite("https://github.com/Usagination/Decchi/releases/latest");
+            this.ctlElements.Visibility = Visibility.Hidden;
+            this.ctlUpdate.IsEnabled = false;
+
+            var progress = await this.ShowProgressAsync("XD", "새 파일 다운로드중!");
+            progress.Minimum = 0;
+            progress.Maximum = 1000;
+
+            var newFile = App.ExePath + ".new";
+            var downloadSuccess = false;
+            try
+            {
+                var req = WebRequest.Create(this.m_newUrl) as HttpWebRequest;
+                req.UserAgent = "Decchi";
+                req.Timeout = 5000;
+                req.ReadWriteTimeout = 3000;
+                using (var res = await req.GetResponseAsync())
+                using (var stream = res.GetResponseStream())
+                using (var file = File.Create(newFile))
+                {
+                    var buff = new byte[4096];
+                    int read;
+                    int down = 0;
+                    int total = (int)res.ContentLength;
+                    while ((read = await stream.ReadAsync(buff, 0, 4096)) > 0)
+                    {
+                        down += read;
+                        await file.WriteAsync(buff, 0, read);
+
+                        progress.SetProgress(down * 1000 / total);
+                    }
+                    file.Flush();
+                }
+
+                downloadSuccess = true;
+            }
+            catch
+            {
+                downloadSuccess = false;
+            }
+
+            await progress.CloseAsync();
+
+            if (!downloadSuccess)
+            {
+                this.ctlElements.Visibility = Visibility.Visible;
+                this.ctlUpdate.IsEnabled = true;
+                await this.ShowMessageAsync("X(", "다운로드 실패 :(");
+                return;
+            }
+
+            var batchPath = Path.Combine("Decchi.bat");
+            var sb = new StringBuilder();
+            sb.AppendFormat("@echo off\r\n");
+            sb.AppendFormat(":del\r\n");
+            sb.AppendFormat("del \"{0}\"\r\n", App.ExePath);
+            sb.AppendFormat("if exist \"{0}\" goto del\r\n", App.ExePath);
+            sb.AppendFormat("move \"{0}\" \"{1}\"\r\n", newFile, App.ExePath);
+            sb.AppendFormat("\"{0}\"\r\n", App.ExePath);
+            sb.AppendFormat("del \"{0}\"\r\n", batchPath);
+            File.WriteAllText(batchPath, sb.ToString());
+
+            Process.Start(new ProcessStartInfo("cmd.exe", "/c " + batchPath) { CreateNoWindow = true, UseShellExecute = false, WindowStyle = ProcessWindowStyle.Hidden });
+            Application.Current.Shutdown();
+            this.Close();
         }
 
         private void ctlHomepage_Click(object sender, RoutedEventArgs e)
@@ -145,7 +213,8 @@ namespace Decchi.Core.Windows
 
         private void ctlTrayDecchi_Click(object sender, RoutedEventArgs e)
         {
-            Task.Run(new Action(DecchiCore.Run));
+            if (!this.ctlTweet.IsEnabled)
+                Task.Run(new Action(DecchiCore.Run));
         }
 
         private void ctlExit_Click(object sender, RoutedEventArgs e)
@@ -218,7 +287,7 @@ namespace Decchi.Core.Windows
             // 두개 병렬처리
             var thdSongInfo = Task.Run(new Func<bool>(SongInfo.InitSonginfo));
             var thdTwitter  = Task.Run(new Func<TwitterUser>(TwitterCommunicator.Instance.RefrashMe));
-            var thdUpdate   = Task.Run(new Func<bool>(App.CheckNewVersion));
+            var thdUpdate   = Task.Run(new Func<bool>(() => App.CheckNewVersion(out m_newUrl)));
 
             // 폼에 트위터 유저 정보 매핑
             var me = await thdTwitter;
@@ -247,6 +316,7 @@ namespace Decchi.Core.Windows
             image.DownloadCompleted += (ls, le) =>
             {
                 this.ctlShowSetting.IsEnabled = true;
+                this.ctlToNormalMode.IsEnabled = true;
                 this.ctlElements.Visibility = Visibility.Visible;
                 DecchiCore.Inited();
             };
@@ -263,7 +333,7 @@ namespace Decchi.Core.Windows
             }
             this.ctlTweet.IsEnabled = true;
             this.ctlShowPlugin.IsEnabled = true;
-            this.ctlPluginsList.ItemsSource = SongInfo.PluginInfos;
+            this.ctlPluginsList.ItemsSource = SongInfo.RulesWithP;
             
             // 업데이트를 확인함
             if (await thdUpdate)
@@ -349,9 +419,16 @@ namespace Decchi.Core.Windows
         {
             this.ctlPluginFlyout.IsOpen = false;
 
-            var songinfo = (sender as FrameworkElement).Tag as SongInfo;
+            var songinfo = (sender as FrameworkElement).Tag as SongInfo.SongInfoRule;
             
             Globals.OpenWebSite(songinfo.PluginUrl);
+        }
+
+        public async void CrashReport(string crashfile)
+        {
+            await this.ShowMessageAsync("X(", "심각한 오류가 발생했어요\n\n파일 이름 : " + crashfile, MessageDialogStyle.Affirmative , new MetroDialogSettings { ColorScheme = MetroDialogColorScheme.Accented });
+
+            App.Current.Shutdown();
         }
     }
 }
