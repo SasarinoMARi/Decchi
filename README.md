@@ -39,8 +39,8 @@
 
  |브라우저 이름|현재 탭|다른 탭|다른 창|
 |---|:-:|:-:|:-:|
-|Chrome|`U`|X|O|
-|FireFox|`U`|X|O|
+|Chrome|U|X|O|
+|FireFox|U|X|O|
 
 ## 설치
 
