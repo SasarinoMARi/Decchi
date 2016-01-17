@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using Decchi.Core.Windows;
@@ -90,7 +91,14 @@ namespace Decchi.Core
             if (infos.Length >= 2)
             {
                 // 두 개 이상의 곡이 재생중인 경우
-                MainWindow.Instance.Dispatcher.Invoke(new Action(MainWindow.Instance.ShowSelectWindow));
+                if (!Globals.Instance.AutoSelect)
+                {
+                    MainWindow.Instance.Dispatcher.Invoke(new Action(MainWindow.Instance.ShowSelectWindow));
+                    return;
+                }
+
+                var top = NativeMethods.GetTopMostWindow(infos.Select(e => e.Handle).ToArray());
+                TwitterCommunicator.Instance.Publish(infos.First(e => e.Handle == top));
             }
             else
             {
@@ -104,10 +112,11 @@ namespace Decchi.Core
                     TwitterCommunicator.Instance.Publish(infos[0]);
                 }
 
-                SongInfo.Clear();
-
-                MainWindow.Instance.Dispatcher.Invoke(new Func<bool, bool>(MainWindow.Instance.SetButtonState), true);
             }
+
+            SongInfo.Clear();
+
+            MainWindow.Instance.Dispatcher.Invoke(new Func<bool, bool>(MainWindow.Instance.SetButtonState), true);
         }
     }
 }

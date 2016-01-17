@@ -4,11 +4,14 @@
 									xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 									xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 									xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                                    xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+                                    xmlns:Behaviours="http://metro.mahapps.com/winfx/xaml/shared"
                                     xmlns:tray="http://www.hardcodet.net/taskbar"
 									xmlns:MahApps.Metro.Controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
 									xmlns:MahApps.Metro.Controls.Dialogs="clr-namespace:MahApps.Metro.Controls.Dialogs;assembly=MahApps.Metro"
 									xmlns:Decchi="clr-namespace:Decchi"
 									xmlns:Decchi.Core.Windows.Converter="clr-namespace:Decchi.Core.Windows.Converter"
+                                    xmlns:Decchi.Utilities="clr-namespace:Decchi.Utilities"
 									Icon="/Decchi;component/icon.ico"
 									Title="뎃찌"
 									Width="240"
@@ -19,11 +22,22 @@
 									WindowStartupLocation="CenterScreen"
                                     ShowIconOnTitleBar="False"
                                     ShowMaxRestoreButton="False"
-                                    Topmost="{Binding Source={x:Static Decchi:Globals.Instance}, Path=TopMost, Mode=OneWay}"
+                                    Topmost="{Binding Source={x:Static Decchi:Globals.Instance}, Path=TopMost, Mode=TwoWay}"
+                                    AllowsTransparency="True"
+                                    WindowStyle="None"
+                                    Opacity="{Binding Source={x:Static Decchi:Globals.Instance}, Path=WindowOpacity, Mode=TwoWay}"
                                     StateChanged="MetroWindow_StateChanged"
                                     Closing="MetroWindow_Closing"
                                     Loaded="MetroWindow_Loaded"
                                     Deactivated="MetroWindow_Deactivated">
+    <i:Interaction.Behaviors>
+        <Decchi.Utilities:MangeticWindowBehavior IsEnabled="{Binding Source={x:Static Decchi:Globals.Instance}, Path=UseMagneticWindow, Mode=OneWay}"
+                                                 Gap="{Binding Source={x:Static Decchi:Globals.Instance}, Path=MagneticWindowGap, Mode=OneWay}"/>
+        <Behaviours:BorderlessWindowBehavior />
+        <Behaviours:WindowsSettingBehaviour />
+        <Behaviours:GlowWindowBehavior />
+    </i:Interaction.Behaviors>
+
     <MahApps.Metro.Controls:MetroWindow.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
@@ -41,6 +55,8 @@
             <Decchi.Core.Windows.Converter:InvertBoolean x:Key="InvertBoolean"/>
             <Decchi.Core.Windows.Converter:VisibilityConverter x:Key="InvertVisibility" Visible="Collapsed" Hidden="Visible" Collapsed="Visible"/>
             <Decchi.Core.Windows.Converter:Boolean2Double x:Key="LoadingSize" True="32" False="128"/>
+            <Decchi.Core.Windows.Converter:PersentConverter x:Key="PersentConverter"/>
+            <Decchi.Core.Windows.Converter:Int2Double x:Key="Int2Double"/>
 
             <Storyboard x:Key="ToMini">
                 <DoubleAnimation Storyboard.TargetName="ctlWindow" Storyboard.TargetProperty="Width"  To="132" Duration="0:0:.2"/>
@@ -129,33 +145,83 @@
                                             Style="{StaticResource MetroAccentButton}"
                                             Height="40"
                                             Margin="3 0 3 3"
-                                            Click="ctlToMiniMode_Click"/>                                    
+                                            Click="ctlToMiniMode_Click"/>
                                     <GroupBox Header="뎃찌 자동 실행"
                                               ToolTip="켬퓨터를 키자마자 뎃찌를 실행해요!">
                                         <MahApps.Metro.Controls:ToggleSwitch IsChecked="{Binding Source={x:Static Decchi:Globals.Instance}, Path=WinStartup, Mode=TwoWay}"/>
-                                    </GroupBox>                                    
+                                    </GroupBox>
                                     <GroupBox Header="최소화로 시작"
                                               ToolTip="뎃찌를 키면 바로 최소화해요!">
                                         <MahApps.Metro.Controls:ToggleSwitch IsChecked="{Binding Source={x:Static Decchi:Globals.Instance}, Path=TrayStart, Mode=TwoWay}"/>
-                                    </GroupBox>                                    
-                                    <GroupBox Header="데찌를 항상 위로"
+                                    </GroupBox>
+                                    <GroupBox Header="뎃찌를 항상 위로"
                                               ToolTip="뎃찌가 모든 창 위에 떠요!">
                                         <MahApps.Metro.Controls:ToggleSwitch IsChecked="{Binding Source={x:Static Decchi:Globals.Instance}, Path=TopMost, Mode=TwoWay}"/>
-                                    </GroupBox>                                    
+                                    </GroupBox>
+                                    <GroupBox Header="자석 뎃찌"
+                                              ToolTip="뎃찌를 이동할 때 화면 끝에 달라붙어요!">
+                                        <StackPanel>
+                                            <MahApps.Metro.Controls:ToggleSwitch IsChecked="{Binding Source={x:Static Decchi:Globals.Instance}, Path=UseMagneticWindow, Mode=TwoWay}"/>
+                                            <GroupBox Header="민감도"
+                                                      ToolTip="민감도가 높을 수록 더 잘 달라붙어요"
+                                                      IsEnabled="{Binding Source={x:Static Decchi:Globals.Instance}, Path=UseMagneticWindow, Mode=OneWay}"
+                                                      Margin="0">
+                                                <Grid>
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="30" />
+                                                        <ColumnDefinition/>
+                                                    </Grid.ColumnDefinitions>
+
+                                                    <TextBlock Text="{Binding Source={x:Static Decchi:Globals.Instance}, Path=MagneticWindowGap, Mode=OneWay, StringFormat={}{0}}"
+                                                               HorizontalAlignment="Stretch"
+                                                               VerticalAlignment="Center"
+                                                               TextAlignment="Center"/>
+                                                    
+                                                    <Slider Grid.Column="1"
+                                                            Value="{Binding Source={x:Static Decchi:Globals.Instance}, Path=MagneticWindowGap, Mode=TwoWay, Converter={StaticResource Int2Double}}"
+                                                            Minimum="10"
+                                                            Maximum="30"
+                                                            LargeChange="5"
+                                                            HorizontalAlignment="Stretch"/>
+                                                </Grid>
+                                            </GroupBox>
+                                        </StackPanel>
+                                    </GroupBox>
+                                    <GroupBox Header="투명 뎃찌"
+                                              ToolTip="뎃찌를 투명하게 만들어요">
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="30" />
+                                                <ColumnDefinition/>
+                                            </Grid.ColumnDefinitions>
+
+                                            <TextBlock Text="{Binding Source={x:Static Decchi:Globals.Instance}, Path=WindowOpacity, Mode=OneWay, Converter={StaticResource PersentConverter}}"
+                                                       HorizontalAlignment="Stretch"
+                                                       VerticalAlignment="Center"
+                                                       TextAlignment="Center"/>
+                                            
+                                            <Slider Grid.Column="1"
+                                                    Value="{Binding Source={x:Static Decchi:Globals.Instance}, Path=WindowOpacity, Mode=TwoWay}"
+                                                    Minimum="0.2"
+                                                    Maximum="1.0"
+                                                    LargeChange="0.2"
+                                                    HorizontalAlignment="Stretch"/>
+                                        </Grid>
+                                    </GroupBox>
                                     <GroupBox Header="트레이">
                                         <StackPanel>
-                                            <GroupBox Header="트레이 항상 표시"
+                                            <GroupBox Header="항상 표시"
                                                       ToolTip="트레이를 항상 표시해요"
                                                       Margin="0">
                                                 <MahApps.Metro.Controls:ToggleSwitch IsChecked="{Binding Source={x:Static Decchi:Globals.Instance}, Path=TrayVisible, Mode=TwoWay}"
                                                                                      IsCheckedChanged="ctlTrayVisible_IsCheckedChanged"/>
                                             </GroupBox>
-                                            <GroupBox Header="접을때 트레이로"
+                                            <GroupBox Header="접을때"
                                                       ToolTip="뎃찌를 최소화하면 트레이로 이동해요"
                                                       Margin="0 5 0 5">
                                                 <MahApps.Metro.Controls:ToggleSwitch IsChecked="{Binding Source={x:Static Decchi:Globals.Instance}, Path=TrayWhenMinimize, Mode=TwoWay}"/>
                                             </GroupBox>
-                                            <GroupBox Header="닫을때 트레이로"
+                                            <GroupBox Header="닫을때"
                                                       ToolTip="뎃찌를 닫으면 트레이로 이동해요"
                                                       Margin="0">
                                                 <MahApps.Metro.Controls:ToggleSwitch IsChecked="{Binding Source={x:Static Decchi:Globals.Instance}, Path=TrayWhenClose, Mode=TwoWay}"/>
@@ -200,6 +266,10 @@
                                     <GroupBox Header="웹 링크 인식"
                                               ToolTip="웹 브라우저에서 주소를 인식해서 추가해줘요!">
                                         <MahApps.Metro.Controls:ToggleSwitch IsChecked="{Binding Source={x:Static Decchi:Globals.Instance}, Path=DetectWebUrl, Mode=TwoWay}"/>
+                                    </GroupBox>
+                                    <GroupBox Header="플레이어 자동 선택"
+                                              ToolTip="여러개의 뮤직 플레이어가 실행중이면, 가장 위에 있는 창으로 뎃찌!! 해요">
+                                        <MahApps.Metro.Controls:ToggleSwitch IsChecked="{Binding Source={x:Static Decchi:Globals.Instance}, Path=AutoSelect, Mode=TwoWay}"/>
                                     </GroupBox>
                                 </StackPanel>
                             </ScrollViewer>
@@ -261,15 +331,15 @@
                     <MenuItem Header="열기"
                               Click="ctlTrayShow_Click"/>
                     <MenuItem Header="뎃찌!!"
-                              Click="ctlTrayDecchi_Click"
-                              IsEnabled="{Binding ElementName=ctlTweet, Path=IsEnabled, Mode=OneWay}"/>
+                              IsEnabled="{Binding ElementName=ctlTweet, Path=IsEnabled, Mode=OneWay}"
+                              Click="ctlTrayDecchi_Click"/>
                     <Separator/>
                     <MenuItem Header="종료"
                               Click="ctlExit_Click"/>
                 </ContextMenu>
             </tray:TaskbarIcon.ContextMenu>
         </tray:TaskbarIcon>
-        
+
         <TextBlock x:Name="ctlVersion"
                    HorizontalAlignment="Right"
                    Margin="5"
@@ -314,12 +384,14 @@
 						    VerticalAlignment="Center"
                             Margin="0 0 0 20">
                     <Ellipse Height="{Binding RelativeSource={RelativeSource Self}, Path=ActualWidth}">
+                        <!--
                         <Ellipse.OpacityMask>
                             <RadialGradientBrush>
-                                <GradientStop Offset="0.95" Color="Black"/>
-                                <GradientStop Offset="1.00" Color="Transparent"/>
+                                <GradientStop Offset="0.975" Color="Black"/>
+                                <GradientStop Offset="1.000" Color="Transparent"/>
                             </RadialGradientBrush>
                         </Ellipse.OpacityMask>
+                        -->
                         <Ellipse.Fill>
                             <ImageBrush x:Name="ctlProfileImage"
                                         Stretch="UniformToFill" />

@@ -98,6 +98,8 @@
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
     <Compile Include="Core\DecchiCore.cs" />
+    <Compile Include="Core\Windows\Converter\Int2Double.cs" />
+    <Compile Include="Core\Windows\Converter\OpacityConverter.cs" />
     <Compile Include="Core\Windows\Converter\Boolean2Double.cs" />
     <Compile Include="Core\Windows\Converter\VisibilityConverter.cs" />
     <Compile Include="Core\Windows\Converter\Boolean2Visibility.cs" />
@@ -126,6 +128,7 @@
     <Compile Include="Uncommit\TwitterToken.cs" />
     <Compile Include="Utilities\ImageResize.cs" />
     <Compile Include="Utilities\DetectOpenedFile.cs" />
+    <Compile Include="Utilities\MagneticWindow.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Uncommit\decchi.snk" />

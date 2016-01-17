@@ -2,6 +2,7 @@
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows.Forms;
+using System.Linq;
 
 namespace Decchi
 {
@@ -58,6 +59,9 @@ namespace Decchi
         [DllImport("user32.dll")]
         [return: MarshalAs(UnmanagedType.Bool)]
         public static extern bool ShowWindow(IntPtr hWnd, ShowWindowCommands nCmdShow);
+
+        [DllImport("user32.dll", SetLastError = true)]
+        public static extern IntPtr GetWindow(IntPtr hWnd, GetWindowCommands uCmd);
 
         [DllImport("kernel32.dll")]
         public static extern IntPtr OpenProcess(ProcessAccessFlags dwDesiredAccess, [MarshalAs(UnmanagedType.Bool)] bool bInheritHandle, int dwProcessId);
@@ -131,6 +135,18 @@ namespace Decchi
             Restore = 9,
             ShowDefault = 10,
             ForceMinimize = 11
+        }
+
+        
+        public enum GetWindowCommands : uint
+        {
+            GW_HWNDFIRST = 0,
+            GW_HWNDLAST = 1,
+            GW_HWNDNEXT = 2,
+            GW_HWNDPREV = 3,
+            GW_OWNER = 4,
+            GW_CHILD = 5,
+            GW_ENABLEDPOPUP = 6
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
@@ -294,6 +310,26 @@ namespace Decchi
             { }
             
             return "?";
+        }
+
+        public static IntPtr GetTopMostWindow(IntPtr[] hwnds)
+        {
+            var tHandle = IntPtr.Zero;
+
+            if (hwnds != null && hwnds.Length > 0)
+            {
+                tHandle = hwnds[0];
+                var hwnd = hwnds[0];
+                while (hwnd != IntPtr.Zero)
+                {
+                    if (hwnds.Contains(hwnd))
+                        tHandle = hwnd;
+                    
+                    hwnd = GetWindow(hwnd, GetWindowCommands.GW_HWNDPREV);
+                }
+            }
+
+            return tHandle;
         }
     }
 }

@@ -120,18 +120,21 @@ namespace Decchi
         {
             if (value is string)        return (string)value;
             if (value is bool)          return (bool)value ? "1" : "0";
-            if (value is ShortcutInfo)  return ((ShortcutInfo)value).ToString();
+            if (value is int)           return value.ToString();
+            if (value is double)        return value.ToString();
+            if (value is ShortcutInfo)  return value.ToString();
             if (value is DateTime)      return ((DateTime)value).ToString("yyyy-MM-dd hh:mm:ss");
 
             return null;
         }
         private static object String2Object(string value, Type type)
         {
-            if (type == typeof(string))             return value;
-            if (type == typeof(bool))               return value == "1" ? true : false;
-
             try
             {
+                if (type == typeof(string))         return value;
+                if (type == typeof(bool))           return value == "1" ? true : false;
+                if (type == typeof(int))            return int.Parse(value);
+                if (type == typeof(double))         return double.Parse(value);
                 if (type == typeof(ShortcutInfo))   return ShortcutInfo.Parse(value);
                 if (type == typeof(DateTime))       return DateTime.Parse(value);	
             }
@@ -176,6 +179,9 @@ namespace Decchi
 
             else if (e.Property == SkipFullscreenProp)
                 globals.m_skipFullscreen = (bool)e.NewValue;
+
+            else if (e.Property == AutoSelectProp)
+                globals.m_autoSelect = (bool)e.NewValue;
         }
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -291,6 +297,39 @@ namespace Decchi
         {
             get { return (bool)this.GetValue(MiniModeProp); }
             set { this.SetValue(MiniModeProp, value); }
+        }
+
+        private static readonly DependencyProperty UseMagneticWindowProp = DependencyProperty.Register("UseMagneticWindow", typeof(bool), typeof(Globals), new FrameworkPropertyMetadata(false, Globals.PropertyChangedCallback));
+        [PropAttr]
+        public bool UseMagneticWindow
+        {
+            get { return (bool)this.GetValue(UseMagneticWindowProp); }
+            set { this.SetValue(UseMagneticWindowProp, value); }
+        }
+
+        private static readonly DependencyProperty MagneticWindowGapProp = DependencyProperty.Register("MagneticWindowGap", typeof(int), typeof(Globals), new FrameworkPropertyMetadata(20));
+        [PropAttr]
+        public int MagneticWindowGap
+        {
+            get { return (int)this.GetValue(MagneticWindowGapProp); }
+            set { this.SetValue(MagneticWindowGapProp, value); }
+        }
+
+        private static readonly DependencyProperty WindowOpacityProp = DependencyProperty.Register("WindowOpacity", typeof(double), typeof(Globals), new FrameworkPropertyMetadata(1.0d));
+        [PropAttr]
+        public double WindowOpacity
+        {
+            get { return (double)this.GetValue(WindowOpacityProp); }
+            set { this.SetValue(WindowOpacityProp, value); }
+        }
+
+        private static readonly DependencyProperty AutoSelectProp = DependencyProperty.Register("AutoSelect", typeof(bool), typeof(Globals), new FrameworkPropertyMetadata(true, Globals.PropertyChangedCallback));
+        private bool m_autoSelect;
+        [PropAttr]
+        public bool AutoSelect
+        {
+            get { return this.m_autoSelect; }
+            set { this.SetValue(AutoSelectProp, value); this.m_autoSelect = value; }
         }
 
         public struct ShortcutInfo

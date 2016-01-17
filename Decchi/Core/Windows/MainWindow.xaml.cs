@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
+using System.Windows.Interop;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
@@ -22,6 +23,7 @@ namespace Decchi.Core.Windows
     {
         public static MainWindow Instance { get; private set; }
 
+        private MainWindowWnc m_wnc;
         private Storyboard m_toMini;
         private Storyboard m_toNormal;
         private string     m_newUrl;
@@ -29,6 +31,7 @@ namespace Decchi.Core.Windows
 		public MainWindow( )
         {
             MainWindow.Instance = this;
+            App.Current.MainWindow = this;
 
             InitializeComponent( );
             this.ctlVersion.Text = App.Version.ToString();
@@ -50,7 +53,9 @@ namespace Decchi.Core.Windows
 
             this.ctlTray.Visibility = Globals.Instance.TrayVisible ? Visibility.Visible : Visibility.Collapsed;
             if (Globals.Instance.TrayStart)
-                this.GoTray();
+                this.HideWindow();
+
+            this.m_wnc = new MainWindowWnc(this);
         }
 
         private void ctlSettingFlyout_IsOpenChanged(object sender, RoutedEventArgs e)
@@ -166,14 +171,14 @@ namespace Decchi.Core.Windows
 
         private void ctlTray_TrayLeftMouseUp(object sender, RoutedEventArgs e)
         {
-            this.FromTray();
+            this.ShowWindow();
         }
 
         private void MetroWindow_Closing(object sender, CancelEventArgs e)
         {
             if (Globals.Instance.TrayWhenClose)
             {
-                this.GoTray();
+                this.HideWindow();
                 e.Cancel = true;
             }
         }
@@ -181,12 +186,12 @@ namespace Decchi.Core.Windows
         private void MetroWindow_StateChanged(object sender, EventArgs e)
         {
             if (Globals.Instance.TrayWhenMinimize && this.WindowState == WindowState.Minimized)
-                this.GoTray();
+                this.HideWindow();
             else if (!Globals.Instance.TrayVisible && this.WindowState == WindowState.Normal)
                 this.ctlTray.Visibility = Visibility.Collapsed;
         }
 
-        private void GoTray()
+        private void HideWindow()
         {
             if (!Globals.Instance.TrayVisible)
                 this.ctlTray.Visibility = Visibility.Visible;
@@ -195,19 +200,19 @@ namespace Decchi.Core.Windows
             this.ctlTray.ShowBalloonTip(this.Title, "트레이에서 실행 중이에요!", BalloonIcon.Info);
         }
 
-        private void FromTray()
+        private void ShowWindow()
         {
             if (!Globals.Instance.TrayVisible)
                 this.ctlTray.Visibility = Visibility.Collapsed;
 
             this.Show();
             this.WindowState = WindowState.Normal;
-            this.Focus();
+            this.Activate();
         }
 
         private void ctlTrayShow_Click(object sender, RoutedEventArgs e)
         {
-            this.FromTray();
+            this.ShowWindow();
         }
 
         private void ctlTrayDecchi_Click(object sender, RoutedEventArgs e)
@@ -341,11 +346,7 @@ namespace Decchi.Core.Windows
 
         public async void ShowSelectWindow()
         {
-            if (this.WindowState == WindowState.Minimized)
-            {
-                this.Show();
-                this.WindowState = WindowState.Normal;
-            }
+            this.ShowWindow();
 
             var songinfo = (SongInfo)(await this.ShowBaseMetroDialog(new ClientSelectionDialog(this)));
             await Task.Run(new Action(() => TwitterCommunicator.Instance.Publish(songinfo)));
@@ -428,6 +429,40 @@ namespace Decchi.Core.Windows
             await this.ShowMessageAsync("X(", "심각한 오류가 발생했어요\n\n파일 이름 : " + crashfile, MessageDialogStyle.Affirmative , new MetroDialogSettings { ColorScheme = MetroDialogColorScheme.Accented });
 
             App.Current.Shutdown();
+        }
+
+        private class MainWindowWnc : System.Windows.Forms.NativeWindow
+        {
+            private MainWindow m_window;
+
+            public MainWindowWnc(MainWindow window)
+            {
+                this.m_window = window;
+
+                var helper = new WindowInteropHelper(window);
+                if (helper.Handle == IntPtr.Zero)
+                    helper.EnsureHandle();
+
+                this.AssignHandle(helper.Handle);
+            }
+
+            protected override void WndProc(ref System.Windows.Forms.Message m)
+            {
+                if (m.Msg == 0x056F) // WM_User Range (0x0400 ~ 0x07FF)
+                {
+                    var l = new IntPtr(0xAB55);
+                    if (m.LParam == l && m.WParam == l)
+                    {
+                        this.m_window.ShowWindow();
+                        this.m_window.Activate();
+
+                        m.Result = new IntPtr(1);
+
+                        return;
+                    }
+                }
+                base.WndProc(ref m);
+            }
         }
     }
 }

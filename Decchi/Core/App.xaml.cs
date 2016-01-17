@@ -62,34 +62,35 @@ namespace Decchi.Core
             if (this.m_lock == null)
             {
                 var curProc = Process.GetCurrentProcess();
+#if DEBUG
+                var procs = Process.GetProcessesByName(curProc.ProcessName.Replace(".vshost", ""));
+#else
                 var procs = Process.GetProcessesByName(curProc.ProcessName);
+#endif
 
                 if (procs.Length > 0)
                 {
                     for (int i = 0; i < procs.Length; ++i)
                     {
+#if DEBUG
+                        if (procs[i].MainModule.FileName != curProc.MainModule.FileName.Replace(".vshost", "")) continue;
+#else
                         if (procs[i].MainModule.FileName != curProc.MainModule.FileName) continue;
+#endif
+                        if (procs[i].Id == curProc.Id) continue;
 
                         var hwnd = procs[i].MainWindowHandle;
                         if (hwnd != IntPtr.Zero)
                         {
-                            if (NativeMethods.IsIconic(hwnd))
-                            {
-                                NativeMethods.ShowWindow(hwnd, NativeMethods.ShowWindowCommands.ShowDefault);
-                                NativeMethods.ShowWindow(hwnd, NativeMethods.ShowWindowCommands.Show);
-                                NativeMethods.ShowWindow(hwnd, NativeMethods.ShowWindowCommands.Restore);
-                            }
-                            else
-                                NativeMethods.ShowWindow(hwnd, NativeMethods.ShowWindowCommands.Normal);
+                            NativeMethods.SendMessage(hwnd, 0x056F, new IntPtr(0xAB55), new IntPtr(0xAB55)); // WM_User Range (0x0400 ~ 0x07FF)
 
-                            NativeMethods.SetForegroundWindow(hwnd);
-
-                            App.Current.Shutdown();
+                            break;
                         }
                     }
                 }
                
                 App.Current.Shutdown();
+                return;
             }
 
             Globals.Instance.LoadSettings();

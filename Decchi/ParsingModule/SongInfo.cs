@@ -228,6 +228,7 @@ namespace Decchi.ParsingModule
         }
 
         public SongInfoRule Rule    { get; private set; } 
+        public IntPtr       Handle  { get; private set; }
         public string       Title   { get; private set; }
         public string       Album   { get; private set; }
         public string       Artist  { get; private set; }
@@ -294,6 +295,7 @@ namespace Decchi.ParsingModule
                     lock (lst)
                         lst.Add((si = new SongInfo(rule)));
                     si.GetFromPipe(data);
+                    si.Handle = NativeMethods.FindWindow(rule.WndClass, null);
                     return;
                 }
             }
@@ -335,6 +337,7 @@ namespace Decchi.ParsingModule
                     si.Album    = album;
                     si.Artist   = artist;
                     si.Cover    = stream;
+                    si.Handle   = hwnd;
 
                     si.GetTagsFromFile();
 
@@ -375,6 +378,7 @@ namespace Decchi.ParsingModule
                 si.Artist   = si.Artist ?? ((g = match.Groups["aritis"])    != null ? g.Value : null);
                 si.Local    = si.Local  ?? ((g = match.Groups["aritis"])    != null ? g.Value : null);
 
+                si.Handle = hwnd;
                 si.GetTagsFromFile();
 
                 if (!string.IsNullOrWhiteSpace(si.Title) ||
@@ -412,12 +416,12 @@ namespace Decchi.ParsingModule
                 
                 url = Globals.Instance.DetectWebUrl ? GetChromeUrl(hwnd) : null;
                 
-                AddWebBrowser(lst, rule, match, url);
+                AddWebBrowser(lst, rule, match, url, hwnd);
             }
             #endregion
 
             #region FireFox
-            if (NativeMethods.FindWindow("MozillaWindowClass", null) != IntPtr.Zero)
+            if ((hwnd = NativeMethods.FindWindow("MozillaWindowClass", null)) != IntPtr.Zero)
             {
                 using (DdeClient dde = new DdeClient("FireFox", "WWW_GetWindowInfo"))
                 {
@@ -438,7 +442,7 @@ namespace Decchi.ParsingModule
 
                 match = rule.Regex.Match(title);
                 if (match.Success)
-                    AddWebBrowser(lst, rule, match, url);
+                    AddWebBrowser(lst, rule, match, url, hwnd);
             }
             #endregion
         }
@@ -466,7 +470,7 @@ namespace Decchi.ParsingModule
 
             return null;
         }
-        private static void AddWebBrowser(List<SongInfo> lst, SongInfoRule rule, Match match, string url)
+        private static void AddWebBrowser(List<SongInfo> lst, SongInfoRule rule, Match match, string url, IntPtr handle)
         {
             var si = new SongInfo(rule);
 
@@ -482,6 +486,8 @@ namespace Decchi.ParsingModule
             {
                 if (!string.IsNullOrWhiteSpace(url) && (string.IsNullOrWhiteSpace(rule.PluginUrl) || url.IndexOf(rule.PluginUrl) >= 0))
                     si.Title = string.Format("{0} {1} ", si.Title, url);
+
+                si.Handle = handle;
 
                 lock (lst)
                     lst.Add(si);
@@ -509,6 +515,7 @@ namespace Decchi.ParsingModule
                         case "artist":  this.Artist = val; break;
                         case "path":    this.Local  = val; break;
                         case "cover":   this.Cover  = new MemoryStream(Convert.FromBase64String(val)); Cover.Position = 0; break;
+                        case "handle":  this.Handle = new IntPtr(long.Parse(val)); break;
                     }
                 }
             }
@@ -517,11 +524,12 @@ namespace Decchi.ParsingModule
         }
         private void GetFromParseResult(IDictionary<string, object> dic)
         {
-            if (dic.ContainsKey("title"))   this.Title  = dic["title"]  as string;
-            if (dic.ContainsKey("album"))   this.Album  = dic["album"]  as string;
-            if (dic.ContainsKey("artist"))  this.Artist = dic["artist"] as string;
-            if (dic.ContainsKey("path"))    this.Local  = dic["path"]   as string;
-            if (dic.ContainsKey("cover"))   this.Cover  = dic["cover"]  as Stream;
+            if (dic.ContainsKey("title"))   this.Title  = (string)dic["title"];
+            if (dic.ContainsKey("album"))   this.Album  = (string)dic["album"];
+            if (dic.ContainsKey("artist"))  this.Artist = (string)dic["artist"];
+            if (dic.ContainsKey("path"))    this.Local  = (string)dic["path"];
+            if (dic.ContainsKey("cover"))   this.Cover  = (Stream)dic["cover"];
+            if (dic.ContainsKey("handle"))  this.Handle = (IntPtr)dic["handle"];
 
             this.GetTagsFromFile();
         }
