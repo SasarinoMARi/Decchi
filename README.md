@@ -16,10 +16,6 @@
 
 ## **뎃찌** 와 함께 데스크탑에서 #NowPlaying 을 게시해요
 
-
-[뎃찌 와 함께 데스크탑에서 #NowPlaying 을 게시해요](#headers)
-[Emphasis](#emphasis)
-
 - 우리는 이 놀라운 기능을 **뎃찌!!**라고 이름붙였답니다. **느낌표가 두개**에요!!
 
 - [**사긔**](https://github.com/Usagination)와 [**륜**](https://github.com/RyuaNerin)이 열씸히 만들었어요ㅇ.<!
