@@ -297,7 +297,8 @@ namespace Decchi.ParsingModule
                     lock (lst)
                         lst.Add((si = new SongInfo(rule)));
                     si.GetFromPipe(data);
-                    si.Handle = NativeMethods.FindWindow(rule.WndClass, null);
+                    if (si.Handle == IntPtr.Zero)
+                        si.Handle = NativeMethods.FindWindow(rule.WndClass, null);
                     return;
                 }
             }

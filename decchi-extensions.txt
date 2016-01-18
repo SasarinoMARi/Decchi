@@ -1,1 +1,1 @@
-title=||album=||artist=||path=
+title=UTF-8||album=UTF-8||artist=UTF-8||path=Local File Path||handle=INT64||cover=BASE64DATA
