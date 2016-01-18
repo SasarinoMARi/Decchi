@@ -8,6 +8,7 @@ using System.Security.AccessControl;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Linq;
 using System.Windows.Threading;
 using Decchi.ParsingModule;
 using Microsoft.Win32;
@@ -20,6 +21,8 @@ namespace Decchi.Core
         public  static readonly string      ExeDir;
         public  static readonly Version     Version;
         private static readonly string      LockPath;
+
+        public static bool ShowPatchNote { get; private set; } 
 
         static App()
         {
@@ -52,6 +55,8 @@ namespace Decchi.Core
         private Stream m_lock;
         private void Application_Startup(object sender, StartupEventArgs e)
         {
+            App.ShowPatchNote = e.Args.Length > 0 && e.Args.Contains("--updated");
+
             try
             {
             	m_lock = new FileStream(App.LockPath, FileMode.CreateNew, FileSystemRights.Write, FileShare.None, 8, FileOptions.DeleteOnClose);

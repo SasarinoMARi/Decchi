@@ -97,8 +97,25 @@ namespace Decchi.Core
                     return;
                 }
 
-                var top = NativeMethods.GetTopMostWindow(infos.Select(e => e.Handle).ToArray());
-                TwitterCommunicator.Instance.Publish(infos.First(e => e.Handle == top));
+                var topHwnd = NativeMethods.GetTopMostWindow(infos.Select(e => e.Handle).ToArray());
+
+                var top = infos.Where(e => e.Handle == topHwnd).ToArray();
+
+                if (top.Length == 1)
+                    TwitterCommunicator.Instance.Publish(top[1]);
+                else
+                {
+                    // 가장 위에 있는 창이 여러개면 그건 웹브라우저다!! (아마도)
+                    // 메인 창을 찾는다
+
+                    var main = top.Where(e => e.MainTab).ToArray();
+
+                    if (main.Length == 1)
+                        TwitterCommunicator.Instance.Publish(main[0]);
+                    else
+                        // 설마 이런경우가 있겠어?
+                        TwitterCommunicator.Instance.Publish(top[0]);
+                }
             }
             else
             {

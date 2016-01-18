@@ -174,8 +174,8 @@ namespace Decchi
             else if (e.Property == DetectLocalFileProp)
                 globals.m_detectLocalFile = (bool)e.NewValue;
 
-            else if (e.Property == DetectWebUrlProp)
-                globals.m_detectWebUrl = (bool)e.NewValue;
+            else if (e.Property == WBDetailSearchProp)
+                globals.m_wbDetailSearch = (bool)e.NewValue;
 
             else if (e.Property == SkipFullscreenProp)
                 globals.m_skipFullscreen = (bool)e.NewValue;
@@ -250,13 +250,13 @@ namespace Decchi
             set { this.SetValue(DetectLocalFileProp, value); this.m_detectLocalFile = value; }
         }
 
-        private static readonly DependencyProperty DetectWebUrlProp = DependencyProperty.Register("DetectWebUrl", typeof(bool), typeof(Globals), new FrameworkPropertyMetadata(false, Globals.PropertyChangedCallback));
-        private bool m_detectWebUrl;
+        private static readonly DependencyProperty WBDetailSearchProp = DependencyProperty.Register("WBDetailSearch", typeof(bool), typeof(Globals), new FrameworkPropertyMetadata(true, Globals.PropertyChangedCallback));
+        private bool m_wbDetailSearch;
         [PropAttr]
-        public bool DetectWebUrl
+        public bool WBDetailSearch
         {
-            get { return this.m_detectWebUrl; }
-            set { this.SetValue(DetectWebUrlProp, value); this.m_detectWebUrl = value; }
+            get { return this.m_wbDetailSearch; }
+            set { this.SetValue(WBDetailSearchProp, value); this.m_wbDetailSearch = value; }
         }
 
         private static readonly DependencyProperty TopMostProp = DependencyProperty.Register("TopMost", typeof(bool), typeof(Globals), new FrameworkPropertyMetadata(false));

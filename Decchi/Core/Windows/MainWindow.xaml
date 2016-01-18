@@ -263,9 +263,9 @@
                                               ToolTip="로컬 파일을 인식해서 트윗해요! 아직 조금 불안정해요!">
                                         <MahApps.Metro.Controls:ToggleSwitch IsChecked="{Binding Source={x:Static Decchi:Globals.Instance}, Path=DetectLocalFile, Mode=TwoWay}"/>
                                     </GroupBox>
-                                    <GroupBox Header="웹 링크 인식"
-                                              ToolTip="웹 브라우저에서 주소를 인식해서 추가해줘요!">
-                                        <MahApps.Metro.Controls:ToggleSwitch IsChecked="{Binding Source={x:Static Decchi:Globals.Instance}, Path=DetectWebUrl, Mode=TwoWay}"/>
+                                    <GroupBox Header="심화 웹 브라우저 인식"
+                                              ToolTip="현재 웹 브라우저의 모든 탭들을 인식해요!">
+                                        <MahApps.Metro.Controls:ToggleSwitch IsChecked="{Binding Source={x:Static Decchi:Globals.Instance}, Path=WBDetailSearch, Mode=TwoWay}"/>
                                     </GroupBox>
                                     <GroupBox Header="플레이어 자동 선택"
                                               ToolTip="여러개의 뮤직 플레이어가 실행중이면, 가장 위에 있는 창으로 뎃찌!! 해요">

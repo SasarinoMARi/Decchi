@@ -10,15 +10,14 @@ using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using System.Windows.Automation;
 using System.Windows.Media.Imaging;
 using Decchi.Core.Windows;
+using Decchi.ParsingModule.WebBrowser;
 using Decchi.Utilities;
-using NDde.Client;
 
 namespace Decchi.ParsingModule
 {
-    [DebuggerDisplay("{Client} : {Title}")]
+    [DebuggerDisplay("{Rule.Client} : {Title}")]
     public sealed class SongInfo
     {
         public const string Via = "#뎃찌NP";
@@ -229,6 +228,7 @@ namespace Decchi.ParsingModule
 
         public SongInfoRule Rule    { get; private set; } 
         public IntPtr       Handle  { get; private set; }
+        public bool         MainTab { get; private set; }
         public string       Title   { get; private set; }
         public string       Album   { get; private set; }
         public string       Artist  { get; private set; }
@@ -256,7 +256,9 @@ namespace Decchi.ParsingModule
         {
             var lst = new List<SongInfo>();
 
-            Parallel.ForEach(SongInfo.Rules, e => GetCurrentPlayingSong(lst, e));
+            var webPages = WBParser.Parse(Globals.Instance.WBDetailSearch);
+
+            Parallel.ForEach(SongInfo.Rules, e => GetCurrentPlayingSong(lst, e, webPages));
 
             return (LastResult = lst.ToArray());
         }
@@ -267,7 +269,7 @@ namespace Decchi.ParsingModule
                     LastResult[i].Cover.Dispose();
         }
 
-        private static void GetCurrentPlayingSong(List<SongInfo> lst, SongInfoRule rule)
+        private static void GetCurrentPlayingSong(List<SongInfo> lst, SongInfoRule rule, WBResult[] WebPages)
         {
             SongInfo si = null;
             
@@ -391,86 +393,23 @@ namespace Decchi.ParsingModule
             }
             #endregion
 
-            //웹브라우저 파싱
+            #region 웹브라우저 파싱
             if (hwnd == IntPtr.Zero && rule.Regex != null)
-                SongInfo.DetectWebBrowser(lst, rule);
-        }
-
-        private static void DetectWebBrowser(List<SongInfo> lst, SongInfoRule rule)
-        {
-            Match match;
-
-            IntPtr hwnd = IntPtr.Zero;
-            string title = null;
-            string url = null;
-
-            #region Chrome
-            while ((hwnd = NativeMethods.FindWindowEx(IntPtr.Zero, hwnd, "Chrome_WidgetWin_1", null)) != IntPtr.Zero)
             {
-                title = NativeMethods.GetWindowTitle(hwnd);
-                if (string.IsNullOrWhiteSpace(title)) continue;
+                Match match;
 
-                Debug.WriteLine(title);
-                match = rule.Regex.Match(title);
-                if (!match.Success) continue;
-                
-                url = Globals.Instance.DetectWebUrl ? GetChromeUrl(hwnd) : null;
-                
-                AddWebBrowser(lst, rule, match, url, hwnd);
-            }
-            #endregion
-
-            #region FireFox
-            if ((hwnd = NativeMethods.FindWindow("MozillaWindowClass", null)) != IntPtr.Zero)
-            {
-                using (DdeClient dde = new DdeClient("FireFox", "WWW_GetWindowInfo"))
+                for (int i = 0; i < WebPages.Length; ++i)
                 {
-                    try
-                    {
-                        dde.Connect();
-                        string[] text = dde.Request("URL", 1000).Trim(new char[] { '"' }).Split(new string[] { "\",\"" }, StringSplitOptions.RemoveEmptyEntries);
-                        title = text[1];
+                    match = rule.Regex.Match(WebPages[i].Title);
+                    if (!match.Success) continue;
 
-                        if (Globals.Instance.DetectWebUrl)
-                            url = text[0];
-
-                        dde.Disconnect();
-                    }
-                    catch
-                    { }
+                    AddWebBrowser(lst, rule, match, WebPages[i].Url, WebPages[i].Handle, WebPages[i].MainTab);
                 }
-
-                match = rule.Regex.Match(title);
-                if (match.Success)
-                    AddWebBrowser(lst, rule, match, url, hwnd);
             }
             #endregion
         }
-        private static string GetChromeUrl(IntPtr handle)
-        {
-            try
-            {
-                var element = AutomationElement.FromHandle(handle);
-                if (element == null) return null;
 
-                var subtree = element.FindAll(TreeScope.Subtree, new PropertyCondition(AutomationElement.ControlTypeProperty, ControlType.Edit));
-                var pattern = (ValuePattern)subtree[0].GetCurrentPattern(ValuePattern.Pattern);
-
-                var vp = pattern.Current.Value as string;
-                if (!vp.StartsWith("http"))
-                    vp = "https://" + vp;
-
-                var uri = new Uri(vp);
-
-                if (uri.Host.IndexOf("youtube") >= 0)
-                    return uri.ToString();
-            }
-            catch
-            { }
-
-            return null;
-        }
-        private static void AddWebBrowser(List<SongInfo> lst, SongInfoRule rule, Match match, string url, IntPtr handle)
+        private static void AddWebBrowser(List<SongInfo> lst, SongInfoRule rule, Match match, string url, IntPtr handle, bool mainTab)
         {
             var si = new SongInfo(rule);
 
@@ -478,22 +417,22 @@ namespace Decchi.ParsingModule
             si.Title    = (g = match.Groups["title"])   != null ? g.Value : null;
             si.Album    = (g = match.Groups["album"])   != null ? g.Value : null;
             si.Artist   = (g = match.Groups["aritis"])  != null ? g.Value : null;
-            si.Local    = (g = match.Groups["path"])    != null ? g.Value : null;
 
             if (!string.IsNullOrWhiteSpace(si.Title) ||
                 !string.IsNullOrWhiteSpace(si.Album) ||
                 !string.IsNullOrWhiteSpace(si.Artist))
             {
-                if (!string.IsNullOrWhiteSpace(url) && (string.IsNullOrWhiteSpace(rule.PluginUrl) || url.IndexOf(rule.PluginUrl) >= 0))
+                if (url != null && url.IndexOf(rule.UrlPart, StringComparison.CurrentCultureIgnoreCase) >= 0)
                     si.Title = string.Format("{0} {1} ", si.Title, url);
 
                 si.Handle = handle;
+
+                si.MainTab = mainTab;
 
                 lock (lst)
                     lst.Add(si);
             }
         }
-
 
         private void GetFromPipe(string str)
         {

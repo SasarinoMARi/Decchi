@@ -145,7 +145,7 @@ namespace Decchi.Core.Windows
             sb.AppendFormat("del \"{0}\"\r\n", App.ExePath);
             sb.AppendFormat("if exist \"{0}\" goto del\r\n", App.ExePath);
             sb.AppendFormat("move \"{0}\" \"{1}\"\r\n", newFile, App.ExePath);
-            sb.AppendFormat("\"{0}\"\r\n", App.ExePath);
+            sb.AppendFormat("\"{0}\" --updated\r\n", App.ExePath);
             sb.AppendFormat("del \"{0}\"\r\n", batchPath);
             File.WriteAllText(batchPath, sb.ToString());
 
@@ -339,6 +339,11 @@ namespace Decchi.Core.Windows
             this.ctlShowPlugin.IsEnabled = true;
             this.ctlPluginsList.ItemsSource = SongInfo.RulesWithP;
             
+            // 패치노트 읽을 것인지 물어봄
+            if (App.ShowPatchNote)
+                if (await this.ShowMessageAsync("뎃찌", "이번 패치노트 읽어볼래요?", MessageDialogStyle.AffirmativeAndNegative, new MetroDialogSettings { AffirmativeButtonText = "읽기", NegativeButtonText = "닫기" }) == MessageDialogResult.Affirmative)
+                    Globals.OpenWebSite(string.Format("https://https://github.com/Usagination/Decchi/blob/master/patch-note/{0}.md", App.Version));
+
             // 업데이트를 확인함
             if (await thdUpdate)
                 this.ctlUpdate.Visibility = Visibility.Visible;
