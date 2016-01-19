@@ -126,7 +126,7 @@ namespace Decchi.Core.Windows
                     App.Debug("===== Download Complete");
                 }
 
-                if (progress.IsCanceled)
+                if (!progress.IsCanceled)
                     downloadSuccess = true;
             }
             catch (Exception ex)
