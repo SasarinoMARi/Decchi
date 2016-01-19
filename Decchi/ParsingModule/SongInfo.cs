@@ -116,7 +116,7 @@ namespace Decchi.ParsingModule
                                         cur.WndClassTop = val == "1";
                                         break;
 
-                                    case "UrlPart":
+                                    case "urlpart":
                                         cur.UrlPart = val;
                                         break;
 

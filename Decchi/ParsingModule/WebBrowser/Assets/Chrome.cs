@@ -54,8 +54,18 @@ namespace Decchi.ParsingModule.WebBrowser
         {
             try
             {
-                var edit = chrome.FindFirst(TreeScope.Descendants, new PropertyCondition(AutomationElement.ControlTypeProperty, ControlType.Edit));
-                return base.GetUrl(edit.GetCurrentPropertyValue(LegacyIAccessiblePattern.ValueProperty) as string);
+                string url = null;
+
+                var edits = chrome.FindAll(TreeScope.Subtree, new PropertyCondition(AutomationElement.ControlTypeProperty, ControlType.Edit));
+                if (edits.Count == 0) return null;
+
+                foreach (AutomationElement edit in edits)
+                {
+                    url = ((ValuePattern)edit.GetCurrentPattern(ValuePattern.Pattern)).Current.Value;
+
+                    if (!string.IsNullOrWhiteSpace(url))
+                        return base.GetUrl(url);
+                }
             }
             catch
             { }
