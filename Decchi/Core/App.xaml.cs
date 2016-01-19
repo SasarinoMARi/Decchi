@@ -6,6 +6,7 @@ using System.Net;
 using System.Net.Cache;
 using System.Reflection;
 using System.Security.AccessControl;
+using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows;
@@ -22,7 +23,11 @@ namespace Decchi.Core
         public  static readonly Version     Version;
         private static readonly string      LockPath;
 
-        public static bool ShowPatchNote { get; private set; } 
+        private static bool m_debug;
+        private static StreamWriter m_debugWriter;
+
+        public static bool ShowPatchNote { get; private set; }
+        public static bool DebugMode { get { return App.m_debug; } }
 
         static App()
         {
@@ -43,7 +48,7 @@ namespace Decchi.Core
             ServicePointManager.UseNagleAlgorithm = false;
             HttpWebRequest.DefaultCachePolicy = new RequestCachePolicy(RequestCacheLevel.NoCacheNoStore);
 #if !DEBUG
-                HttpWebRequest.DefaultWebProxy      = null;
+            HttpWebRequest.DefaultWebProxy      = null;
 #endif
         }
 
@@ -57,9 +62,14 @@ namespace Decchi.Core
         {
             App.ShowPatchNote = e.Args.Length > 0 && e.Args.Contains("--updated");
 
+            App.m_debug = e.Args.Length > 0 && e.Args.Contains("--debug");
+            if (App.m_debug)
+                App.m_debugWriter = new StreamWriter(Path.Combine(App.ExeDir, "decchi.debug"), true, Encoding.UTF8) { AutoFlush = true };
+
             try
             {
             	m_lock = new FileStream(App.LockPath, FileMode.CreateNew, FileSystemRights.Write, FileShare.None, 8, FileOptions.DeleteOnClose);
+                File.SetAttributes(App.LockPath, FileAttributes.Archive | FileAttributes.Hidden | FileAttributes.ReadOnly);
             }
             catch
             { }
@@ -155,7 +165,42 @@ namespace Decchi.Core
                 return false;
             }
         }
-
+        
+        public static void Debug(Exception exception)
+        {
+            if (App.m_debug)
+                lock (App.m_debugWriter)
+                    App.Debug(exception.ToString());
+        }
+        public static void Debug(string format, params object[] args)
+        {
+            if (App.m_debug)
+                lock (App.m_debugWriter)
+                    App.Debug(string.Format(format, args));
+        }
+        public static void Debug(string str)
+        {
+            if (App.m_debug)
+            {
+                lock (App.m_debugWriter)
+                {
+                    App.m_debugWriter.Write(DateTime.Now.ToString("yyyy-MM-dd hh:mm:ss "));
+                    App.m_debugWriter.WriteLine(str);
+                }
+            }
+        }
+        public static void Debug(string[] str)
+        {
+            if (App.m_debug)
+            {
+                lock (App.m_debugWriter)
+                {
+                    App.m_debugWriter.Write(DateTime.Now.ToString("yyyy-MM-dd hh:mm:ss "));
+                    for (int i = 0; i < str.Length; ++i)
+                        App.m_debugWriter.WriteLine(str[i]);
+                }
+            }
+        }
 
         private static void ShowCrashReport(Exception exception)
         {
@@ -175,7 +220,10 @@ namespace Decchi.Core
                 writer.WriteLine(exception.ToString());
             }
 
-            Decchi.Core.Windows.MainWindow.Instance.Dispatcher.Invoke(() => Decchi.Core.Windows.MainWindow.Instance.CrashReport(file));
+            if (Decchi.Core.Windows.MainWindow.Instance != null)
+                Decchi.Core.Windows.MainWindow.Instance.Dispatcher.Invoke(() => Decchi.Core.Windows.MainWindow.Instance.CrashReport(file));
+            else
+                App.Current.Shutdown();
         }
 
         private static string GetOSInfomation()
@@ -196,7 +244,7 @@ namespace Decchi.Core
             Globals.Instance.SaveSettings();
 
             if (this.m_lock != null)
-                this.m_lock.Close();
+                this.m_lock.Dispose();
         }
 	}
 }

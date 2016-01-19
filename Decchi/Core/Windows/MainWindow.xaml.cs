@@ -91,6 +91,8 @@ namespace Decchi.Core.Windows
             this.ctlElements.Visibility = Visibility.Hidden;
             this.ctlUpdate.IsEnabled = false;
 
+            App.Debug("===== Update =====");
+            App.Debug(this.m_newUrl);
             var progress = await this.ShowProgressAsync("XD", "새 파일 다운로드중!", true);
             progress.Minimum = 0;
             progress.Maximum = 1000;
@@ -107,26 +109,32 @@ namespace Decchi.Core.Windows
                 using (var stream = res.GetResponseStream())
                 using (var file = File.Create(newFile))
                 {
-                    var buff = new byte[4096];
+                    var buff = new byte[40960];
                     int read;
                     int down = 0;
                     int total = (int)res.ContentLength;
-                    while (!progress.IsCanceled && (read = await stream.ReadAsync(buff, 0, 4096)) > 0)
+                    while (!progress.IsCanceled && (read = await stream.ReadAsync(buff, 0, 40960)) > 0)
                     {
                         down += read;
                         await file.WriteAsync(buff, 0, read);
 
+                        App.Debug("Download : {1}({0}) / {2}", read, down, total);
+
                         progress.SetProgress(down * 1000 / total);
                     }
                     file.Flush();
+                    App.Debug("===== Download Complete");
                 }
 
                 if (progress.IsCanceled)
                     downloadSuccess = true;
             }
-            catch
+            catch (Exception ex)
             {
                 downloadSuccess = false;
+
+                App.Debug("===== Download Fail");
+                App.Debug(ex);
             }
 
             await progress.CloseAsync();

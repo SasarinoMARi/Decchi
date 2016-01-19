@@ -83,9 +83,12 @@ namespace Decchi.Core
         /// </summary>
         public static void Run()
         {
+            App.Debug("Run");
+            App.Debug("Invoke");
             if (!(bool)MainWindow.Instance.Dispatcher.Invoke(new Func<bool, bool>(MainWindow.Instance.SetButtonState), false))
                 return;
-            
+
+            App.Debug("Get");
             var infos = SongInfo.GetCurrentPlayingSong();
             
             if (infos.Length >= 2)

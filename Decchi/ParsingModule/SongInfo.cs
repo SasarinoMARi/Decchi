@@ -11,6 +11,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Media.Imaging;
+using Decchi.Core;
 using Decchi.Core.Windows;
 using Decchi.ParsingModule.WebBrowser;
 using Decchi.Utilities;
@@ -258,7 +259,35 @@ namespace Decchi.ParsingModule
 
             var webPages = WBParser.Parse(Globals.Instance.WBDetailSearch);
 
-            Parallel.ForEach(SongInfo.Rules, e => GetCurrentPlayingSong(lst, e, webPages));
+            if (App.DebugMode)
+            {
+                App.Debug("===== Songinfo =====");
+                App.Debug("===== Web Pages");
+                App.Debug(webPages.Select(e => e.ToString()).ToArray());
+
+                for (int i = 0; i < SongInfo.Rules.Length; ++i)
+                {
+                    App.Debug("===== " + SongInfo.Rules[i].Client);
+                    GetCurrentPlayingSong(lst, SongInfo.Rules[i], webPages);
+                }
+                
+                App.Debug("===== Result =====");
+                lst.ForEach(e =>
+                {
+                    App.Debug("===== " + e.Rule.Client);
+                    App.Debug("Title  : " + e.Title);
+                    App.Debug("Artist : " + e.Artist);
+                    App.Debug("Album  : " + e.Album);
+                    App.Debug("Cover  : {0} Bytes", e.Cover.Length);
+                    App.Debug("Local  : " + e.Local);
+                    App.Debug("Handle : 0x{0:X}", e.Handle);
+                    App.Debug("MainTab: " + (e.MainTab ? "1" : "0"));
+                });
+            }
+            else
+            {
+                Parallel.ForEach(SongInfo.Rules, e => GetCurrentPlayingSong(lst, e, webPages));
+            }
 
             return (LastResult = lst.ToArray());
         }
@@ -276,6 +305,7 @@ namespace Decchi.ParsingModule
             #region 파이프
             if (rule.PluginPipe != null)
             {
+                App.Debug("Pipe");
                 string data = null;
 
                 using (var stream = new NamedPipeClientStream(".", rule.PluginPipe, PipeDirection.In))
@@ -291,6 +321,7 @@ namespace Decchi.ParsingModule
                     catch
                     { }
                 }
+                App.Debug(data);
 
                 if (data != null)
                 {
@@ -309,6 +340,9 @@ namespace Decchi.ParsingModule
             if (!string.IsNullOrWhiteSpace(rule.WndClass))
             {
                 hwnd = GetWindowHandle(rule);
+
+                App.Debug("Handle : {0} : 0x{1:X}", rule.WndClass, hwnd);
+
                 if (hwnd == IntPtr.Zero) return;
             }
 
@@ -318,6 +352,8 @@ namespace Decchi.ParsingModule
                 var local = DetectOpenedFile.GetOpenedFile(hwnd);
                 if (!string.IsNullOrEmpty(local) && File.Exists(local))
                 {
+                    App.Debug("Local");
+                    App.Debug(local);
                     si = new SongInfo(rule);
                     si.Local = local;
                 }
@@ -327,6 +363,7 @@ namespace Decchi.ParsingModule
             #region 추가 DLL
             if (rule.Parse != null)
             {
+                App.Debug("DLL Parse");
                 string title, album, artist;
                 Stream stream;
 
@@ -334,6 +371,7 @@ namespace Decchi.ParsingModule
 
                 if (succ)
                 {
+                    App.Debug("OK");
                     lock (lst)
                         lst.Add(si ?? (si = new SongInfo(rule)));
                     si.Title    = title;
@@ -349,10 +387,12 @@ namespace Decchi.ParsingModule
             }
             else if (rule.Parse2 != null)
             {
+                App.Debug("DLL Parse2");
                 var lstResult = rule.Parse2.Invoke(0);
 
                 if (lstResult != null && lstResult.Count > 0)
                 {
+                    App.Debug("OK");
                     for (int i = 0; i < lstResult.Count; ++i)
                     {
                         lock (lst)
@@ -369,6 +409,8 @@ namespace Decchi.ParsingModule
             {
                 var str = NativeMethods.GetWindowTitle(hwnd);
                 if (string.IsNullOrEmpty(str)) return;
+                App.Debug("Title");
+                App.Debug(str);
 
                 var match = rule.Regex.Match(str);
                 if (!match.Success) return;
@@ -397,6 +439,7 @@ namespace Decchi.ParsingModule
             #region 웹브라우저 파싱
             if (hwnd == IntPtr.Zero && rule.Regex != null)
             {
+                App.Debug("Web");
                 Match match;
 
                 for (int i = 0; i < WebPages.Length; ++i)
@@ -404,6 +447,7 @@ namespace Decchi.ParsingModule
                     match = rule.Regex.Match(WebPages[i].Title);
                     if (!match.Success) continue;
 
+                    App.Debug("Match : " + WebPages[i].ToString());
                     AddWebBrowser(lst, rule, match, WebPages[i].Url, WebPages[i].Handle, WebPages[i].MainTab);
                 }
             }
