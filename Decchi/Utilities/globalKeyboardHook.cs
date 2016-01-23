@@ -15,7 +15,7 @@ namespace Decchi.Utilities
 		/// <summary>
 		/// The collections of keys to watch for
 		/// </summary>
-        public List<Key> HookedKeys { get { return this.m_hookedKeys; } }
+        public IList<Key> HookedKeys { get { return this.m_hookedKeys; } }
 		/// <summary>
 		/// Handle to the hook, need this to unhook and call the next hook
 		/// </summary>

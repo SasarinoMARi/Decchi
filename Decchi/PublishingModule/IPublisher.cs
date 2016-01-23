@@ -6,6 +6,8 @@ namespace Decchi.PublishingModule
 	{
 		bool Login();
 
-		bool Publish(SongInfo text);
+		bool Publish(SongInfo songinfo);
+
+        string GetLastError();
 	}
 }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -8,11 +9,10 @@ using System.Reflection;
 using System.Security.AccessControl;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Threading;
-using Decchi.ParsingModule;
 using Microsoft.Win32;
+using Decchi.ParsingModule;
 
 namespace Decchi.Core
 {
@@ -32,17 +32,26 @@ namespace Decchi.Core
         static App()
         {
             AppDomain.CurrentDomain.AssemblyResolve += CurrentDomain_AssemblyResolve;
+#if !DEBUG
             AppDomain.CurrentDomain.UnhandledException += (s, e) => ShowCrashReport((Exception)e.ExceptionObject);
-            TaskScheduler.UnobservedTaskException += (s, e) => ShowCrashReport(e.Exception);
+            System.Threading.Tasks.TaskScheduler.UnobservedTaskException += (s, e) => ShowCrashReport(e.Exception);
+#endif
 
-            m_assembly  = Assembly.GetExecutingAssembly();
-            m_resources = m_assembly.GetManifestResourceNames();
+            var asm  = Assembly.GetExecutingAssembly();
 
-            Version = m_assembly.GetName().Version;
-            ExePath = Path.GetFullPath(m_assembly.Location);
+            Version = asm.GetName().Version;
+            ExePath = Path.GetFullPath(asm.Location);
             ExeDir  = Path.GetDirectoryName(ExePath);
 
             LockPath = Path.Combine(App.ExeDir, "Decchi.lock");
+            
+            var byteArray = typeof(byte[]);
+            App.m_resourceMethod = Type.GetType("Decchi.Properties.Resources")
+                                       .GetProperties(BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.GetProperty)
+                                       .Where(e => e.PropertyType == byteArray)
+                                       .ToArray();
+            App.m_resourceName = App.m_resourceMethod.Select(e => e.Name.Replace('_', '.'))
+                                                     .ToArray();
 
             ServicePointManager.Expect100Continue = false;
             ServicePointManager.UseNagleAlgorithm = false;
@@ -54,7 +63,9 @@ namespace Decchi.Core
 
         private void Application_DispatcherUnhandledException(object sender, DispatcherUnhandledExceptionEventArgs e)
         {
+#if !DEBUG
             ShowCrashReport(e.Exception);
+#endif
         }
 
         private Stream m_lock;
@@ -69,7 +80,7 @@ namespace Decchi.Core
             try
             {
             	m_lock = new FileStream(App.LockPath, FileMode.CreateNew, FileSystemRights.Write, FileShare.None, 8, FileOptions.DeleteOnClose);
-                File.SetAttributes(App.LockPath, FileAttributes.Archive | FileAttributes.Hidden | FileAttributes.ReadOnly);
+                File.SetAttributes(App.LockPath, FileAttributes.Archive | FileAttributes.Hidden | FileAttributes.ReadOnly | FileAttributes.System);
             }
             catch
             { }
@@ -107,34 +118,20 @@ namespace Decchi.Core
                 App.Current.Shutdown();
                 return;
             }
-
-            Globals.Instance.LoadSettings();
         }
 
-        private static readonly Assembly    m_assembly;
-        private static readonly string[]    m_resources;
+        private static readonly string[]        m_resourceName;
+        private static readonly PropertyInfo[]  m_resourceMethod;
         private static Assembly CurrentDomain_AssemblyResolve(object sender, ResolveEventArgs args)
         {
-            var eInfo = new AssemblyName(args.Name);
+            var name = new AssemblyName(args.Name).Name;
+            if (name.StartsWith("Decchi")) return null;
 
-            for (int i = 0; i < m_resources.Length; ++i)
+            for (int i = 0; i < m_resourceName.Length; ++i)
             {
-                if (m_resources[i].Contains(eInfo.Name))
-                {
-                    using (var stream = m_assembly.GetManifestResourceStream(m_resources[i]))
-                    {
-                        byte[] buff = new byte[stream.Length];
-                        stream.Read(buff, 0, buff.Length);
-
-                        return Assembly.Load(buff);
-                    }
-                }
+                if (m_resourceName[i].Contains(name))
+                    return Assembly.Load((byte[])m_resourceMethod[i].GetValue(null));
             }
-
-            if (SongInfo.Assemblies != null)
-                for (int i = 0; i < SongInfo.Assemblies.Length; ++i)
-                    if (eInfo.FullName == SongInfo.Assemblies[i].FullName)
-                        return SongInfo.Assemblies[i];
 
             return null;
         }
@@ -166,12 +163,6 @@ namespace Decchi.Core
             }
         }
         
-        public static void Debug(Exception exception)
-        {
-            if (App.m_debug)
-                lock (App.m_debugWriter)
-                    App.Debug(exception.ToString());
-        }
         public static void Debug(string format, params object[] args)
         {
             if (App.m_debug)
@@ -189,15 +180,28 @@ namespace Decchi.Core
                 }
             }
         }
-        public static void Debug(string[] str)
+        public static void Debug(IEnumerable<string> strs)
         {
             if (App.m_debug)
             {
                 lock (App.m_debugWriter)
                 {
-                    App.m_debugWriter.Write(DateTime.Now.ToString("yyyy-MM-dd hh:mm:ss "));
-                    for (int i = 0; i < str.Length; ++i)
-                        App.m_debugWriter.WriteLine(str[i]);
+                    foreach (var str in strs)
+                    {
+                        App.m_debugWriter.Write(DateTime.Now.ToString("yyyy-MM-dd hh:mm:ss "));
+                        App.m_debugWriter.WriteLine(str);
+                    }
+                }
+            }
+        }
+        public static void Debug(Exception exception)
+        {
+            if (App.m_debug)
+            {
+                lock (App.m_debugWriter)
+                {
+                    App.m_debugWriter.WriteLine(DateTime.Now.ToString("yyyy-MM-dd hh:mm:ss"));
+                    App.m_debugWriter.WriteLine(exception.ToString());
                 }
             }
         }
@@ -242,6 +246,9 @@ namespace Decchi.Core
         private void Application_Exit(object sender, ExitEventArgs e)
         {
             Globals.Instance.SaveSettings();
+
+            foreach (var rule in SongInfo.Rules)
+                rule.Dispose();
 
             if (this.m_lock != null)
                 this.m_lock.Dispose();

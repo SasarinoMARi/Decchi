@@ -1,1 +1,27 @@
-title=UTF-8||album=UTF-8||artist=UTF-8||path=Local File Path||handle=INT64||cover=BASE64DATA
+key1=value1||key2=value2||key3=value3||...
+
+separate by '||'
+
+[keys]
+title
+
+album
+
+artist = in this order: Track Artist, Artist, Composer, Performer
+tartist = track artist
+
+track
+ttrack = total track
+
+disc
+tdisc = total disc
+
+genre
+
+year
+
+path = File path
+
+cover = BASE64 Encoded image
+
+handle = wndHandle

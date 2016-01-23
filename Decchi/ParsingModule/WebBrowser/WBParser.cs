@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Reflection;
+using System.Linq;
 using System.Threading.Tasks;
+using Decchi.Core;
 
 namespace Decchi.ParsingModule.WebBrowser
 {
@@ -12,31 +13,17 @@ namespace Decchi.ParsingModule.WebBrowser
         static WBParser()
         {
             var type = typeof(WBParser);
-
-            var lst = new List<WBParser>();
-
-            var types = Assembly.GetExecutingAssembly().GetTypes();
-            for (int i = 0; i < types.Length; ++i)
-            {
-                if (!types[i].IsClass ||
-                    !types[i].IsSealed ||
-                    !types[i].IsSubclassOf(type)) continue;
-
-                lst.Add((WBParser)Activator.CreateInstance(types[i]));
-            }
-
-            Parsers = lst.ToArray();
+            WBParser.Parsers = type.Assembly.GetTypes().Where(e => e.IsClass && e.IsSealed && e.IsSubclassOf(type)).Select(e => (WBParser)Activator.CreateInstance(e)).ToArray();
         }
 
-        public static WBResult[] Parse(bool detail)
+        public static IList<WBResult> Parse(bool detail)
         {
             var lst = new List<WBResult>();
 
             Parallel.ForEach(Parsers, e => e.ParsePriv(detail, lst));
 
-            return lst.ToArray();
+            return lst;
         }
-
 
         protected virtual string WndClassName { get { return null; } } 
 
@@ -47,20 +34,25 @@ namespace Decchi.ParsingModule.WebBrowser
             var hwnd = IntPtr.Zero;
             while ((hwnd = NativeMethods.FindWindowEx(IntPtr.Zero, hwnd, this.WndClassName, null)) != IntPtr.Zero)
             {
-                title = NativeMethods.GetWindowTitle(hwnd);
-                if (string.IsNullOrWhiteSpace(title)) continue;
+                App.Debug("0x{0:X} : {1}", hwnd, this.WndClassName);
 
-                if (!detail)
-                    lst.Add(new WBResult { Handle = hwnd, Title = title, MainTab = true });
-                else
+                if (detail)
                 {
                     try
                     {
-                        GetByUIAutomation(hwnd, lst);
+                        this.GetByUIAutomation(hwnd, lst);
+                        continue;
                     }
-                    catch
-                    { }
+                    catch (Exception ex)
+                    {
+                        App.Debug(ex);
+                    }
                 }
+                
+                title = NativeMethods.GetWindowTitle(hwnd);
+                if (string.IsNullOrWhiteSpace(title)) continue;
+
+                lst.Add(new WBResult { Handle = hwnd, Title = title, MainTab = true });
             }
         }
 
@@ -83,5 +75,10 @@ namespace Decchi.ParsingModule.WebBrowser
 
         protected virtual void GetByUIAutomation(IntPtr handle, IList<WBResult> lst)
         { }
+
+        protected string DeleteEndString(string src, string findString)
+        {
+            return src.EndsWith(findString) ? src.Substring(0, src.Length - findString.Length) : src;
+        }
     }
 }

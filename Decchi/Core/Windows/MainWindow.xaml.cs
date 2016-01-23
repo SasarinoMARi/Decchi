@@ -22,33 +22,85 @@ namespace Decchi.Core.Windows
     public partial class MainWindow : MahApps.Metro.Controls.MetroWindow
     {
         public static MainWindow Instance { get; private set; }
+        
+        private static void PropertyChangedCallback(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var wnd = d as MainWindow;
+            if (e.Property == TweetableProp)
+                wnd.ctlTrayDecchi.IsEnabled = (bool)e.NewValue;
+        }
+        public static readonly DependencyProperty TweetableProp = DependencyProperty.Register("Tweetable", typeof(bool), typeof(MainWindow), new FrameworkPropertyMetadata(true, MainWindow.PropertyChangedCallback));
+        public bool Tweetable
+        {
+            get { return (bool)this.GetValue(TweetableProp); }
+            set { this.SetValue(TweetableProp, value); }
+        }
+
+        private class MainWindowWnc : System.Windows.Forms.NativeWindow
+        {
+            private MainWindow m_window;
+
+            public MainWindowWnc(MainWindow window)
+            {
+                this.m_window = window;
+
+                var helper = new WindowInteropHelper(window);
+                if (helper.Handle == IntPtr.Zero)
+                    helper.EnsureHandle();
+
+                this.AssignHandle(helper.Handle);
+            }
+
+            protected override void WndProc(ref System.Windows.Forms.Message m)
+            {
+                if (m.Msg == 0x056F) // WM_User Range (0x0400 ~ 0x07FF)
+                {
+                    var l = new IntPtr(0xAB55);
+                    if (m.LParam == l && m.WParam == l)
+                    {
+                        this.m_window.ShowWindow();
+                        this.m_window.Activate();
+
+                        m.Result = new IntPtr(1);
+
+                        return;
+                    }
+                }
+                base.WndProc(ref m);
+            }
+        }
 
         private MainWindowWnc m_wnc;
         private Storyboard m_toMini;
         private Storyboard m_toNormal;
-        private string     m_newUrl;
 
-		public MainWindow( )
+        private bool   m_updatable;
+        private string m_updateUrl;
+        
+        public MainWindow( )
         {
             MainWindow.Instance = this;
             App.Current.MainWindow = this;
-
+            
             InitializeComponent( );
-            this.ctlVersion.Text = App.Version.ToString();
-            this.ctlFormat.Text = Globals.Instance.PublishFormat;
+
+            Globals.Instance.LoadSettings();
 
             this.m_toMini   = (Storyboard)this.Resources["ToMini"];
             this.m_toNormal = (Storyboard)this.Resources["ToNormal"];
 
-            this.ctlElements.Visibility = Visibility.Collapsed;
-            this.ctlTweet.IsEnabled = false;
-            
-            this.m_formatOK = ( Brush ) this.FindResource( "BlackColorBrush" );
+            this.m_formatOK = (Brush)this.FindResource("BlackColorBrush");
             this.m_formatErr = Brushes.Red;
+            this.m_formatEdit = Brushes.Blue;
+
+            this.ctlVersion.Text = App.Version.ToString();
+            this.ctlFormat.Foreground = this.m_formatOK;
+
+            this.ctlElements.Visibility = Visibility.Collapsed;
 
             var g = !Globals.Instance.MiniMode;
-            this.Width  = g ? 240 : 132;
-            this.Height = g ? 380 : 80;
+            this.Width  = g ? 240 : 110;
+            this.Height = g ? 400 : 80;
             this.ShowMinButton = g;
 
             this.ctlTray.Visibility = Globals.Instance.TrayVisible ? Visibility.Visible : Visibility.Collapsed;
@@ -65,18 +117,30 @@ namespace Decchi.Core.Windows
 
         private void ctlToMiniMode_Click(object sender, RoutedEventArgs e)
         {
+            this.ToMiniMode();
+        }
+        private void ctlToNormalMode_Click(object sender, RoutedEventArgs e)
+        {
+            this.ToNormalMode();
+        }
+
+        private void ToMiniMode()
+        {
             this.ctlSettingFlyout.IsOpen = this.ctlPluginFlyout.IsOpen = false;
 
-            this.ShowMinButton = false;
             Globals.Instance.MiniMode = true;
+            this.ShowMinButton = false;
+            this.ctlUpdate.Visibility = Visibility.Collapsed;
 
             this.m_toMini.Begin();
         }
-
-        private void ctlToNormalMode_Click(object sender, RoutedEventArgs e)
+        private void ToNormalMode()
         {
-            this.ShowMinButton = true;
             Globals.Instance.MiniMode = false;
+            this.ShowMinButton = true;
+
+            if (this.m_updatable)
+                this.ctlUpdate.Visibility = Visibility.Visible;
 
             this.m_toNormal.Begin();
         }
@@ -92,7 +156,7 @@ namespace Decchi.Core.Windows
             this.ctlUpdate.IsEnabled = false;
 
             App.Debug("===== Update =====");
-            App.Debug(this.m_newUrl);
+            App.Debug(this.m_updateUrl);
             var progress = await this.ShowProgressAsync("XD", "새 파일 다운로드중!", true);
             progress.Minimum = 0;
             progress.Maximum = 1000;
@@ -101,7 +165,7 @@ namespace Decchi.Core.Windows
             var downloadSuccess = false;
             try
             {
-                var req = WebRequest.Create(this.m_newUrl) as HttpWebRequest;
+                var req = WebRequest.Create(this.m_updateUrl) as HttpWebRequest;
                 req.UserAgent = "Decchi";
                 req.Timeout = 5000;
                 req.ReadWriteTimeout = 3000;
@@ -109,18 +173,16 @@ namespace Decchi.Core.Windows
                 using (var stream = res.GetResponseStream())
                 using (var file = File.Create(newFile))
                 {
-                    var buff = new byte[40960];
+                    var buff = new byte[4096];
                     int read;
                     int down = 0;
                     int total = (int)res.ContentLength;
-                    while (!progress.IsCanceled && (read = await stream.ReadAsync(buff, 0, 40960)) > 0)
+                    while (!progress.IsCanceled && (read = await stream.ReadAsync(buff, 0, 4096)) > 0)
                     {
                         down += read;
                         await file.WriteAsync(buff, 0, read);
 
-                        App.Debug("Download : {1}({0}) / {2}", read, down, total);
-
-                        progress.SetProgress(down * 1000 / total);
+                        progress.SetProgress(1000d / total * down);
                     }
                     file.Flush();
                     App.Debug("===== Download Complete");
@@ -144,6 +206,14 @@ namespace Decchi.Core.Windows
                 this.ctlElements.Visibility = Visibility.Visible;
                 this.ctlUpdate.IsEnabled = true;
 
+                try
+                {
+                    if (File.Exists(newFile))
+                        File.Delete(newFile);
+                }
+                catch
+                { }
+
                 if (!progress.IsCanceled)
                     await this.ShowMessageAsync("X(", "다운로드 실패 :(");
                 return;
@@ -159,6 +229,8 @@ namespace Decchi.Core.Windows
             sb.AppendFormat("\"{0}\" --updated\r\n", App.ExePath);
             sb.AppendFormat("del \"{0}\"\r\n", batchPath);
             File.WriteAllText(batchPath, sb.ToString());
+
+            await this.ShowMessageAsync(": )", "업데이트를 위해서 재시작할게요");
 
             Process.Start(new ProcessStartInfo("cmd.exe", "/c " + batchPath) { CreateNoWindow = true, UseShellExecute = false, WindowStyle = ProcessWindowStyle.Hidden });
             Application.Current.Shutdown();
@@ -210,8 +282,7 @@ namespace Decchi.Core.Windows
             this.Hide();
             this.ctlTray.ShowBalloonTip(this.Title, "트레이에서 실행 중이에요!", BalloonIcon.Info);
         }
-
-        private void ShowWindow()
+        public void ShowWindow()
         {
             if (!Globals.Instance.TrayVisible)
                 this.ctlTray.Visibility = Visibility.Collapsed;
@@ -228,8 +299,7 @@ namespace Decchi.Core.Windows
 
         private void ctlTrayDecchi_Click(object sender, RoutedEventArgs e)
         {
-            if (!this.ctlTweet.IsEnabled)
-                Task.Run(new Action(DecchiCore.Run));
+            Task.Run(new Action(DecchiCore.Run));
         }
 
         private void ctlExit_Click(object sender, RoutedEventArgs e)
@@ -249,16 +319,19 @@ namespace Decchi.Core.Windows
             this.ctlPluginFlyout.IsOpen = !this.ctlPluginFlyout.IsOpen;
         }
 
-        public bool SetButtonState( bool progress )
+        public void SetButtonState( bool progress )
         {
-            var b = this.ctlTweet.IsEnabled;
-            this.ctlTweet.IsEnabled = progress;
-            return b ^ progress;
+            this.Tweetable = progress;
         }
 
         private void ctlTweet_Click( object sender, RoutedEventArgs e )
         {
             Task.Run( new Action( DecchiCore.Run ) );
+        }
+        public void PublishError()
+        {
+            if (!Globals.Instance.MiniMode)
+                this.ShowMessageAsync("X(", "뎃찌!! 하지 못했어요\n\n" + TwitterCommunicator.Instance.GetLastError());
         }
         
         private async void MetroWindow_Loaded(object sender, RoutedEventArgs e)
@@ -266,6 +339,8 @@ namespace Decchi.Core.Windows
             // 왜인지 몰라도 Login 함수에 async 시켜서 실행하면 씹고 다음라인 실행하더라
             if (!DecchiCore.Login())
             {
+                this.ToNormalMode();
+
                 var requestToken = await Task.Run(new Func<OAuth.TokenPair>(TwitterCommunicator.Instance.OAuth.RequestToken));
 
                 Globals.OpenWebSite("https://api.twitter.com/oauth/authorize?oauth_token=" + requestToken.Token);
@@ -300,14 +375,14 @@ namespace Decchi.Core.Windows
             }
 
             // 두개 병렬처리
-            var thdSongInfo = Task.Run(new Func<bool>(SongInfo.InitSonginfo));
             var thdTwitter  = Task.Run(new Func<TwitterUser>(TwitterCommunicator.Instance.RefrashMe));
-            var thdUpdate   = Task.Run(new Func<bool>(() => App.CheckNewVersion(out m_newUrl)));
+            var thdUpdate   = Task.Run(new Func<bool>(() => App.CheckNewVersion(out m_updateUrl)));
 
             // 폼에 트위터 유저 정보 매핑
             var me = await thdTwitter;
             if ( me == null )
             {
+                this.ToNormalMode();
                 await this.ShowMessageAsync("X(", "트위터에서 정보를 가져오지 못했어요");
 
                 Globals.Instance.TwitterToken  = null;
@@ -332,31 +407,24 @@ namespace Decchi.Core.Windows
             {
                 this.ctlShowSetting.IsEnabled = true;
                 this.ctlToNormalMode.IsEnabled = true;
+
                 this.ctlElements.Visibility = Visibility.Visible;
+
+                this.ctlShowPlugin.IsEnabled = true;
+                this.ctlPluginsList.ItemsSource = SongInfo.RulesPipe;
+
                 DecchiCore.Inited();
             };
             this.ctlProfileImage.ImageSource = image;
-
-            // 서버에서 SongInfo 데이터를 가져옴
-            if (!await thdSongInfo)
-            {
-                await this.ShowMessageAsync("X(", "서버에 연결하지 못했어요");
-
-                Application.Current.Shutdown();
-
-                return;
-            }
-            this.ctlTweet.IsEnabled = true;
-            this.ctlShowPlugin.IsEnabled = true;
-            this.ctlPluginsList.ItemsSource = SongInfo.RulesWithP;
             
             // 패치노트 읽을 것인지 물어봄
-            if (App.ShowPatchNote)
-                if (await this.ShowMessageAsync("뎃찌", "이번 패치노트 읽어볼래요?", MessageDialogStyle.AffirmativeAndNegative, new MetroDialogSettings { AffirmativeButtonText = "읽기", NegativeButtonText = "닫기" }) == MessageDialogResult.Affirmative)
-                    Globals.OpenWebSite(string.Format("https://https://github.com/Usagination/Decchi/blob/master/patch-note/{0}.md", App.Version));
+            if (App.ShowPatchNote && !Globals.Instance.MiniMode)
+                if (await this.ShowMessageAsync(": )", "이번 패치노트 읽어볼래요?", MessageDialogStyle.AffirmativeAndNegative, new MetroDialogSettings { AffirmativeButtonText = "읽기", NegativeButtonText = "닫기" }) == MessageDialogResult.Affirmative)
+                    Globals.OpenWebSite(string.Format("https://github.com/Usagination/Decchi/releases/tag/{0}", App.Version));
 
             // 업데이트를 확인함
-            if (await thdUpdate)
+            this.m_updatable = await thdUpdate;
+            if (this.m_updatable && !Globals.Instance.MiniMode)
                 this.ctlUpdate.Visibility = Visibility.Visible;
         }
 
@@ -365,22 +433,37 @@ namespace Decchi.Core.Windows
             this.ShowWindow();
 
             var songinfo = (SongInfo)(await this.ShowBaseMetroDialog(new ClientSelectionDialog(this)));
-            await Task.Run(new Action(() => TwitterCommunicator.Instance.Publish(songinfo)));
+            if (songinfo != null && !await Task.Run(new Func<bool>(() => TwitterCommunicator.Instance.Publish(songinfo))))
+                MainWindow.Instance.PublishError();
 
-            SongInfo.Clear();
-            MainWindow.Instance.Dispatcher.Invoke(new Func<bool, bool>(MainWindow.Instance.SetButtonState), true);
+            SongInfo.AllClear();
+            this.SetButtonState(true);
+
+            DecchiCore.Sync();
         }
 
         private Brush m_formatOK;
+        private Brush m_formatEdit;
         private Brush m_formatErr;
         private void ctlFormat_KeyDown( object sender, System.Windows.Input.KeyEventArgs e )
         {
             if ( e.Key == Key.Enter )
                 this.ctlFormat_LostFocus( null, null );
+            else if (e.Key == Key.Escape)
+            {
+                this.ctlFormat.Text = Globals.Instance.PublishFormat;
+                this.ctlFormat.Foreground = this.m_formatOK;
+            }
         }
-
+        private void ctlFormat_TextChanged(object sender, System.Windows.Controls.TextChangedEventArgs e)
+        {
+            this.ctlFormat.Foreground = this.m_formatEdit;
+        }
         private void ctlFormat_LostFocus( object sender, RoutedEventArgs e )
         {
+            this.ctlFormat.IsUndoEnabled = false;
+            this.ctlFormat.IsUndoEnabled = true;
+
             if ( string.IsNullOrWhiteSpace( this.ctlFormat.Text ) )
             {
                 Globals.Instance.PublishFormat = this.ctlFormat.Text = SongInfo.defaultFormat;
@@ -435,50 +518,43 @@ namespace Decchi.Core.Windows
         {
             this.ctlPluginFlyout.IsOpen = false;
 
-            var songinfo = (sender as FrameworkElement).Tag as SongInfo.SongInfoRule;
+            var songinfo = (sender as FrameworkElement).Tag as IParseRule;
             
             Globals.OpenWebSite(songinfo.PluginUrl);
         }
 
         public async void CrashReport(string crashfile)
         {
+            this.ToNormalMode();
             await this.ShowMessageAsync("X(", "심각한 오류가 발생했어요\n\n파일 이름 : " + crashfile, MessageDialogStyle.Affirmative , new MetroDialogSettings { ColorScheme = MetroDialogColorScheme.Accented });
 
             App.Current.Shutdown();
         }
 
-        private class MainWindowWnc : System.Windows.Forms.NativeWindow
+        private async void ctlAutoDecchi_IsCheckedChanged(object sender, EventArgs e)
         {
-            private MainWindow m_window;
-
-            public MainWindowWnc(MainWindow window)
+            if (this.ctlAutoDecchi.IsChecked.Value)
             {
-                this.m_window = window;
+                var rule = (IParseRule)(await this.ShowBaseMetroDialog(new ADSelectionDialog(this)));
 
-                var helper = new WindowInteropHelper(window);
-                if (helper.Handle == IntPtr.Zero)
-                    helper.EnsureHandle();
-
-                this.AssignHandle(helper.Handle);
-            }
-
-            protected override void WndProc(ref System.Windows.Forms.Message m)
-            {
-                if (m.Msg == 0x056F) // WM_User Range (0x0400 ~ 0x07FF)
+                if (rule != null)
                 {
-                    var l = new IntPtr(0xAB55);
-                    if (m.LParam == l && m.WParam == l)
-                    {
-                        this.m_window.ShowWindow();
-                        this.m_window.Activate();
+                    DecchiCore.DisableKeyEvent = true;
 
-                        m.Result = new IntPtr(1);
+                    Globals.Instance.AutoDecchi = rule;
 
-                        return;
-                    }
+                    this.Tweetable = false;
+                    
+                    return;
                 }
-                base.WndProc(ref m);
             }
+            this.ctlAutoDecchi.IsChecked = false;
+
+            DecchiCore.DisableKeyEvent = false;
+
+            Globals.Instance.AutoDecchi = null;
+
+            this.Tweetable = true;
         }
     }
 }

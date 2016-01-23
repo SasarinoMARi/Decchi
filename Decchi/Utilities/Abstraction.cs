@@ -11,7 +11,7 @@ namespace Decchi.Utilities
 
             this.m_stream = openForWrite ? 
                 new FileStream(path, FileMode.Open, FileAccess.ReadWrite, FileShare.ReadWrite) :
-                new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read);
+                new FileStream(path, FileMode.Open, FileAccess.Read,      FileShare.Read);
         }
         ~Abstraction()
         {

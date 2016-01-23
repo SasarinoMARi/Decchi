@@ -109,9 +109,9 @@ namespace Decchi.Utilities
                 if (winPos.cx > 0 && winPos.cy > 0)
                 {
                     if (Math.Abs(winPos.x - screen.Left) <= this.m_gap) winPos.x = screen.Left;
-                    if (Math.Abs(winPos.y - screen.Top) <= this.m_gap) winPos.y = screen.Top;
+                    if (Math.Abs(winPos.y - screen.Top)  <= this.m_gap) winPos.y = screen.Top;
 
-                    if (Math.Abs(winPos.x + winPos.cx - screen.Right) <= this.m_gap) winPos.x = screen.Right - winPos.cx;
+                    if (Math.Abs(winPos.x + winPos.cx - screen.Right)  <= this.m_gap) winPos.x = screen.Right  - winPos.cx;
                     if (Math.Abs(winPos.y + winPos.cy - screen.Bottom) <= this.m_gap) winPos.y = screen.Bottom - winPos.cy;
 
                     Marshal.StructureToPtr(winPos, m.LParam, false);

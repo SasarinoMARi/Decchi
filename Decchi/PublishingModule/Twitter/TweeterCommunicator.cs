@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Net;
 using System.Text;
 using System.Text.RegularExpressions;
 using Decchi.ParsingModule;
@@ -46,6 +47,10 @@ namespace Decchi.PublishingModule.Twitter
             }
         }
 
+        private Regex m_error = new Regex("\"message\"[ \t]*:[ \t]*\"([^\"]+)\"", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+        private Regex m_media = new Regex("\"media_id_string\"[ \t]*:[ \t]*\"([^\"]+)\"", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+        
+        private static string m_lastStr;
         /// <summary>
         /// 트윗을 게시합니다.
         /// </summary>
@@ -54,9 +59,6 @@ namespace Decchi.PublishingModule.Twitter
         public bool Publish(SongInfo songinfo)
         {
             if (songinfo == null) return false;
-            
-            var text = songinfo.ToString(songinfo.Cover != null);
-            if (string.IsNullOrEmpty(text)) return false;
 
             string mediaId = null;
 
@@ -89,13 +91,21 @@ namespace Decchi.PublishingModule.Twitter
 
                     using (var res = req.GetResponse())
                     using (var reader = new StreamReader(res.GetResponseStream()))
-                        mediaId = Regex.Match(reader.ReadToEnd(), "\"media_id_string\"[ \t]*:[ \t]*\"([^\"]+)\"").Groups[1].Value;
+                        mediaId = m_media.Match(reader.ReadToEnd()).Groups[1].Value;
                 }
                 catch
                 {
                     mediaId = null;
                 }
             }
+
+            //////////////////////////////////////////////////
+
+            var text = songinfo.ToString(mediaId != null);
+            if (string.IsNullOrEmpty(text)) return false;
+
+            if (TwitterCommunicator.m_lastStr == text) return true;
+            TwitterCommunicator.m_lastStr = text;
 
             //////////////////////////////////////////////////
 
@@ -116,10 +126,40 @@ namespace Decchi.PublishingModule.Twitter
                 using (var reader = new StreamReader(res.GetResponseStream()))
                     return reader.ReadToEnd() != null;
             }
+            catch (WebException ex)
+            {
+                if (ex.Response != null)
+                {
+                    using (var res = ex.Response)
+                    using (var reader = new StreamReader(res.GetResponseStream()))
+                    {
+                        this.m_lastError = reader.ReadToEnd();
+
+                        try
+                        {
+                            var m = m_error.Match(this.m_lastError);
+                            this.m_lastError = m.Groups[1].Value;
+
+                            // 중복 트윗인 경우에는 에러 메시지를 작성하지 않는다
+                            if (this.m_lastError.IndexOf("duplica") >= 0)
+                                return true;
+                        }
+                        catch
+                        { }
+                    }
+                }
+                return false;
+            }
             catch
             {
                 return false;
             }
+        }
+
+        private string m_lastError;
+        public string GetLastError()
+        {
+            return this.m_lastError;
         }
 
         private TwitterUser me;

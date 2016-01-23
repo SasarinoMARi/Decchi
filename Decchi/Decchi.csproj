@@ -66,15 +66,23 @@
     <Reference Include="Accessibility" />
     <Reference Include="Hardcodet.Wpf.TaskbarNotification">
       <HintPath>ExternalLibrarys\Hardcodet.NotifyIcon.Wpf-1.0.5\Hardcodet.Wpf.TaskbarNotification.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Interop.iTunesLib">
+      <HintPath>ExternalLibrarys\Interop.iTunesLib\Interop.iTunesLib.dll</HintPath>
+      <EmbedInteropTypes>False</EmbedInteropTypes>
+      <Private>False</Private>
     </Reference>
     <Reference Include="Interop.UIAutomationClient, Version=12.0.20617.1, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <EmbedInteropTypes>False</EmbedInteropTypes>
       <HintPath>ExternalLibrarys\UIAComWrapper-1.1.0.14\Interop.UIAutomationClient.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="MahApps.Metro, Version=1.2.0.0, Culture=neutral, PublicKeyToken=df6e08c7cdc2292f, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>ExternalLibrarys\MahApps.Metro-1.2.2\MahApps.Metro.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
@@ -86,15 +94,18 @@
     <Reference Include="System.Windows.Interactivity, Version=4.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>ExternalLibrarys\MahApps.Metro-1.2.2\System.Windows.Interactivity.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="System.Xaml" />
     <Reference Include="System.XML" />
     <Reference Include="TagLib.Portable">
       <HintPath>ExternalLibrarys\TagLib.Portable-1.0.3\TagLib.Portable.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="UIAComWrapper, Version=1.1.0.14, Culture=neutral, PublicKeyToken=78cbcf77433a85e5, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>ExternalLibrarys\UIAComWrapper-1.1.0.14\UIAComWrapper.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="WindowsBase" />
   </ItemGroup>
@@ -103,12 +114,19 @@
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
     <Compile Include="Core\DecchiCore.cs" />
-    <Compile Include="Core\Windows\Converter\Int2Double.cs" />
-    <Compile Include="Core\Windows\Converter\OpacityConverter.cs" />
-    <Compile Include="Core\Windows\Converter\Boolean2Double.cs" />
-    <Compile Include="Core\Windows\Converter\VisibilityConverter.cs" />
-    <Compile Include="Core\Windows\Converter\Boolean2Visibility.cs" />
+    <Compile Include="Core\Windows\Converter\Boolean2Int.cs" />
     <Compile Include="Core\Windows\Converter\InvertBoolean.cs" />
+    <Compile Include="Core\Windows\Converter\GetClientIcon.cs" />
+    <Compile Include="Core\Windows\Converter\Null2Boolean.cs" />
+    <Compile Include="Core\Windows\Converter\NullConverter.cs" />
+    <Compile Include="Core\Windows\Converter\Int2Double.cs" />
+    <Compile Include="Core\Windows\Converter\PersentConverter.cs" />
+    <Compile Include="Core\Windows\Converter\Visibility2Boolean.cs" />
+    <Compile Include="Core\Windows\Converter\VisibilityConverter.cs" />
+    <Compile Include="Core\Windows\Converter\BooleanConverter.cs" />
+    <Compile Include="Core\Windows\Dialogs\ADSelectionDialog.xaml.cs">
+      <DependentUpon>ADSelectionDialog.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Core\Windows\Dialogs\ClientSelectionDialog.xaml.cs">
       <DependentUpon>ClientSelectionDialog.xaml</DependentUpon>
     </Compile>
@@ -119,7 +137,17 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="NativeMethods.cs" />
-    <Compile Include="Core\Windows\Converter\Visibility2Boolean.cs" />
+    <Compile Include="ParsingModule\IParseRule.cs" />
+    <Compile Include="ParsingModule\Rules\WMP.cs" />
+    <Compile Include="ParsingModule\Rules\Youtube.cs" />
+    <Compile Include="ParsingModule\Rules\Winamp.cs" />
+    <Compile Include="ParsingModule\Rules\Nicodong.cs" />
+    <Compile Include="ParsingModule\Rules\Melon.cs" />
+    <Compile Include="ParsingModule\Rules\Goma.cs" />
+    <Compile Include="ParsingModule\Rules\Foobar.cs" />
+    <Compile Include="ParsingModule\Rules\AIMP3.cs" />
+    <Compile Include="ParsingModule\Rules\Alsong.cs" />
+    <Compile Include="ParsingModule\Rules\iTunes.cs" />
     <Compile Include="ParsingModule\SongInfo.cs" />
     <Compile Include="ParsingModule\WebBrowser\Assets\Chrome.cs" />
     <Compile Include="ParsingModule\WebBrowser\Assets\FireFox.cs" />
@@ -127,17 +155,24 @@
     <Compile Include="ParsingModule\WebBrowser\WBParser.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Globals.cs" />
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
     <Compile Include="PublishingModule\IPublisher.cs" />
     <Compile Include="PublishingModule\Twitter\OAuth.cs" />
     <Compile Include="PublishingModule\Twitter\TweeterCommunicator.cs" />
     <Compile Include="PublishingModule\Twitter\TwitterUser.cs" />
     <Compile Include="Utilities\Abstraction.cs" />
+    <Compile Include="Utilities\ClipboardMonitor.cs" />
     <Compile Include="Utilities\InteropServices\UnmanagedMemory.cs" />
     <Compile Include="Utilities\GlobalKeyboardHook.cs" />
     <Compile Include="Uncommit\TwitterToken.cs" />
     <Compile Include="Utilities\ImageResize.cs" />
     <Compile Include="Utilities\DetectOpenedFile.cs" />
     <Compile Include="Utilities\MagneticWindow.cs" />
+    <Compile Include="Utilities\OpenedWindow.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Uncommit\decchi.snk" />
@@ -150,6 +185,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </ApplicationDefinition>
+    <Page Include="Core\Windows\Dialogs\ADSelectionDialog.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Core\Windows\Dialogs\ClientSelectionDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -188,18 +227,37 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="ExternalLibrarys\Hardcodet.NotifyIcon.Wpf-1.0.5\Hardcodet.Wpf.TaskbarNotification.dll" />
+    <None Include="ExternalLibrarys\Hardcodet.NotifyIcon.Wpf-1.0.5\Hardcodet.Wpf.TaskbarNotification.dll" />
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="ExternalLibrarys\TagLib.Portable-1.0.3\TagLib.Portable.dll" />
+    <None Include="ExternalLibrarys\TagLib.Portable-1.0.3\TagLib.Portable.dll" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="ExternalLibrarys\MahApps.Metro-1.2.2\MahApps.Metro.dll" />
-    <EmbeddedResource Include="ExternalLibrarys\MahApps.Metro-1.2.2\System.Windows.Interactivity.dll" />
+    <None Include="ExternalLibrarys\MahApps.Metro-1.2.2\MahApps.Metro.dll" />
+    <None Include="ExternalLibrarys\MahApps.Metro-1.2.2\System.Windows.Interactivity.dll" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="ExternalLibrarys\UIAComWrapper-1.1.0.14\Interop.UIAutomationClient.dll" />
-    <EmbeddedResource Include="ExternalLibrarys\UIAComWrapper-1.1.0.14\UIAComWrapper.dll" />
+    <None Include="ExternalLibrarys\UIAComWrapper-1.1.0.14\Interop.UIAutomationClient.dll" />
+    <None Include="ExternalLibrarys\UIAComWrapper-1.1.0.14\UIAComWrapper.dll" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="ExternalLibrarys\Interop.iTunesLib\Interop.iTunesLib.dll" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="ParsingModule\Rules\Icons\aimp3.png" />
+    <Resource Include="ParsingModule\Rules\Icons\alsong.png" />
+    <Resource Include="ParsingModule\Rules\Icons\foobar.png" />
+    <Resource Include="ParsingModule\Rules\Icons\goma.png" />
+    <Resource Include="ParsingModule\Rules\Icons\itunes.png" />
+    <Resource Include="ParsingModule\Rules\Icons\melon.png" />
+    <Resource Include="ParsingModule\Rules\Icons\nicodong.png" />
+    <Resource Include="ParsingModule\Rules\Icons\winamp.png" />
+    <Resource Include="ParsingModule\Rules\Icons\wmp.png" />
+    <Resource Include="ParsingModule\Rules\Icons\youtube.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

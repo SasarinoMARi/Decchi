@@ -7,6 +7,7 @@ using System.Text;
 using System.Windows;
 using System.Windows.Input;
 using Decchi.Core;
+using Decchi.Core.Windows;
 using Decchi.ParsingModule;
 using Microsoft.Win32;
 
@@ -68,8 +69,6 @@ namespace Decchi
                            .Where(e => e.CustomAttributes.Any(ee => ee.AttributeType == typeof(PropAttr)))
                            .OrderBy(e => e.Name)
                            .ToArray();
-
-            LoadSettings();
         }
 
         public void LoadSettings()
@@ -124,6 +123,7 @@ namespace Decchi
             if (value is double)        return value.ToString();
             if (value is ShortcutInfo)  return value.ToString();
             if (value is DateTime)      return ((DateTime)value).ToString("yyyy-MM-dd hh:mm:ss");
+            if (value is IParseRule)    return value == null ? null : ((IParseRule)value).Client;
 
             return null;
         }
@@ -136,7 +136,8 @@ namespace Decchi
                 if (type == typeof(int))            return int.Parse(value);
                 if (type == typeof(double))         return double.Parse(value);
                 if (type == typeof(ShortcutInfo))   return ShortcutInfo.Parse(value);
-                if (type == typeof(DateTime))       return DateTime.Parse(value);	
+                if (type == typeof(DateTime))       return DateTime.Parse(value);
+                if (type == typeof(IParseRule))     return SongInfo.RulesPlayer.FirstOrDefault(e => e.Client == value);
             }
             catch
             {}
@@ -182,6 +183,19 @@ namespace Decchi
 
             else if (e.Property == AutoSelectProp)
                 globals.m_autoSelect = (bool)e.NewValue;
+
+            else if (e.Property == AutoDecchiProp)
+            {
+                var oldValue = e.OldValue as IParseRule;
+                if (oldValue != null) oldValue.DisableAD();
+
+                var newValue = e.NewValue as IParseRule;
+                if (newValue != null) newValue.EnableAD();
+                
+                DecchiCore.DisableKeyEvent = newValue != null;
+
+                MainWindow.Instance.Dispatcher.Invoke(new Action<bool>(MainWindow.Instance.SetButtonState), false);
+            }
         }
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -217,7 +231,7 @@ namespace Decchi
         }
 
         private static readonly DependencyProperty SkipFullscreenProp = DependencyProperty.Register("SkipFullscreen", typeof(bool), typeof(Globals), new FrameworkPropertyMetadata(true, Globals.PropertyChangedCallback));
-        private bool m_skipFullscreen;
+        private bool m_skipFullscreen = true;
         [PropAttr]
         public bool SkipFullscreen
         {
@@ -242,7 +256,7 @@ namespace Decchi
         }
 
         private static readonly DependencyProperty DetectLocalFileProp = DependencyProperty.Register("DetectLocalFile", typeof(bool), typeof(Globals), new FrameworkPropertyMetadata(false, Globals.PropertyChangedCallback));
-        private bool m_detectLocalFile;
+        private bool m_detectLocalFile = false;
         [PropAttr]
         public bool DetectLocalFile
         {
@@ -251,7 +265,7 @@ namespace Decchi
         }
 
         private static readonly DependencyProperty WBDetailSearchProp = DependencyProperty.Register("WBDetailSearch", typeof(bool), typeof(Globals), new FrameworkPropertyMetadata(true, Globals.PropertyChangedCallback));
-        private bool m_wbDetailSearch;
+        private bool m_wbDetailSearch = true;
         [PropAttr]
         public bool WBDetailSearch
         {
@@ -299,7 +313,7 @@ namespace Decchi
             set { this.SetValue(MiniModeProp, value); }
         }
 
-        private static readonly DependencyProperty UseMagneticWindowProp = DependencyProperty.Register("UseMagneticWindow", typeof(bool), typeof(Globals), new FrameworkPropertyMetadata(false, Globals.PropertyChangedCallback));
+        private static readonly DependencyProperty UseMagneticWindowProp = DependencyProperty.Register("UseMagneticWindow", typeof(bool), typeof(Globals), new FrameworkPropertyMetadata(true, Globals.PropertyChangedCallback));
         [PropAttr]
         public bool UseMagneticWindow
         {
@@ -323,13 +337,21 @@ namespace Decchi
             set { this.SetValue(WindowOpacityProp, value); }
         }
 
-        private static readonly DependencyProperty AutoSelectProp = DependencyProperty.Register("AutoSelect", typeof(bool), typeof(Globals), new FrameworkPropertyMetadata(true, Globals.PropertyChangedCallback));
-        private bool m_autoSelect;
+        private static readonly DependencyProperty AutoSelectProp = DependencyProperty.Register("AutoSelect", typeof(bool), typeof(Globals), new FrameworkPropertyMetadata(false, Globals.PropertyChangedCallback));
+        private bool m_autoSelect = false;
         [PropAttr]
         public bool AutoSelect
         {
             get { return this.m_autoSelect; }
             set { this.SetValue(AutoSelectProp, value); this.m_autoSelect = value; }
+        }
+
+        private static readonly DependencyProperty AutoDecchiProp = DependencyProperty.Register("AutoDecchi", typeof(IParseRule), typeof(Globals), new FrameworkPropertyMetadata(null, Globals.PropertyChangedCallback));
+        [PropAttr]
+        public IParseRule AutoDecchi
+        {
+            get { return (IParseRule)this.GetValue(AutoDecchiProp); }
+            set { this.SetValue(AutoDecchiProp, value); }
         }
 
         public struct ShortcutInfo

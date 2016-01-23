@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
@@ -13,24 +12,15 @@ namespace Decchi.Core.Windows.Dialogs
 {
     public partial class ClientSelectionDialog : BaseMetroDialog
     {
-        private	List<SongInfo> m_songinfo;
         private TaskCompletionSource<object> m_tcs;
         private CancellationTokenRegistration m_cancel;
 
         internal ClientSelectionDialog(MetroWindow parentWindow)
-            : this(parentWindow, null)
-        {
-        }
-        internal ClientSelectionDialog(MetroWindow parentWindow, MetroDialogSettings settings)
-            : base(parentWindow, settings)
+            : base(parentWindow, null)
         {
             InitializeComponent();
 
-            this.m_songinfo = new List<SongInfo>();
-            for (int i = 0; i < SongInfo.LastResult.Length; ++i)
-                this.m_songinfo.Add(SongInfo.LastResult[i]);
-
-            this.ctlList.ItemsSource = this.m_songinfo;
+            this.ctlList.ItemsSource = SongInfo.LastResult;
 
             this.m_tcs = new TaskCompletionSource<object>();
             this.m_cancel = DialogSettings.CancellationToken.Register(() => this.m_tcs.TrySetResult(null));

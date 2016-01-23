@@ -9,11 +9,11 @@ namespace Decchi.ParsingModule.WebBrowser
         public string Title;
         public string Url;
         public IntPtr Handle;
-        public bool MainTab;
+        public bool   MainTab;
 
         public override string ToString()
         {
-            return string.Format("{{{0} : {1}}}", this.Title, this.Url);
+            return string.Format("0x{0:X8} : {1} : {2}", this.Handle, this.Title, this.Url);
         }
     }
 }

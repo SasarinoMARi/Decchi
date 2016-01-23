@@ -52,12 +52,15 @@
 
 ### 뮤직 플레이어 뎃찌!!
 
-- 기본 설정일때 인식이 제일 잘 되어요.
+- 뎃찌의 기본 인식은 플레이어의 기본 설정일때에요.
 
-|클라이언트 이름|곡 이름|아티스트 이름|앨범 이름|앨범 아트|
-|---|:-:|:-:|:-:|:-:|
-|iTunes|O|O|O|O|
-|Foobar 2000|O|O|O||
+- *기울여진 클라이언트*는 [뎃찌EXT](#뎃찌ext) 를 사용중일때에요!
+
+|클라이언트 이름|곡 이름|아티스트 이름|앨범 이름|앨범 아트|확장 태그 지원|
+|---|:-:|:-:|:-:|:-:|:-:|
+|iTunes|O|O|O|O|O|
+|*Foobar 2000*|O|O|O|O|O|
+|Foobar 2000|O|O|O|||
 |곰오디오|O|O|||
 |알송|O|O|||
 |멜론|O|O|||
@@ -111,15 +114,22 @@
 
 - 뎃찌와 약속한 몇 개의 문자열들을 사용해 손쉽게 포맷팅을 정의해보세요!
 
-- 아래는 뎃찌의 약속어 목록이에요.
+- 아래는 뎃찌의 약속어 목록이에요. (**굵은 글자는 확장 태그에요**)
 
  |약속어|치환|
 |:-:|---|
 |`Title`|곡의 제목|
 |`Artist`|아티스트 이름|
 |`Album`|앨범 이름|
+|`Track`|트랙 정보|
 |`Client`|재생중인 클라이언트|
 |`Via`|뎃찌의 홍보문구에요 ㅇ.<|
+|`**Track**`|현재 트랙|
+|`**TTrack**`|전체 트랙|
+|`**Disc**`|현재 디스크|
+|`**TDisc**`|전체 디스크|
+|`**Ganre**`|장르|
+|`**Year**`|제작년도|
 
  - 약속어는 '{'와 '}' 안에 '/'로 감싸서 써주셔야 해요.
 
@@ -129,12 +139,12 @@
 
  - \\n 을 적어서 줄바꿈을 할 수도 있어요!
 
-- 예) 포맷팅 문자열 : {***/Artist/*** 의 }{***/Title/***{ (***/Album/***)} 을 }듣고 있어요! {***/Via/***} - {***/Client/***}
+- 예) 포맷팅 문자열 : {***/Artist/*** 의 }{{#/Track/ }***/Title/***{ (***/Album/***)} 을 }듣고 있어요! {***/Via/***} - {***/Client/***}
 
- |Title|Artist|Album|Client|Output|
+ |Title|Artist|Album|Track|Client|Output|
 |:-:|:-:|:-:|:-:|---|
-|夜もすがら君想ふ|Chalili|-|곰오디오|***Chalili***의 ***夜もすがら君想ふ*** 을 듣고 있어요! ***#뎃찌NP*** - ***곰오디오***|
-|Dreams|Imagine Dragons|Smoke + Mirrors|iTunes|***Imagine Dragons*** 의 ***Dreams*** (***Smoke + Mirrors***) 을 듣고 있어요! ***#뎃찌NP*** - ***iTunes***|
+|夜もすがら君想ふ|Chalili|-|곰오디오|-|***Chalili***의 ***夜もすがら君想ふ*** 을 듣고 있어요! ***#뎃찌NP*** - ***곰오디오***|
+|Dreams|Imagine Dragons|Smoke + Mirrors|iTunes|4|***Imagine Dragons*** 의 #***4*** ***Dreams*** (***Smoke + Mirrors***) 을 듣고 있어요! ***#뎃찌NP*** - ***iTunes***|
 |Shanhai Alice in 1884 feat.nomico|-|-|알송|***Shanhai Alice in 1884 feat.nomico*** 을 듣고 있어요! ***#뎃찌NP*** - ***알송***|
 
 ## LICENSE
@@ -145,8 +155,12 @@
 
  - [RyuaNerin/MahApps.Metro v1.2.2 (forked from MahApps/MahApps.Metro)](https://github.com/RyuaNerin/MahApps.Metro)
 
+ - [Interop.iTunesLib](Decchi/ExternalLibrarys/Interop.iTunesLib)
+
  - [Hardcodet.NotifyIcon v1.0.5](Decchi/ExternalLibrarys/Hardcodet.NotifyIcon.Wpf-1.0.5)
 
  - [TabLib.Portable v1.0.3](Decchi/ExternalLibrarys/TagLib.Portable-1.0.3)
 
  - [UIAComWrapper-1.1.0.14](Decchi/ExternalLibrarys/UIAComWrapper-1.1.0.14)
+
+ - 왜 Librarys 인지는 묻지마세요

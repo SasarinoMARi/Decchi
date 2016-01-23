@@ -9,8 +9,8 @@
              Startup="Application_Startup"
              DispatcherUnhandledException="Application_DispatcherUnhandledException"
 			 Exit="Application_Exit">
-    <Application.Resources>        
-        <ResourceDictionary>            
+    <Application.Resources>
+        <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
 				<ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Controls.xaml" />
 				<ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Colors.xaml" />

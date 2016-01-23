@@ -3,6 +3,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
+using Decchi.Utilities;
 using MahApps.Metro.Controls;
 using MahApps.Metro.Controls.Dialogs;
 
@@ -13,14 +14,15 @@ namespace Decchi.Core.Windows.Dialogs
         private TaskCompletionSource<object> m_tcs;
         private CancellationTokenRegistration m_cancel;
 
-        internal VerifierDialog(MetroWindow parentWindow)
-            : this(parentWindow, null)
-        {
-        }
-        internal VerifierDialog(MetroWindow parentWindow, MetroDialogSettings settings)
-            : base(parentWindow, settings)
+        private MainWindow m_mainwindow;
+        private ClipboardMonitor m_clipboardMonitor;
+
+        internal VerifierDialog(MainWindow parentWindow)
+            : base(parentWindow, null)
         {
             InitializeComponent();
+
+            this.m_mainwindow = parentWindow;
 
             this.m_tcs = new TaskCompletionSource<object>();
             this.m_cancel = DialogSettings.CancellationToken.Register(() => this.m_tcs.TrySetResult(null));
@@ -28,18 +30,35 @@ namespace Decchi.Core.Windows.Dialogs
         
         protected override void OnLoaded()
         {
-            switch (this.DialogSettings.ColorScheme)
+            this.ctlOK.Style = this.FindResource("AccentedDialogHighlightedSquareButton") as Style;
+            this.ctlText.SetResourceReference(ForegroundProperty, "BlackColorBrush");
+            this.ctlText.SetResourceReference(ControlsHelper.FocusBorderBrushProperty, "TextBoxFocusBorderBrush");
+
+            this.m_clipboardMonitor = new ClipboardMonitor(this.OwningWindow);
+            this.m_clipboardMonitor.ClipboardChanged += this.m_clipboardMonitor_ClipboardChanged;
+        }
+
+        private void m_clipboardMonitor_ClipboardChanged(object sender, EventArgs e)
+        {
+            if (Clipboard.ContainsText(TextDataFormat.Text))
             {
-                case MetroDialogColorScheme.Accented:
-                    ctlOK.Style = this.FindResource("AccentedDialogHighlightedSquareButton") as Style;
-                    ctlText.SetResourceReference(ForegroundProperty, "BlackColorBrush");
-                    ctlText.SetResourceReference(ControlsHelper.FocusBorderBrushProperty, "TextBoxFocusBorderBrush");
-                    break;
+                var str = Clipboard.GetText(TextDataFormat.Text);
+                if (str.Length == 7 && IsNumbericText(str))
+                {
+                    this.m_mainwindow.ShowWindow();
+                    this.m_mainwindow.Focus();
+
+                    this.ctlText.Text = str;
+                    this.ctlText.SelectionStart = str.Length;
+                    this.ctlText.Focus();
+                }
             }
         }
+
         protected override void OnClose()
         {
             this.m_cancel.Dispose();
+            this.m_clipboardMonitor.ReleaseHandle();
         }
 
         public override Task<object> WaitForButtonPressAsync()

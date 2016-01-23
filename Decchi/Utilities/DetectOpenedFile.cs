@@ -17,7 +17,7 @@ namespace Decchi.Utilities
         public static string GetOpenedFile(IntPtr hwnd)
         {
             int pid;
-            if (NativeMethods.GetWindowThreadProcessId(hwnd, out pid) == 0 && pid != 0) return null;
+            if (NativeMethods.GetWindowThreadProcessId(hwnd, out pid) == 0 || pid == 0) return null;
 
             var ipProcessHwnd = NativeMethods.OpenProcess(NativeMethods.ProcessAccessFlags.All, false, pid);
 

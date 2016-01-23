@@ -99,10 +99,9 @@ namespace Decchi.PublishingModule.Twitter
             return req;
         }
 
-        private static Random rnd = new Random(DateTime.Now.Millisecond);
         private static string GetNonce()
         {
-            return rnd.Next(int.MinValue, int.MaxValue).ToString("X");
+            return Guid.NewGuid().ToString("N");
         }
 
         private static DateTime GenerateTimeStampDateTime = new DateTime(1970, 1, 1, 0, 0, 0, 0);

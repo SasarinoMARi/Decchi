@@ -9,3 +9,5 @@ if not exist %MSBUILD% echo Error: Could not find MSBuild.exe. && goto :eof
 del /F /S /Q "Decchi\bin\Release"
 
 %MSBUILD% "%cd%\Decchi\Decchi.csproj" /p:Configuration=Release
+
+pause

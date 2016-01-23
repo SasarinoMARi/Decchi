@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using Decchi.Core.Windows;
@@ -77,7 +78,9 @@ namespace Decchi.Core
         {
             return TwitterCommunicator.Instance.Login();
         }
-
+        
+        private static object m_runSync = new object();
+        public static int m_isRunning = 0;
         /// <summary>
         /// 뎃찌에서 실행중인 음악 리스트를 만들어 퍼블리싱 모듈에 전달합니다.
         /// </summary>
@@ -85,13 +88,19 @@ namespace Decchi.Core
         {
             App.Debug("Run");
             App.Debug("Invoke");
-            if (!(bool)MainWindow.Instance.Dispatcher.Invoke(new Func<bool, bool>(MainWindow.Instance.SetButtonState), false))
+
+            // 쓰레드 동기화
+            if (Interlocked.CompareExchange(ref m_isRunning, 1, 0) == 1)
                 return;
+
+            MainWindow.Instance.Dispatcher.Invoke(new Action<bool>(MainWindow.Instance.SetButtonState), false);
 
             App.Debug("Get");
             var infos = SongInfo.GetCurrentPlayingSong();
             
-            if (infos.Length >= 2)
+            bool success = false;
+
+            if (infos.Count >= 2)
             {
                 // 두 개 이상의 곡이 재생중인 경우
                 if (!Globals.Instance.AutoSelect)
@@ -100,43 +109,69 @@ namespace Decchi.Core
                     return;
                 }
 
-                var topHwnd = NativeMethods.GetTopMostWindow(infos.Select(e => e.Handle).ToArray());
+                App.Debug("AutoSelect");
 
-                var top = infos.Where(e => e.Handle == topHwnd).ToArray();
+                var topHwnd = NativeMethods.GetTopMostWindow(infos.Select(e => e.Handle).ToArray());
+                App.Debug("topHwnd : " + topHwnd.ToString("X8"));
+
+                var top     = infos.Where(e => e.Handle == topHwnd).ToArray();
+                App.Debug("topWindow Count : " + top.ToString());
 
                 if (top.Length == 1)
-                    TwitterCommunicator.Instance.Publish(top[1]);
+                    success = TwitterCommunicator.Instance.Publish(top[0]);
                 else
                 {
                     // 가장 위에 있는 창이 여러개면 그건 웹브라우저다!! (아마도)
                     // 메인 창을 찾는다
 
                     var main = top.Where(e => e.MainTab).ToArray();
-
                     if (main.Length == 1)
-                        TwitterCommunicator.Instance.Publish(main[0]);
+                        success = TwitterCommunicator.Instance.Publish(main[0]);
                     else
                         // 설마 이런경우가 있겠어?
-                        TwitterCommunicator.Instance.Publish(top[0]);
+                        success = TwitterCommunicator.Instance.Publish(top[0]);
                 }
             }
             else
             {
-                if (infos.Length == 0)
+                if (infos.Count == 0)
                 {
                     // 재생중인 곡이 없는 경우
+                    success = true;
                 }
                 else
                 {
                     // 하나의 곡이 재생중인 경우
-                    TwitterCommunicator.Instance.Publish(infos[0]);
+                    success = TwitterCommunicator.Instance.Publish(infos[0]);
                 }
-
             }
 
-            SongInfo.Clear();
+            SongInfo.AllClear();
 
-            MainWindow.Instance.Dispatcher.Invoke(new Func<bool, bool>(MainWindow.Instance.SetButtonState), true);
+            MainWindow.Instance.Dispatcher.Invoke(new Action<bool>(MainWindow.Instance.SetButtonState), true);
+
+            if (!success)
+                MainWindow.Instance.Dispatcher.Invoke(new Action(MainWindow.Instance.PublishError));
+
+            Interlocked.CompareExchange(ref DecchiCore.m_isRunning, 0, 1);
+        }
+        public static void Sync()
+        {
+            Interlocked.CompareExchange(ref DecchiCore.m_isRunning, 0, 1);
+        }
+
+        public static void Run(SongInfo info)
+        {
+            // 쓰레드 동기화
+            if (Interlocked.CompareExchange(ref m_isRunning, 1, 0) == 1)
+                return;
+            
+            if (!TwitterCommunicator.Instance.Publish(info))
+                MainWindow.Instance.Dispatcher.Invoke(new Action(MainWindow.Instance.PublishError));
+
+            info.Clear();
+
+            Interlocked.CompareExchange(ref DecchiCore.m_isRunning, 0, 1);
         }
     }
 }

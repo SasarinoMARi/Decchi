@@ -26,11 +26,12 @@ namespace Decchi.ParsingModule.WebBrowser
 
                 foreach (AutomationElement tabitem in tabitems)
                 {
-                    title = tabitem.Current.Name;
+                    title = base.DeleteEndString(tabitem.Current.Name, "- FireFox");
+                    if (!string.IsNullOrWhiteSpace(title)) continue;
 
                     // 0x200000 : 선택 가능
                     currentTab = (bool)tabitem.GetCurrentPropertyValue(AutomationElementIdentifiers.IsLegacyIAccessiblePatternAvailableProperty) &&
-                                 (((int)tabitem.GetCurrentPropertyValue(LegacyIAccessiblePattern.StateProperty) & 0x02) == 2);
+                                 (((int)tabitem.GetCurrentPropertyValue(LegacyIAccessiblePattern.StateProperty) & 2) == 2);
                     url = currentTab ? GetCurrentUrl(toolbars) : null;
 
                     lock (lst)

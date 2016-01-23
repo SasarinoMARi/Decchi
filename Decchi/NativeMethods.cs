@@ -1,14 +1,16 @@
 ﻿using System;
+using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows.Forms;
-using System.Linq;
 
 namespace Decchi
 {
     // https://msdn.microsoft.com/en-us/library/ms182161.aspx
     internal static class NativeMethods
     {
+        public delegate bool EnumWindowsProc(IntPtr hWnd, int lParam);  
+
         /// <summary>
         /// 클래스 이름과 타이틀로 윈도우 핸들 값을 얻어옵니다
         /// </summary>
@@ -20,7 +22,7 @@ namespace Decchi
 
         [DllImport("user32.dll", CharSet = CharSet.Unicode)]
         public static extern IntPtr FindWindowEx(IntPtr parentHandle, IntPtr childAfter, string className, string windowTitle);
-
+        
         [DllImport("user32.dll")]
         public static extern IntPtr GetParent(IntPtr hwnd);
 
@@ -60,8 +62,22 @@ namespace Decchi
         [return: MarshalAs(UnmanagedType.Bool)]
         public static extern bool ShowWindow(IntPtr hWnd, ShowWindowCommands nCmdShow);
 
+        [DllImport("user32.dll")]
+        public static extern bool EnumWindows(EnumWindowsProc enumFunc, int lParam);
+
         [DllImport("user32.dll", SetLastError = true)]
         public static extern IntPtr GetWindow(IntPtr hWnd, GetWindowCommands uCmd);
+        
+        [DllImport("user32.dll")]
+        public static extern bool IsWindowVisible(IntPtr hWnd);
+
+        [DllImport("user32.dll")]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        public static extern bool AddClipboardFormatListener(IntPtr hwnd);
+
+        [DllImport("user32.dll")]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        public static extern bool RemoveClipboardFormatListener(IntPtr hwnd);
 
         [DllImport("kernel32.dll")]
         public static extern IntPtr OpenProcess(ProcessAccessFlags dwDesiredAccess, [MarshalAs(UnmanagedType.Bool)] bool bInheritHandle, int dwProcessId);
