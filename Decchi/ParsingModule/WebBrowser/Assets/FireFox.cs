@@ -27,7 +27,7 @@ namespace Decchi.ParsingModule.WebBrowser
                 foreach (AutomationElement tabitem in tabitems)
                 {
                     title = base.DeleteEndString(tabitem.Current.Name, "- FireFox");
-                    if (!string.IsNullOrWhiteSpace(title)) continue;
+                    if (string.IsNullOrWhiteSpace(title)) continue;
 
                     // 0x200000 : 선택 가능
                     currentTab = (bool)tabitem.GetCurrentPropertyValue(AutomationElementIdentifiers.IsLegacyIAccessiblePatternAvailableProperty) &&

@@ -38,7 +38,7 @@ namespace Decchi.ParsingModule.WebBrowser
                 foreach (AutomationElement tabitem in tabitems)
                 {
                     title = base.DeleteEndString(tabitem.Current.Name, "- Chrome");
-                    if (!string.IsNullOrWhiteSpace(title)) continue;
+                    if (string.IsNullOrWhiteSpace(title)) continue;
 
                     currentTab = (bool)tabitem.GetCurrentPropertyValue(AutomationElementIdentifiers.IsLegacyIAccessiblePatternAvailableProperty) &&
                                  (((int)tabitem.GetCurrentPropertyValue(LegacyIAccessiblePattern.StateProperty) & 2) == 2);
