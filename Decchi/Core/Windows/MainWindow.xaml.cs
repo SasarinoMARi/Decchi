@@ -419,7 +419,7 @@ namespace Decchi.Core.Windows
             
             // 패치노트 읽을 것인지 물어봄
             if (App.ShowPatchNote && !Globals.Instance.MiniMode)
-                if (await this.ShowMessageAsync(": )", "이번 패치노트 읽어볼래요?", MessageDialogStyle.AffirmativeAndNegative, new MetroDialogSettings { AffirmativeButtonText = "읽기", NegativeButtonText = "닫기" }) == MessageDialogResult.Affirmative)
+                if (await this.ShowMessageAsync(": )", "이번 패치노트 읽어볼래요?", MessageDialogStyle.AffirmativeAndNegative, new MetroDialogSettings { AffirmativeButtonText = "좋아요!", NegativeButtonText = "됐어요;(" }) == MessageDialogResult.Affirmative)
                     Globals.OpenWebSite(string.Format("https://github.com/Usagination/Decchi/releases/tag/{0}", App.Version));
 
             // 업데이트를 확인함
