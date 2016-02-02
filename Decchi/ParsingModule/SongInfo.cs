@@ -453,8 +453,8 @@ namespace Decchi.ParsingModule
                         if (filename.IndexOf("cover") >= 0  ||
                             filename.IndexOf("front") >= 0  ||
                             filename.IndexOf(dirName) >= 0  ||
-                            (string.IsNullOrEmpty(si.Title) && filename.IndexOf(si.Title) >= 0) ||
-                            (string.IsNullOrEmpty(si.Album) && filename.IndexOf(si.Album) >= 0))
+                            (!string.IsNullOrEmpty(si.Title) && filename.IndexOf(si.Title) >= 0) ||
+                            (!string.IsNullOrEmpty(si.Album) && filename.IndexOf(si.Album) >= 0))
                             si.Cover = new FileStream(files[i], FileMode.Open, FileAccess.Read, FileShare.Read);
                     }
                 }

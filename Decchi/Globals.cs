@@ -154,7 +154,12 @@ namespace Decchi
         {
             var globals = (Globals)d;
 
-            if (e.Property == UseShortcutProp ||
+            if (e.Property == PublishFormatProp)
+            {
+                if (e.NewValue == null)
+                    globals.SetValue(PublishFormatProp, SongInfo.defaultFormat);
+            }
+            else if (e.Property == UseShortcutProp ||
                 e.Property == ShortcutProp)
             {
                 DecchiCore.HookSetting();
@@ -206,12 +211,12 @@ namespace Decchi
         [PropAttr]
         public string TwitterSecret { get; set; }
 
-        private string m_publishFormat = SongInfo.defaultFormat;
+        private static readonly DependencyProperty PublishFormatProp = DependencyProperty.Register("PublishFormat", typeof(string), typeof(Globals), new FrameworkPropertyMetadata(SongInfo.defaultFormat, Globals.PropertyChangedCallback));
         [PropAttr]
-        public  string PublishFormat
+        public string PublishFormat
         {
-            get { return string.IsNullOrWhiteSpace(this.m_publishFormat) ? SongInfo.defaultFormat : this.m_publishFormat; }
-            set { this.m_publishFormat = value; }
+            get { return (string)this.GetValue(PublishFormatProp); }
+            set { this.SetValue(PublishFormatProp, value); }
         }
 
         private static readonly DependencyProperty UseShortcutProp = DependencyProperty.Register("UseShortcut", typeof(bool), typeof(Globals), new FrameworkPropertyMetadata(true, Globals.PropertyChangedCallback));
