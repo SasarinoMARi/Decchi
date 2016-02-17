@@ -489,7 +489,7 @@
                          TextWrapping="NoWrap"
                          IsUndoEnabled="True"
                          UndoLimit="10"
-                         MaxLength="100"
+                         MaxLength="200"
                          Text="{Binding Source={x:Static Decchi:Globals.Instance}, Path=PublishFormat, Mode=OneWay}"
                          KeyDown="ctlFormat_KeyDown"
                          TextChanged="ctlFormat_TextChanged"
