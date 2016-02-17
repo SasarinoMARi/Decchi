@@ -76,6 +76,8 @@ namespace Decchi.Core.Windows
 
         private bool   m_updatable;
         private string m_updateUrl;
+
+        private bool m_exit;
         
         public MainWindow( )
         {
@@ -259,7 +261,7 @@ namespace Decchi.Core.Windows
 
         private void MetroWindow_Closing(object sender, CancelEventArgs e)
         {
-            if (Globals.Instance.TrayWhenClose)
+            if (!this.m_exit && Globals.Instance.TrayWhenClose)
             {
                 this.HideWindow();
                 e.Cancel = true;
@@ -304,6 +306,7 @@ namespace Decchi.Core.Windows
 
         private void ctlExit_Click(object sender, RoutedEventArgs e)
         {
+            this.m_exit = true;
             App.Current.Shutdown();
         }
 
