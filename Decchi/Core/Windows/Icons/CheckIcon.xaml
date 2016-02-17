@@ -1,0 +1,18 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+	<DrawingImage x:Key="CheckIcon">
+		<DrawingImage.Drawing>
+			<DrawingGroup>
+				<DrawingGroup.ClipGeometry>
+					<RectangleGeometry Rect="0,0,76,76" />
+				</DrawingGroup.ClipGeometry>
+                <GeometryDrawing Brush="#FF41B1E1">
+					<GeometryDrawing.Geometry>
+						<PathGeometry FillRule="Nonzero"
+									  Figures="M 23.7501,33.25L 34.8334,44.3333L 52.2499,22.1668L 56.9999,26.9168L 34.8334,53.8333L 19.0001,38L 23.7501,33.25 Z" />
+					</GeometryDrawing.Geometry>
+				</GeometryDrawing>
+			</DrawingGroup>
+		</DrawingImage.Drawing>
+	</DrawingImage>
+</ResourceDictionary>

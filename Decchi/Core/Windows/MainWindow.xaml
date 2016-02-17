@@ -47,6 +47,7 @@
                 <ResourceDictionary Source="/Decchi;component/Core/Windows/Icons/PluginIcon.xaml" />
                 <ResourceDictionary Source="/Decchi;component/Core/Windows/Icons/PlusIcon.xaml" />
                 <ResourceDictionary Source="/Decchi;component/Core/Windows/Icons/TwitterIcon.xaml" />
+                <ResourceDictionary Source="/Decchi;component/Core/Windows/Icons/CheckIcon.xaml" />
             </ResourceDictionary.MergedDictionaries>
 
             <converter:BooleanConverter x:Key="True2Visible"   True="{x:Static Visibility.Visible}"   False="{x:Static Visibility.Collapsed}"/>
@@ -320,7 +321,8 @@
                 </Grid>
             </controls:Flyout>
             <controls:Flyout x:Name="ctlPluginFlyout"
-                             Width="68">
+                             Width="68"
+                             IsOpenChanged="ctlPluginFlyout_IsOpenChanged">
                 <Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="auto"/>
@@ -341,14 +343,34 @@
                                       Margin="0 0 0 5">
                             <ItemsControl.ItemTemplate>
                                 <DataTemplate>
-                                    <Image Width="32"
-                                           Height="32"
-                                           VerticalAlignment="Center"
-                                           Source="{Binding Path=ClientIcon}"
-                                           Tag="{Binding}"
-                                           Margin="0 10 0 0"
-                                           Cursor="Hand"
-                                           MouseUp="ctlPluginInstall_MouseUp"/>
+                                    <Grid Width="32"
+                                          Height="32"
+                                          Margin="0 10 0 0"
+                                          VerticalAlignment="Center">
+                                        <Image Width="32"
+                                               Height="32"
+                                               Source="{Binding Path=ClientIcon}"
+                                               IsEnabled="{Binding Path=IsInstalled, Converter={StaticResource True2False}}"
+                                               Tag="{Binding}"
+                                               Cursor="Hand"
+                                               MouseUp="ctlPluginInstall_MouseUp">
+                                            <Image.Style>
+                                                <Style TargetType="Image">
+                                                    <Style.Triggers>
+                                                        <Trigger Property="IsEnabled" Value="False">
+                                                            <Setter Property="Opacity" Value="0.5" />
+                                                        </Trigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </Image.Style>
+                                        </Image>
+                                        <Image Visibility="{Binding Path=IsInstalled, Converter={StaticResource True2Visible}}"
+                                               Source="{StaticResource CheckIcon}"
+                                               Width="16"
+                                               Height="16"
+                                               HorizontalAlignment="Right"
+                                               VerticalAlignment="Bottom"/>
+                                    </Grid>
                                 </DataTemplate>
                             </ItemsControl.ItemTemplate>
                         </ItemsControl>

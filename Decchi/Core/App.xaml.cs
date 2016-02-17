@@ -11,8 +11,8 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Threading;
-using Microsoft.Win32;
 using Decchi.ParsingModule;
+using Microsoft.Win32;
 
 namespace Decchi.Core
 {

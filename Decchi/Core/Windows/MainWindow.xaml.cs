@@ -81,6 +81,8 @@ namespace Decchi.Core.Windows
         
         public MainWindow( )
         {
+            RenderOptions.SetBitmapScalingMode(this, BitmapScalingMode.Fant);
+
             MainWindow.Instance = this;
             App.Current.MainWindow = this;
             
@@ -418,6 +420,7 @@ namespace Decchi.Core.Windows
 
                 DecchiCore.Inited();
             };
+
             this.ctlProfileImage.ImageSource = image;
             
             // 패치노트 읽을 것인지 물어봄
@@ -558,6 +561,11 @@ namespace Decchi.Core.Windows
             Globals.Instance.AutoDecchi = null;
 
             this.Tweetable = true;
+        }
+
+        private async void ctlPluginFlyout_IsOpenChanged(object sender, RoutedEventArgs e)
+        {
+            await Task.Run(() => SongInfo.CheckPipe());
         }
     }
 }
