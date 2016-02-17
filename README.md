@@ -76,7 +76,7 @@
 
 - 현재 지원하는 플레이어
 
- - Foobar 2000
+ - [Foobar 2000](https://github.com/Usagination/Decchi/blob/master/Decchi-Plugins/foo_decchi/README.md)
 
 ### 웹 페이지 뎃찌!!
 
