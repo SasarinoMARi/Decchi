@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Text.RegularExpressions;
 using System.Threading;
@@ -33,7 +34,7 @@ namespace Decchi.ParsingModule
     }
 
     [DebuggerDisplay("{Client}")]
-    public class IParseRule : IDisposable
+    public class IParseRule : IDisposable, INotifyPropertyChanged
     {
         protected class IParseRuleOption
         {
@@ -140,6 +141,24 @@ namespace Decchi.ParsingModule
             this.m_timer.Change(Timeout.Infinite, Timeout.Infinite);
             this.m_timer.Dispose();
             this.m_timer = null;
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        private bool m_isInstalled;
+        public bool IsInstalled
+        {
+            get { return this.m_isInstalled; }
+            set
+            {
+                if (value == true)
+                {
+                    this.m_isInstalled = value;
+
+                    if (this.PropertyChanged != null)
+                        App.Current.Dispatcher.Invoke(new Action<object, PropertyChangedEventArgs>(this.PropertyChanged.Invoke), new object[] { this, new PropertyChangedEventArgs("IsInstalled") });
+                }
+            }
         }
     }
 }

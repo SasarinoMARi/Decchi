@@ -1,6 +1,6 @@
 # 뎃찌EXT (Foobar 2000) : foo_decchi v1.1
 
-***1.*** [여기](https://github.com/Usagination/Decchi/raw/songinfo/ext/foobar/foo_decchi.fb2k-component) 를 클릭해서 파일을 다운로드해요.
+***1.*** [여기](https://github.com/Usagination/Decchi/raw/master/Decchi-Plugins/foo_decchi/foo_decchi.fb2k-component) 를 클릭해서 파일을 다운로드해요.
 
 ***2.*** Foobar 2000 을 실행해요.
 

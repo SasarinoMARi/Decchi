@@ -76,9 +76,13 @@ namespace Decchi.Core.Windows
 
         private bool   m_updatable;
         private string m_updateUrl;
+
+        private bool m_exit;
         
         public MainWindow( )
         {
+            RenderOptions.SetBitmapScalingMode(this, BitmapScalingMode.Fant);
+
             MainWindow.Instance = this;
             App.Current.MainWindow = this;
             
@@ -259,7 +263,7 @@ namespace Decchi.Core.Windows
 
         private void MetroWindow_Closing(object sender, CancelEventArgs e)
         {
-            if (Globals.Instance.TrayWhenClose)
+            if (!this.m_exit && Globals.Instance.TrayWhenClose)
             {
                 this.HideWindow();
                 e.Cancel = true;
@@ -304,6 +308,7 @@ namespace Decchi.Core.Windows
 
         private void ctlExit_Click(object sender, RoutedEventArgs e)
         {
+            this.m_exit = true;
             App.Current.Shutdown();
         }
 
@@ -415,6 +420,7 @@ namespace Decchi.Core.Windows
 
                 DecchiCore.Inited();
             };
+
             this.ctlProfileImage.ImageSource = image;
             
             // 패치노트 읽을 것인지 물어봄
@@ -555,6 +561,11 @@ namespace Decchi.Core.Windows
             Globals.Instance.AutoDecchi = null;
 
             this.Tweetable = true;
+        }
+
+        private async void ctlPluginFlyout_IsOpenChanged(object sender, RoutedEventArgs e)
+        {
+            await Task.Run(() => SongInfo.CheckPipe());
         }
     }
 }

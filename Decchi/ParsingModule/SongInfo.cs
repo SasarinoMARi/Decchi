@@ -6,6 +6,7 @@ using System.IO.Pipes;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading;
 using System.Threading.Tasks;
 using Decchi.Core;
 using Decchi.ParsingModule.WebBrowser;
@@ -88,6 +89,21 @@ namespace Decchi.ParsingModule
             if (thisHandle < otherHandle) return -1;
 
             return this.Title.CompareTo(other.Title);
+        }
+
+        private static int m_checkPipe;
+        public static void CheckPipe()
+        {
+            if (Interlocked.CompareExchange(ref m_checkPipe, 1, 0) == 1) return;
+
+            foreach (var pipeRule in SongInfo.RulesPipe)
+            {
+                if (!pipeRule.IsInstalled)
+                    if (SongInfo.GetDataFromPipe(pipeRule) != null)
+                        pipeRule.IsInstalled = true;
+            }
+
+            Interlocked.CompareExchange(ref m_checkPipe, 0, 1);
         }
 
         private readonly static List<SongInfo> m_lastResult = new List<SongInfo>();
@@ -453,8 +469,8 @@ namespace Decchi.ParsingModule
                         if (filename.IndexOf("cover") >= 0  ||
                             filename.IndexOf("front") >= 0  ||
                             filename.IndexOf(dirName) >= 0  ||
-                            (string.IsNullOrEmpty(si.Title) && filename.IndexOf(si.Title) >= 0) ||
-                            (string.IsNullOrEmpty(si.Album) && filename.IndexOf(si.Album) >= 0))
+                            (!string.IsNullOrEmpty(si.Title) && filename.IndexOf(si.Title) >= 0) ||
+                            (!string.IsNullOrEmpty(si.Album) && filename.IndexOf(si.Album) >= 0))
                             si.Cover = new FileStream(files[i], FileMode.Open, FileAccess.Read, FileShare.Read);
                     }
                 }
