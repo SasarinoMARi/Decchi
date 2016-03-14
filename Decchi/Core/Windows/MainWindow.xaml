@@ -179,7 +179,7 @@
                     </Grid.RowDefinitions>
 
                     <TabControl Margin="0">
-                        <TabItem Header="뎃찌">
+                        <TabItem Header="그래픽">
                             <ScrollViewer>
                                 <StackPanel>
                                     <Button HorizontalAlignment="Stretch"
@@ -275,7 +275,7 @@
                             </ScrollViewer>
                         </TabItem>
 
-                        <TabItem Header="뎃찌!!">
+                        <TabItem Header="기능">
                             <ScrollViewer>
                                 <StackPanel>
                                     <GroupBox Header="단축키 사용"
@@ -314,6 +314,23 @@
                                               ToolTip="여러개의 뮤직 플레이어가 실행중이면, 가장 위에 있는 창으로 뎃찌!! 해요">
                                         <controls:ToggleSwitch IsChecked="{Binding Source={x:Static Decchi:Globals.Instance}, Path=AutoSelect, Mode=TwoWay}"/>
                                     </GroupBox>
+
+                                    <GroupBox Header="자동 뎃찌"
+                                              ToolTip="특정 클라이언트를 선택해서 노래가 변경되면 자동으로 뎃찌!! 해요">
+                                    <controls:ToggleSwitch x:Name="ctlAutoDecchi"
+                                   HorizontalAlignment="Right"
+                                   VerticalAlignment="Top"
+                                   ToolTip="특정 클라이언트를 선택해서 노래가 변경되면 자동으로 뎃찌!! 해요"
+                                   IsChecked="{Binding Source={x:Static Decchi:Globals.Instance}, Path=AutoDecchi, Converter={StaticResource Null2False}, Mode=OneWay}"
+                                   IsCheckedChanged="ctlAutoDecchi_IsCheckedChanged">
+                                        <controls:ToggleSwitch.Content>
+                                            <controls:ProgressRing Width="16"
+                                           Height="16"
+                                           IsActive="{Binding Source={x:Static Decchi:Globals.Instance}, Path=AutoDecchi, Converter={StaticResource Null2False}, Mode=OneWay}"/>
+                                        </controls:ToggleSwitch.Content>
+                                        </controls:ToggleSwitch>
+                                    </GroupBox>
+
                                 </StackPanel>
                             </ScrollViewer>
                         </TabItem>
@@ -417,18 +434,6 @@
                                IsActive="{Binding ElementName=ctlElements, Path=Visibility, Converter={StaticResource Collapsed2True}, Mode=OneWay}"/>
 
         <Grid x:Name="ctlElements">
-            <controls:ToggleSwitch x:Name="ctlAutoDecchi"
-                                   HorizontalAlignment="Right"
-                                   VerticalAlignment="Top"
-                                   ToolTip="특정 클라이언트를 선택해서 노래가 변경되면 자동으로 뎃찌!! 해요"
-                                   IsChecked="{Binding Source={x:Static Decchi:Globals.Instance}, Path=AutoDecchi, Converter={StaticResource Null2False}, Mode=OneWay}"
-                                   IsCheckedChanged="ctlAutoDecchi_IsCheckedChanged">
-                <controls:ToggleSwitch.Content>
-                    <controls:ProgressRing Width="16"
-                                           Height="16"
-                                           IsActive="{Binding Source={x:Static Decchi:Globals.Instance}, Path=AutoDecchi, Converter={StaticResource Null2False}, Mode=OneWay}"/>
-                </controls:ToggleSwitch.Content>
-            </controls:ToggleSwitch>
 
             <!-- Normal Mode Components -->
             <Grid Margin="5"

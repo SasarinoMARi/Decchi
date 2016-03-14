@@ -18,7 +18,7 @@ namespace Decchi.ParsingModule
     public sealed class SongInfo : IComparable, IComparable<SongInfo>
     {
         public const string Via = "#뎃찌NP";
-        public const string defaultFormat = "{/Artist/의 }{/Title/{ (/Album/{ CD/Disc/{//TDisc/}}{ #/Track/{//TTrack/}})}을/를 }듣고 있어요! {/Via/} - {/Client/} #NowPlaying";
+        public const string defaultFormat = "{/Artist/의 }{/Title/{ (/Album/{ CD/Disc/{//TDisc/}}{ #/Track/{//TTrack/}})}을(를) }듣고 있어요! {/Via/} - {/Client/} #NowPlaying";
 
         private const int    ShortenUrlLength = 24;
         private const string ShortenUrlStr    = @"@!^@@#$%^#$^@%&(%^&#^&*$";
