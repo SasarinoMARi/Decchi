@@ -142,10 +142,10 @@
 - 예) 포맷팅 문자열 : {***/Artist/*** 의 }{{#/Track/ }***/Title/***{ (***/Album/***)} 을 }듣고 있어요! {***/Via/***} - {***/Client/***}
 
  |Title|Artist|Album|Track|Client|Output|
-|:-:|:-:|:-:|:-:|---|
-|夜もすがら君想ふ|Chalili|-|곰오디오|-|***Chalili***의 ***夜もすがら君想ふ*** 을 듣고 있어요! ***#뎃찌NP*** - ***곰오디오***|
-|Dreams|Imagine Dragons|Smoke + Mirrors|iTunes|4|***Imagine Dragons*** 의 #***4*** ***Dreams*** (***Smoke + Mirrors***) 을 듣고 있어요! ***#뎃찌NP*** - ***iTunes***|
-|Shanhai Alice in 1884 feat.nomico|-|-|알송|***Shanhai Alice in 1884 feat.nomico*** 을 듣고 있어요! ***#뎃찌NP*** - ***알송***|
+|:-:|:-:|:-:|:-:|:-:|:-:|
+|夜もすがら君想ふ|Chalili|-|-|곰오디오|***Chalili***의 ***夜もすがら君想ふ*** 을 듣고 있어요! ***#뎃찌NP*** - ***곰오디오***|
+|Dreams|Imagine Dragons|Smoke + Mirrors|4|iTunes|***Imagine Dragons*** 의 #***4*** ***Dreams*** (***Smoke + Mirrors***) 을 듣고 있어요! ***#뎃찌NP*** - ***iTunes***|
+|Shanhai Alice in 1884 feat.nomico|-|-|-|알송|***Shanhai Alice in 1884 feat.nomico*** 을 듣고 있어요! ***#뎃찌NP*** - ***알송***|
 
 ## LICENSE
 
