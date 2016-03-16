@@ -1,5 +1,7 @@
 # [뎃찌](https://github.com/Usagination/Decchi/releases/latest) (Decchi)
 
+[뎃찌 공식 트위터 계정이 만들어졌어요!](https://twitter.com/DecchiSupport)
+
 - [뎃찌 와 함께 데스크탑에서 #NowPlaying 을 게시해요](#뎃찌-와-함께-데스크탑에서-nowplaying-을-게시해요)
 - [설치](#설치)
 - [사용법 : Just click 뎃찌!!](#사용법--just-click-뎃찌)
