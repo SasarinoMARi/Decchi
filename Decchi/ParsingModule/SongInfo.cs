@@ -190,10 +190,11 @@ namespace Decchi.ParsingModule
             var hwnd = NativeMethods.FindWindow(rule.WndClass, null);
             if (hwnd == IntPtr.Zero) return IntPtr.Zero;
 
-            if (rule.WndClassTop)
-                return NativeMethods.GetParent(hwnd) == IntPtr.Zero ? hwnd : IntPtr.Zero;
-            else
-                return hwnd;
+			if ( rule.WndClassTop )
+				//return NativeMethods.GetParent(hwnd) == IntPtr.Zero ? hwnd : IntPtr.Zero;
+				return hwnd;
+			else
+				return hwnd;
         }
 
         private static void GetFromPlayer(IParseRule rule)
@@ -376,7 +377,7 @@ namespace Decchi.ParsingModule
                         
             if ((rule.ParseFlag & ParseFlags.ManualParse) == ParseFlags.ManualParse)
             {
-                if (rule.ParseTitle(si, title))
+                if (rule.ParseTitle(ref si, title))
                 {
                     SongInfo.AddToList(si);
                     return true;

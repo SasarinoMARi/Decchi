@@ -11,14 +11,14 @@ namespace Decchi.ParsingModule.Rules
             {
                 Client      = "알송",
                 ParseFlag   = ParseFlags.Default | ParseFlags.ManualParse,
-                WndClass    = "ALSong_Class",
+                WndClass    = "ALSongUniWnd",
                 WndClassTop = true,
                 ClientIcon  = "alsong"
 
             })
         { }
 
-        public override bool ParseTitle(SongInfo si, string title)
+        public override bool ParseTitle(ref SongInfo si, string title)
         {
             try
             {
@@ -35,12 +35,15 @@ namespace Decchi.ParsingModule.Rules
                 alsongFormat = alsongFormat.Replace("%경로%", ".+");
                 alsongFormat = alsongFormat.Replace("%트랙%", ".+");
 
-                var match = Regex.Match(title, alsongFormat, RegexOptions.IgnoreCase | RegexOptions.Singleline);
+				var regex = new Regex(alsongFormat, RegexOptions.IgnoreCase | RegexOptions.Singleline);
+
+                var match = regex.Match(title);
                 if (!match.Success) return false;
-
+				
                 Group g;
+				si = new SongInfo(this);
 
-                si.Artist   = (g = match.Groups["가수"]) != null ? g.Value : null;
+				si.Artist   = (g = match.Groups["가수"]) != null ? g.Value : null;
                 si.Title    = (g = match.Groups["제목"]) != null ? g.Value : null;
                 si.Album    = (g = match.Groups["앨범"]) != null ? g.Value : null;
 

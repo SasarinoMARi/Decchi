@@ -113,7 +113,7 @@ namespace Decchi.ParsingModule
         public virtual void Edit(SongInfo si)
         { }
 
-        public virtual bool ParseTitle(SongInfo si, string title)
+        public virtual bool ParseTitle(ref SongInfo si, string title)
         {
             return false;
         }
