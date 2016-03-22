@@ -12,7 +12,7 @@ namespace Decchi.ParsingModule.Rules
                 Client      = "알송",
                 ParseFlag   = ParseFlags.Default | ParseFlags.ManualParse,
                 WndClass    = "ALSongUniWnd",
-                WndClassTop = true,
+                WndClassTop = false,
                 ClientIcon  = "alsong"
 
             })

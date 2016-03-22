@@ -191,8 +191,7 @@ namespace Decchi.ParsingModule
             if (hwnd == IntPtr.Zero) return IntPtr.Zero;
 
 			if ( rule.WndClassTop )
-				//return NativeMethods.GetParent(hwnd) == IntPtr.Zero ? hwnd : IntPtr.Zero;
-				return hwnd;
+				return NativeMethods.GetParent(hwnd) == IntPtr.Zero ? hwnd : IntPtr.Zero;
 			else
 				return hwnd;
         }
