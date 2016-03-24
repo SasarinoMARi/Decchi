@@ -1,6 +1,6 @@
-﻿using System.Net;
-using System;
+﻿using System;
 using System.IO;
+using System.Net;
 using System.Text.RegularExpressions;
 
 namespace Decchi.ParsingModule.Rules

@@ -116,7 +116,8 @@ namespace Decchi.Core.Windows
 
         private void ctlSettingFlyout_IsOpenChanged(object sender, RoutedEventArgs e)
         {
-            Globals.Instance.SaveSettings();
+            if (!this.ctlSettingFlyout.IsOpen)
+                Globals.Instance.SaveSettings();
         }
 
         private void ctlToMiniMode_Click(object sender, RoutedEventArgs e)
@@ -301,11 +302,6 @@ namespace Decchi.Core.Windows
             this.ShowWindow();
         }
 
-        private void ctlTrayDecchi_Click(object sender, RoutedEventArgs e)
-        {
-            Task.Run(new Action(DecchiCore.Run));
-        }
-
         private void ctlExit_Click(object sender, RoutedEventArgs e)
         {
             this.m_exit = true;
@@ -331,7 +327,7 @@ namespace Decchi.Core.Windows
 
         private void ctlTweet_Click( object sender, RoutedEventArgs e )
         {
-            Task.Run( new Action( DecchiCore.Run ) );
+            DecchiCore.Run();
         }
         public void PublishError()
         {
@@ -346,7 +342,7 @@ namespace Decchi.Core.Windows
             {
                 this.ToNormalMode();
 
-                var requestToken = await Task.Run(new Func<OAuth.TokenPair>(TwitterCommunicator.Instance.OAuth.RequestToken));
+                var requestToken = await Task.Factory.StartNew<OAuth.TokenPair>(TwitterCommunicator.Instance.OAuth.RequestToken);
 
                 Globals.OpenWebSite("https://api.twitter.com/oauth/authorize?oauth_token=" + requestToken.Token);
 
@@ -364,7 +360,7 @@ namespace Decchi.Core.Windows
                 TwitterCommunicator.Instance.OAuth.User.Token  = requestToken.Token;
                 TwitterCommunicator.Instance.OAuth.User.Secret = requestToken.Secret;
 
-                var userToken = await Task.Run(new Func<OAuth.TokenPair>(() => TwitterCommunicator.Instance.OAuth.AccessToken(key)));
+                var userToken = await Task.Factory.StartNew<OAuth.TokenPair>(new Func<OAuth.TokenPair>(() => TwitterCommunicator.Instance.OAuth.AccessToken(key)));
                 if (userToken == null)
                 {
                     await this.ShowMessageAsync("X(", "트위터에 로그인 하지 못했어요");
@@ -380,8 +376,8 @@ namespace Decchi.Core.Windows
             }
 
             // 두개 병렬처리
-            var thdTwitter  = Task.Run(new Func<TwitterUser>(TwitterCommunicator.Instance.RefrashMe));
-            var thdUpdate   = Task.Run(new Func<bool>(() => App.CheckNewVersion(out m_updateUrl)));
+            var thdTwitter  = Task.Factory.StartNew<TwitterUser>(TwitterCommunicator.Instance.RefrashMe);
+            var thdUpdate   = Task.Factory.StartNew(new Func<bool>(() => App.CheckNewVersion(out m_updateUrl)));
 
             // 폼에 트위터 유저 정보 매핑
             var me = await thdTwitter;
@@ -416,7 +412,7 @@ namespace Decchi.Core.Windows
                 this.ctlElements.Visibility = Visibility.Visible;
 
                 this.ctlShowPlugin.IsEnabled = true;
-                this.ctlPluginsList.ItemsSource = SongInfo.RulesPipe;
+                this.ctlPluginsList.ItemsSource = IParseRule.RulesPipe;
 
                 DecchiCore.Inited();
             };
@@ -425,7 +421,7 @@ namespace Decchi.Core.Windows
             
             // 패치노트 읽을 것인지 물어봄
             if (App.ShowPatchNote && !Globals.Instance.MiniMode)
-                if (await this.ShowMessageAsync(": )", "이번 패치노트 읽어볼래요?", MessageDialogStyle.AffirmativeAndNegative, new MetroDialogSettings { AffirmativeButtonText = "좋아요!", NegativeButtonText = "됐어요;(" }) == MessageDialogResult.Affirmative)
+                if (await this.ShowMessageAsync(": )", "이번 패치노트 읽어볼래요?", MessageDialogStyle.AffirmativeAndNegative, new MetroDialogSettings { AffirmativeButtonText = "좋아요!", NegativeButtonText = "됐어요:(" }) == MessageDialogResult.Affirmative)
                     Globals.OpenWebSite(string.Format("https://github.com/Usagination/Decchi/releases/tag/{0}", App.Version));
 
             // 업데이트를 확인함
@@ -439,7 +435,7 @@ namespace Decchi.Core.Windows
             this.ShowWindow();
 
             var songinfo = (SongInfo)(await this.ShowBaseMetroDialog(new ClientSelectionDialog(this)));
-            if (songinfo != null && !await Task.Run(new Func<bool>(() => TwitterCommunicator.Instance.Publish(songinfo))))
+            if (songinfo != null && !await Task.Factory.StartNew<bool>(new Func<bool>(() => TwitterCommunicator.Instance.Publish(songinfo))))
                 MainWindow.Instance.PublishError();
 
             SongInfo.AllClear();
@@ -539,9 +535,11 @@ namespace Decchi.Core.Windows
 
         private async void ctlAutoDecchi_IsCheckedChanged(object sender, EventArgs e)
         {
-            if (this.ctlAutoDecchi.IsChecked.Value)
+            if (this.ctlAutoDecchi.IsChecked.HasValue && this.ctlAutoDecchi.IsChecked.Value)
             {
+                ctlSettingFlyout.IsPinned = true;
                 var rule = (IParseRule)(await this.ShowBaseMetroDialog(new ADSelectionDialog(this)));
+                ctlSettingFlyout.IsPinned = false;
 
                 if (rule != null)
                 {
@@ -565,7 +563,7 @@ namespace Decchi.Core.Windows
 
         private async void ctlPluginFlyout_IsOpenChanged(object sender, RoutedEventArgs e)
         {
-            await Task.Run(() => SongInfo.CheckPipe());
+            await Task.Factory.StartNew(new Action(IParseRule.CheckPipe));
         }
     }
 }

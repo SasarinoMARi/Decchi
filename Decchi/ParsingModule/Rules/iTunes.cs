@@ -4,7 +4,6 @@ using System.Drawing.Imaging;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Threading;
-using System.Threading.Tasks;
 using Decchi.Core;
 using iTunesLib;
 
@@ -16,7 +15,7 @@ namespace Decchi.ParsingModule.Rules
             new IParseRuleOption
             {
                 Client      = "iTunes",
-                ParseFlag   = ParseFlags.ManualOne,
+                ParseFlag   = ParseFlags.ManualParse,
                 WndClass    = "iTunes",
                 WndClassTop = true,
                 ClientIcon  = "itunes"
@@ -35,7 +34,7 @@ namespace Decchi.ParsingModule.Rules
             if (this.m_itunes == null)
             {
                 // 아이튠즈가 실행중인지 확인
-                if (SongInfo.GetWindowHandle(this) != IntPtr.Zero)
+                if (this.GetWindowHandle() != IntPtr.Zero)
                 {
                     try
                     {
@@ -52,7 +51,7 @@ namespace Decchi.ParsingModule.Rules
             else
             {
                 // 아이튠즈가 실행중인지 확인
-                if (SongInfo.GetWindowHandle(this) != IntPtr.Zero)
+                if (this.GetWindowHandle() != IntPtr.Zero)
                     return true;
                 else
                     this.DeleteITunes();
@@ -90,7 +89,7 @@ namespace Decchi.ParsingModule.Rules
             }
         }
 
-        public override bool Get(SongInfo si, IntPtr hwnd)
+        public override bool ParseManual(SongInfo si, IntPtr hwnd)
         {
             if (!this.Init()) return false;
 
@@ -100,8 +99,6 @@ namespace Decchi.ParsingModule.Rules
                     return true;
                 else if (!string.IsNullOrWhiteSpace(this.m_itunes.CurrentStreamTitle))
                 {
-                    if (si == null) si = new SongInfo(this);
-
                     si.Title = this.m_itunes.CurrentStreamTitle;
                     if (!string.IsNullOrWhiteSpace(this.m_itunes.CurrentStreamURL))
                     {
@@ -167,7 +164,7 @@ namespace Decchi.ParsingModule.Rules
                 }
                 finally
                 {
-                    if (!string.IsNullOrEmpty(temp) && File.Exists(temp))
+                    if (!string.IsNullOrWhiteSpace(temp) && File.Exists(temp))
                         File.Delete(temp);
                 }
             }
@@ -231,7 +228,7 @@ namespace Decchi.ParsingModule.Rules
 
             var si = new SongInfo(this);
             if (this.Get(si, IntPtr.Zero, this.m_adTrack))
-                Task.Run(new Action(() => DecchiCore.Run(si)));
+                DecchiCore.Run(si);
         }
 
         public override void DisableAD()

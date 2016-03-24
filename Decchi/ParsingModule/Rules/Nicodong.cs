@@ -1,7 +1,4 @@
-﻿using System;
-using System.Text.RegularExpressions;
-
-namespace Decchi.ParsingModule.Rules
+﻿namespace Decchi.ParsingModule.Rules
 {
     internal sealed class Nicodong : IParseRule
     {

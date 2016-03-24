@@ -20,7 +20,7 @@ namespace Decchi.Core.Windows.Dialogs
         {
             InitializeComponent();
 
-            this.ctlList.ItemsSource = SongInfo.RulesPlayer;
+            this.ctlList.ItemsSource = IParseRule.RulesPlayer;
 
             this.m_tcs = new TaskCompletionSource<object>();
             this.m_cancel = DialogSettings.CancellationToken.Register(() => this.m_tcs.TrySetResult(null));

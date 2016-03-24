@@ -22,10 +22,9 @@
                       WindowStartupLocation="CenterScreen"
                       ShowIconOnTitleBar="False"
                       ShowMaxRestoreButton="False"
-                      Topmost="{Binding Source={x:Static Decchi:Globals.Instance}, Path=TopMost, Mode=TwoWay}"
+                      IconBitmapScalingMode="Fant"
                       AllowsTransparency="True"
                       WindowStyle="None"
-                      Opacity="{Binding Source={x:Static Decchi:Globals.Instance}, Path=WindowOpacity, Mode=TwoWay}"
                       StateChanged="MetroWindow_StateChanged"
                       Closing="MetroWindow_Closing"
                       Loaded="MetroWindow_Loaded"
@@ -179,7 +178,7 @@
                     </Grid.RowDefinitions>
 
                     <TabControl Margin="0">
-                        <TabItem Header="그래픽">
+                        <TabItem Header="모양">
                             <ScrollViewer>
                                 <StackPanel>
                                     <Button HorizontalAlignment="Stretch"
@@ -278,6 +277,12 @@
                         <TabItem Header="기능">
                             <ScrollViewer>
                                 <StackPanel>
+                                    <GroupBox Header="자동 뎃찌"
+                                              ToolTip="특정 클라이언트를 선택해서 노래가 변경되면 자동으로 뎃찌!! 해요">
+                                        <controls:ToggleSwitch x:Name="ctlAutoDecchi"
+                                                               IsChecked="{Binding Source={x:Static Decchi:Globals.Instance}, Path=AutoDecchi, Converter={StaticResource Null2False}, Mode=OneWay}"
+                                                               IsCheckedChanged="ctlAutoDecchi_IsCheckedChanged"/>
+                                    </GroupBox>
                                     <GroupBox Header="단축키 사용"
                                               ToolTip="어디서든 키보드 입력 한번으로 뎃찌!! 할 수 있어요!">
                                         <StackPanel>
@@ -302,10 +307,12 @@
                                             </GroupBox>
                                         </StackPanel>
                                     </GroupBox>
+                                    <!--
                                     <GroupBox Header="로컬 파일 인식"
                                               ToolTip="로컬 파일을 인식해서 트윗해요! 아직 조금 불안정해요!">
                                         <controls:ToggleSwitch IsChecked="{Binding Source={x:Static Decchi:Globals.Instance}, Path=DetectLocalFile, Mode=TwoWay}"/>
                                     </GroupBox>
+                                    -->
                                     <GroupBox Header="심화 웹 브라우저 인식"
                                               ToolTip="현재 웹 브라우저의 모든 탭들을 인식해요!">
                                         <controls:ToggleSwitch IsChecked="{Binding Source={x:Static Decchi:Globals.Instance}, Path=WBDetailSearch, Mode=TwoWay}"/>
@@ -314,23 +321,6 @@
                                               ToolTip="여러개의 뮤직 플레이어가 실행중이면, 가장 위에 있는 창으로 뎃찌!! 해요">
                                         <controls:ToggleSwitch IsChecked="{Binding Source={x:Static Decchi:Globals.Instance}, Path=AutoSelect, Mode=TwoWay}"/>
                                     </GroupBox>
-
-                                    <GroupBox Header="자동 뎃찌"
-                                              ToolTip="특정 클라이언트를 선택해서 노래가 변경되면 자동으로 뎃찌!! 해요">
-                                        <controls:ToggleSwitch x:Name="ctlAutoDecchi"
-                                                               HorizontalAlignment="Right"
-                                                               VerticalAlignment="Top"
-                                                               ToolTip="특정 클라이언트를 선택해서 노래가 변경되면 자동으로 뎃찌!! 해요"
-                                                               IsChecked="{Binding Source={x:Static Decchi:Globals.Instance}, Path=AutoDecchi, Converter={StaticResource Null2False}, Mode=OneWay}"
-                                                               IsCheckedChanged="ctlAutoDecchi_IsCheckedChanged">
-                                            <controls:ToggleSwitch.Content>
-                                                <controls:ProgressRing Width="16"
-                                                                       Height="16"
-                                                                       IsActive="{Binding Source={x:Static Decchi:Globals.Instance}, Path=AutoDecchi, Converter={StaticResource Null2False}, Mode=OneWay}"/>
-                                            </controls:ToggleSwitch.Content>
-                                        </controls:ToggleSwitch>
-                                    </GroupBox>
-
                                 </StackPanel>
                             </ScrollViewer>
                         </TabItem>
@@ -409,7 +399,7 @@
                     <!--IsEnabled="{Binding ElementName=ctlWindow, Path=Tweetable, Mode=OneWay}"-->
                     <MenuItem x:Name="ctlTrayDecchi"
                               Header="뎃찌!!"
-                              Click="ctlTrayDecchi_Click">
+                              Click="ctlTweet_Click">
                         <MenuItem.Icon>
                             <Image Width="16" Height="16" Source="{StaticResource TwitterIcon}"/>
                         </MenuItem.Icon>

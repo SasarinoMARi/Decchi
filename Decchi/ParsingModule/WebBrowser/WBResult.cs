@@ -4,7 +4,7 @@ using System.Diagnostics;
 namespace Decchi.ParsingModule.WebBrowser
 {
     [DebuggerDisplay("{Title} : {Url}")]
-    internal struct WBResult
+    public struct WBResult
     {
         public string Title;
         public string Url;

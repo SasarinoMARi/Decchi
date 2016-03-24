@@ -67,7 +67,7 @@ namespace Decchi.Core
 
             if (Keyboard.Modifiers == Globals.Instance.Shortcut.Modifier)
             {
-                Task.Run(new Action(DecchiCore.Run));
+                DecchiCore.Run();
             }
         }
 
@@ -86,6 +86,10 @@ namespace Decchi.Core
         /// </summary>
         public static void Run()
         {
+            Task.Factory.StartNew(new Action(RunPriv));
+        }
+        private static void RunPriv()
+        {
             App.Debug("Run");
             App.Debug("Invoke");
 
@@ -97,7 +101,7 @@ namespace Decchi.Core
 
             App.Debug("Get");
             var infos = SongInfo.GetCurrentPlayingSong();
-            
+
             bool success = false;
 
             if (infos.Count >= 2)
@@ -155,21 +159,28 @@ namespace Decchi.Core
 
             Interlocked.CompareExchange(ref DecchiCore.m_isRunning, 0, 1);
         }
+
         public static void Sync()
         {
             Interlocked.CompareExchange(ref DecchiCore.m_isRunning, 0, 1);
         }
 
-        public static void Run(SongInfo info)
+        public static void Run(SongInfo si)
         {
+            Task.Factory.StartNew(new Action<object>(RunPriv), si);
+        }
+        private static void RunPriv(object siObj)
+        {
+            var si = siObj as SongInfo;
+
             // 쓰레드 동기화
             if (Interlocked.CompareExchange(ref m_isRunning, 1, 0) == 1)
                 return;
-            
-            if (!TwitterCommunicator.Instance.Publish(info))
+
+            if (!TwitterCommunicator.Instance.Publish(si))
                 MainWindow.Instance.Dispatcher.Invoke(new Action(MainWindow.Instance.PublishError));
 
-            info.Clear();
+            si.Clear();
 
             Interlocked.CompareExchange(ref DecchiCore.m_isRunning, 0, 1);
         }

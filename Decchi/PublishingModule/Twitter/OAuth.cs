@@ -50,7 +50,7 @@ namespace Decchi.PublishingModule.Twitter
             var uri = new Uri(url);
             var dic = new SortedDictionary<string, object>();
 
-            if (!string.IsNullOrEmpty(uri.Query))
+            if (!string.IsNullOrWhiteSpace(uri.Query))
                 OAuth.AddDictionary(dic, uri.Query);
 
             if (data != null)
@@ -157,7 +157,7 @@ namespace Decchi.PublishingModule.Twitter
 
         private static void AddDictionary(IDictionary<string, object> dic, string query)
         {
-            if (!string.IsNullOrEmpty(query) || (query.Length > 1))
+            if (!string.IsNullOrWhiteSpace(query) || (query.Length > 1))
             {
                 int read = 0;
                 int find = 0;

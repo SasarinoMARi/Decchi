@@ -79,21 +79,27 @@ namespace Decchi
 
                 using (var reader = new StreamReader(SettingFilePath))
                 {
-                    string      line;
-                    string[]    splitedLine;
-                    object      obj;
+                    string line;
+
+                    int f;
+                    string key;
+                    string val;
+
+                    object obj;
 
                     while ((line = reader.ReadLine()) != null)
                     {
-                        splitedLine = line.Split('=');
+                        f = line.IndexOf('=');
+                        if (f == -1) continue;
 
-                        if (splitedLine.Length != 2) continue;
+                        key = line.Substring(0, f).Trim();
+                        val = line.Substring(f + 1).Trim();
 
                         for (i = 0; i < this.m_props.Length; ++i)
                         {
-                            if (this.m_props[i].Name == splitedLine[0])
+                            if (this.m_props[i].Name == key)
                             {
-                                obj = String2Object(splitedLine[1], this.m_props[i].PropertyType);
+                                obj = String2Object(val, this.m_props[i].PropertyType);
                                 if (obj != null)
                                     this.m_props[i].SetValue(this, obj);
 
@@ -111,8 +117,11 @@ namespace Decchi
         public void SaveSettings()
         {
             using (var writer = new StreamWriter(SettingFilePath))
+            {
+                writer.WriteLine("[Decchi]");
                 for (int i = 0; i < this.m_props.Length; ++i)
                     writer.WriteLine("{0}={1}", this.m_props[i].Name, Object2String(this.m_props[i].GetValue(this)));
+            }
         }
 
         private static string Object2String(object value)
@@ -137,7 +146,7 @@ namespace Decchi
                 if (type == typeof(double))         return double.Parse(value);
                 if (type == typeof(ShortcutInfo))   return ShortcutInfo.Parse(value);
                 if (type == typeof(DateTime))       return DateTime.Parse(value);
-                if (type == typeof(IParseRule))     return SongInfo.RulesPlayer.FirstOrDefault(e => e.Client == value);
+                if (type == typeof(IParseRule))     return IParseRule.RulesPlayer.FirstOrDefault(e => e.Client == value);
             }
             catch
             {}
@@ -179,11 +188,21 @@ namespace Decchi
                         reg.DeleteValue("Decchi");
                 }
             }
+            /*
             else if (e.Property == DetectLocalFileProp)
                 globals.m_detectLocalFile = (bool)e.NewValue;
+            */
 
             else if (e.Property == WBDetailSearchProp)
                 globals.m_wbDetailSearch = (bool)e.NewValue;
+
+            else if (e.Property == TopMostProp)
+                if (MainWindow.Instance != null)
+                    MainWindow.Instance.Topmost = (bool)e.NewValue;
+
+                else if (e.Property == WindowOpacityProp)
+                    if (MainWindow.Instance != null)
+                        MainWindow.Instance.Opacity = (double)e.NewValue;
 
             else if (e.Property == SkipFullscreenProp)
                 globals.m_skipFullscreen = (bool)e.NewValue;
@@ -201,7 +220,8 @@ namespace Decchi
                 
                 DecchiCore.DisableKeyEvent = newValue != null;
 
-                MainWindow.Instance.Dispatcher.Invoke(new Action<bool>(MainWindow.Instance.SetButtonState), false);
+                if (MainWindow.Instance != null)
+                    MainWindow.Instance.Dispatcher.Invoke(new Action<bool>(MainWindow.Instance.SetButtonState), false);
             }
         }
 
@@ -267,6 +287,7 @@ namespace Decchi
             set { this.SetValue(WinStartupProp, value); }
         }
 
+        /*
         private static readonly DependencyProperty DetectLocalFileProp = DependencyProperty.Register("DetectLocalFile", typeof(bool), typeof(Globals), new FrameworkPropertyMetadata(false, Globals.PropertyChangedCallback));
         private bool m_detectLocalFile = false;
         [PropAttr]
@@ -275,6 +296,7 @@ namespace Decchi
             get { return this.m_detectLocalFile; }
             set { this.SetValue(DetectLocalFileProp, value); this.m_detectLocalFile = value; }
         }
+        */
 
         private static readonly DependencyProperty WBDetailSearchProp = DependencyProperty.Register("WBDetailSearch", typeof(bool), typeof(Globals), new FrameworkPropertyMetadata(true, Globals.PropertyChangedCallback));
         private bool m_wbDetailSearch = true;
@@ -285,7 +307,7 @@ namespace Decchi
             set { this.SetValue(WBDetailSearchProp, value); this.m_wbDetailSearch = value; }
         }
 
-        private static readonly DependencyProperty TopMostProp = DependencyProperty.Register("TopMost", typeof(bool), typeof(Globals), new FrameworkPropertyMetadata(false));
+        private static readonly DependencyProperty TopMostProp = DependencyProperty.Register("TopMost", typeof(bool), typeof(Globals), new FrameworkPropertyMetadata(false, Globals.PropertyChangedCallback));
         [PropAttr]
         public bool TopMost
         {
@@ -341,7 +363,7 @@ namespace Decchi
             set { this.SetValue(MagneticWindowGapProp, value); }
         }
 
-        private static readonly DependencyProperty WindowOpacityProp = DependencyProperty.Register("WindowOpacity", typeof(double), typeof(Globals), new FrameworkPropertyMetadata(1.0d));
+        private static readonly DependencyProperty WindowOpacityProp = DependencyProperty.Register("WindowOpacity", typeof(double), typeof(Globals), new FrameworkPropertyMetadata(1.0d, Globals.PropertyChangedCallback));
         [PropAttr]
         public double WindowOpacity
         {
@@ -372,7 +394,7 @@ namespace Decchi
 
             public static ShortcutInfo Parse(string value)
             {
-                if (!string.IsNullOrEmpty(value))
+                if (!string.IsNullOrWhiteSpace(value))
                 {
                     ModifierKeys    modifier = ModifierKeys.None;
                     Key             key;

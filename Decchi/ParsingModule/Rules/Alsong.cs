@@ -1,5 +1,4 @@
-﻿using System;
-using System.Text.RegularExpressions;
+﻿using System.Text.RegularExpressions;
 using Microsoft.Win32;
 
 namespace Decchi.ParsingModule.Rules
@@ -10,7 +9,7 @@ namespace Decchi.ParsingModule.Rules
             new IParseRuleOption
             {
                 Client      = "알송",
-                ParseFlag   = ParseFlags.Default | ParseFlags.ManualParse,
+                ParseFlag   = ParseFlags.Default | ParseFlags.ManualTitle,
                 WndClass    = "ALSongUniWnd",
                 WndClassTop = false,
                 ClientIcon  = "alsong"
@@ -18,7 +17,7 @@ namespace Decchi.ParsingModule.Rules
             })
         { }
 
-        public override bool ParseTitle(ref SongInfo si, string title)
+        public override bool ParseTitle(SongInfo si, string title)
         {
             try
             {
@@ -41,8 +40,6 @@ namespace Decchi.ParsingModule.Rules
                 if (!match.Success) return false;
 				
                 Group g;
-				si = new SongInfo(this);
-
 				si.Artist   = (g = match.Groups["가수"]) != null ? g.Value : null;
                 si.Title    = (g = match.Groups["제목"]) != null ? g.Value : null;
                 si.Album    = (g = match.Groups["앨범"]) != null ? g.Value : null;

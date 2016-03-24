@@ -11,7 +11,7 @@ using System.Resources;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
 [assembly: AssemblyProduct("Decchi")]
-[assembly: AssemblyCopyright("Copyright (c) 2016 Sasarino MARi & RyuaNerin")]
+[assembly: AssemblyCopyright("CopyRight (C) By Sasarino MARi & RyuaNerin")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

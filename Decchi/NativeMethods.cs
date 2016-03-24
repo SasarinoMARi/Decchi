@@ -106,12 +106,6 @@ namespace Decchi
         [DllImport("kernel32.Dll")]
         internal static extern short GetVersionEx(ref OsVersioninfo o);
 
-        [DllImport("ntdll.dll")]
-        public static extern uint NtQuerySystemInformation(int SystemInformationClass, IntPtr SystemInformation, int SystemInformationLength, [Out] out int returnLength);
-
-        [DllImport("ntdll.dll")]
-        public static extern uint NtQueryObject(IntPtr ObjectHandle, ObjectInformationClass ObjectInformationClass, IntPtr ObjectInformation, int ObjectInformationLength, [Out] out int returnLength);
-
         [Flags]
         public enum ProcessAccessFlags : uint
         {

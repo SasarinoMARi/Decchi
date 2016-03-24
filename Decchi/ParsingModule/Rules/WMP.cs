@@ -10,14 +10,14 @@ namespace Decchi.ParsingModule.Rules
             new IParseRuleOption
             {
                 Client      = "WMP",
-                ParseFlag   = ParseFlags.Local | ParseFlags.ManualOne,
+                ParseFlag   = ParseFlags.Local | ParseFlags.ManualParse,
                 ClientIcon  = "wmp",
                 WndClass    = "WMPlayerApp",
                 WndClassTop = true,
             })
         { }
 
-        public override bool Get(SongInfo si, IntPtr hwnd)
+        public override bool ParseManual(SongInfo si, IntPtr hwnd)
         {
             // Finding the WMP window
             hwnd = NativeMethods.FindWindow("WMPlayerApp", "Windows Media Player");

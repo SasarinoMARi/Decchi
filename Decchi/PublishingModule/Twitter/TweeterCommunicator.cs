@@ -102,7 +102,7 @@ namespace Decchi.PublishingModule.Twitter
             //////////////////////////////////////////////////
 
             var text = songinfo.ToString(mediaId != null);
-            if (string.IsNullOrEmpty(text)) return false;
+            if (string.IsNullOrWhiteSpace(text)) return false;
 
             if (TwitterCommunicator.m_lastStr == text) return true;
             TwitterCommunicator.m_lastStr = text;

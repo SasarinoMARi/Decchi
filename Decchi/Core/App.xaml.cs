@@ -1,27 +1,27 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Cache;
 using System.Reflection;
-using System.Security.AccessControl;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Threading;
 using Decchi.ParsingModule;
+using Decchi.Utilities;
 using Microsoft.Win32;
 
 namespace Decchi.Core
 {
 	internal partial class App : Application
     {
+        private static readonly string      Guid;
         public  static readonly string      ExePath;
         public  static readonly string      ExeDir;
         public  static readonly Version     Version;
-        private static readonly string      LockPath;
 
         private static bool m_debug;
         private static StreamWriter m_debugWriter;
@@ -39,11 +39,10 @@ namespace Decchi.Core
 
             var asm  = Assembly.GetExecutingAssembly();
 
+            Guid    = new Guid((asm.GetCustomAttributes(typeof(GuidAttribute), true)[0] as GuidAttribute).Value).ToString("D").ToLower();
             Version = asm.GetName().Version;
             ExePath = Path.GetFullPath(asm.Location);
             ExeDir  = Path.GetDirectoryName(ExePath);
-
-            LockPath = Path.Combine(App.ExeDir, "Decchi.lock");
             
             var byteArray = typeof(byte[]);
             App.m_resourceMethod = Type.GetType("Decchi.Properties.Resources")
@@ -68,56 +67,21 @@ namespace Decchi.Core
 #endif
         }
 
-        private Stream m_lock;
+        private InstanceHelper m_instance;
         private void Application_Startup(object sender, StartupEventArgs e)
         {
+            m_instance = new InstanceHelper(Guid);
+            if (!m_instance.Check())
+            {
+                this.Shutdown();
+                return;
+            }
+
             App.ShowPatchNote = e.Args.Length > 0 && e.Args.Contains("--updated");
 
             App.m_debug = e.Args.Length > 0 && e.Args.Contains("--debug");
             if (App.m_debug)
                 App.m_debugWriter = new StreamWriter(Path.Combine(App.ExeDir, "decchi.debug"), true, Encoding.UTF8) { AutoFlush = true };
-
-            try
-            {
-            	m_lock = new FileStream(App.LockPath, FileMode.CreateNew, FileSystemRights.Write, FileShare.None, 8, FileOptions.DeleteOnClose);
-                File.SetAttributes(App.LockPath, FileAttributes.Archive | FileAttributes.Hidden | FileAttributes.ReadOnly | FileAttributes.System);
-            }
-            catch
-            { }
-
-            if (this.m_lock == null)
-            {
-                var curProc = Process.GetCurrentProcess();
-#if DEBUG
-                var procs = Process.GetProcessesByName(curProc.ProcessName.Replace(".vshost", ""));
-#else
-                var procs = Process.GetProcessesByName(curProc.ProcessName);
-#endif
-
-                if (procs.Length > 0)
-                {
-                    for (int i = 0; i < procs.Length; ++i)
-                    {
-#if DEBUG
-                        if (procs[i].MainModule.FileName != curProc.MainModule.FileName.Replace(".vshost", "")) continue;
-#else
-                        if (procs[i].MainModule.FileName != curProc.MainModule.FileName) continue;
-#endif
-                        if (procs[i].Id == curProc.Id) continue;
-
-                        var hwnd = procs[i].MainWindowHandle;
-                        if (hwnd != IntPtr.Zero)
-                        {
-                            NativeMethods.SendMessage(hwnd, 0x056F, new IntPtr(0xAB55), new IntPtr(0xAB55)); // WM_User Range (0x0400 ~ 0x07FF)
-
-                            break;
-                        }
-                    }
-                }
-               
-                App.Current.Shutdown();
-                return;
-            }
         }
 
         private static readonly string[]        m_resourceName;
@@ -247,11 +211,10 @@ namespace Decchi.Core
         {
             Globals.Instance.SaveSettings();
 
-            foreach (var rule in SongInfo.Rules)
-                rule.Dispose();
+            this.m_instance.Dispose();
 
-            if (this.m_lock != null)
-                this.m_lock.Dispose();
+            foreach (var rule in IParseRule.Rules)
+                rule.Dispose();
         }
 	}
 }
