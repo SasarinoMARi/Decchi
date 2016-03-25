@@ -101,6 +101,7 @@
     <Reference Include="taglib-sharp, Version=2.1.0.0, Culture=neutral, PublicKeyToken=db62eba44689b5b0, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>ExternalLibraries\TagLib-Sharp\taglib-sharp.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="UIAComWrapper, Version=1.1.0.14, Culture=neutral, PublicKeyToken=78cbcf77433a85e5, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -176,6 +177,13 @@
     <Compile Include="Utilities\OpenedWindow.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="ExternalLibraries\Hardcodet.NotifyIcon.Wpf\Hardcodet.Wpf.TaskbarNotification.dll.gz" />
+    <None Include="ExternalLibraries\Interop.iTunesLib\Interop.iTunesLib.dll.gz" />
+    <None Include="ExternalLibraries\MahApps.Metro\MahApps.Metro.dll.gz" />
+    <None Include="ExternalLibraries\MahApps.Metro\System.Windows.Interactivity.dll.gz" />
+    <None Include="ExternalLibraries\TagLib-Sharp\taglib-sharp.dll.gz" />
+    <None Include="ExternalLibraries\UIAComWrapper\Interop.UIAutomationClient.dll.gz" />
+    <None Include="ExternalLibraries\UIAComWrapper\UIAComWrapper.dll.gz" />
     <None Include="Uncommit\decchi.snk" />
   </ItemGroup>
   <ItemGroup>

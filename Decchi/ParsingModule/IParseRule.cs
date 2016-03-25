@@ -7,7 +7,6 @@ using System.IO.Pipes;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading;
-using System.Threading.Tasks;
 using System.Windows.Media.Imaging;
 using Decchi.Core;
 using Decchi.ParsingModule.WebBrowser;

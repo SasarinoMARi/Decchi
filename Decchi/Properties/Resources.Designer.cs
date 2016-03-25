@@ -63,9 +63,9 @@ namespace Decchi.Properties {
         /// <summary>
         ///   System.Byte[] 형식의 지역화된 리소스를 찾습니다.
         /// </summary>
-        internal static byte[] Hardcodet_Wpf_TaskbarNotification {
+        internal static byte[] Hardcodet_Wpf_TaskbarNotification_dll {
             get {
-                object obj = ResourceManager.GetObject("Hardcodet_Wpf_TaskbarNotification", resourceCulture);
+                object obj = ResourceManager.GetObject("Hardcodet_Wpf_TaskbarNotification_dll", resourceCulture);
                 return ((byte[])(obj));
             }
         }
@@ -73,9 +73,9 @@ namespace Decchi.Properties {
         /// <summary>
         ///   System.Byte[] 형식의 지역화된 리소스를 찾습니다.
         /// </summary>
-        internal static byte[] Interop_iTunesLib {
+        internal static byte[] Interop_iTunesLib_dll {
             get {
-                object obj = ResourceManager.GetObject("Interop_iTunesLib", resourceCulture);
+                object obj = ResourceManager.GetObject("Interop_iTunesLib_dll", resourceCulture);
                 return ((byte[])(obj));
             }
         }
@@ -83,9 +83,9 @@ namespace Decchi.Properties {
         /// <summary>
         ///   System.Byte[] 형식의 지역화된 리소스를 찾습니다.
         /// </summary>
-        internal static byte[] Interop_UIAutomationClient {
+        internal static byte[] Interop_UIAutomationClient_dll {
             get {
-                object obj = ResourceManager.GetObject("Interop_UIAutomationClient", resourceCulture);
+                object obj = ResourceManager.GetObject("Interop_UIAutomationClient_dll", resourceCulture);
                 return ((byte[])(obj));
             }
         }
@@ -93,9 +93,9 @@ namespace Decchi.Properties {
         /// <summary>
         ///   System.Byte[] 형식의 지역화된 리소스를 찾습니다.
         /// </summary>
-        internal static byte[] MahApps_Metro {
+        internal static byte[] MahApps_Metro_dll {
             get {
-                object obj = ResourceManager.GetObject("MahApps_Metro", resourceCulture);
+                object obj = ResourceManager.GetObject("MahApps_Metro_dll", resourceCulture);
                 return ((byte[])(obj));
             }
         }
@@ -103,9 +103,9 @@ namespace Decchi.Properties {
         /// <summary>
         ///   System.Byte[] 형식의 지역화된 리소스를 찾습니다.
         /// </summary>
-        internal static byte[] System_Windows_Interactivity {
+        internal static byte[] System_Windows_Interactivity_dll {
             get {
-                object obj = ResourceManager.GetObject("System_Windows_Interactivity", resourceCulture);
+                object obj = ResourceManager.GetObject("System_Windows_Interactivity_dll", resourceCulture);
                 return ((byte[])(obj));
             }
         }
@@ -113,9 +113,9 @@ namespace Decchi.Properties {
         /// <summary>
         ///   System.Byte[] 형식의 지역화된 리소스를 찾습니다.
         /// </summary>
-        internal static byte[] taglib_sharp {
+        internal static byte[] taglib_sharp_dll {
             get {
-                object obj = ResourceManager.GetObject("taglib_sharp", resourceCulture);
+                object obj = ResourceManager.GetObject("taglib_sharp_dll", resourceCulture);
                 return ((byte[])(obj));
             }
         }
@@ -123,9 +123,9 @@ namespace Decchi.Properties {
         /// <summary>
         ///   System.Byte[] 형식의 지역화된 리소스를 찾습니다.
         /// </summary>
-        internal static byte[] UIAComWrapper {
+        internal static byte[] UIAComWrapper_dll {
             get {
-                object obj = ResourceManager.GetObject("UIAComWrapper", resourceCulture);
+                object obj = ResourceManager.GetObject("UIAComWrapper_dll", resourceCulture);
                 return ((byte[])(obj));
             }
         }

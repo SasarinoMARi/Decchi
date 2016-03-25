@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.IO.Compression;
 using System.Linq;
 using System.Net;
 using System.Net.Cache;
@@ -88,13 +89,26 @@ namespace Decchi.Core
         private static readonly PropertyInfo[]  m_resourceMethod;
         private static Assembly CurrentDomain_AssemblyResolve(object sender, ResolveEventArgs args)
         {
-            var name = new AssemblyName(args.Name).Name;
+            var name = new AssemblyName(args.Name).Name.Replace('-', '.');
             if (name.StartsWith("Decchi")) return null;
 
             for (int i = 0; i < m_resourceName.Length; ++i)
             {
                 if (m_resourceName[i].Contains(name))
-                    return Assembly.Load((byte[])m_resourceMethod[i].GetValue(null));
+                {
+                    byte[] buff;
+
+                    using (var comp     = new MemoryStream((byte[])m_resourceMethod[i].GetValue(null)))
+                    using (var gzip     = new GZipStream(comp, CompressionMode.Decompress))
+                    using (var uncomp   = new MemoryStream(4096))
+                    {
+                        gzip.CopyTo(uncomp);
+
+                        buff = uncomp.ToArray();
+                    }
+
+                    return Assembly.Load(buff);
+                }
             }
 
             return null;

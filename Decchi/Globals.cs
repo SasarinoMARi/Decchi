@@ -171,38 +171,28 @@ namespace Decchi
                     globals.m_publishFormat = (string)e.NewValue;
             }
             else if (e.Property == UseShortcutProp ||
-                e.Property == ShortcutProp)
-            {
+                     e.Property == ShortcutProp)
                 DecchiCore.HookSetting();
-            }
+
             else if (e.Property == WinStartupProp)
             {
                 if ((bool)e.NewValue)
-                {
                     using (var reg = Registry.CurrentUser.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", true))
                         reg.SetValue("Decchi", App.ExePath);
-                }
+
                 else
-                {
                     using (var reg = Registry.CurrentUser.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", true))
                         reg.DeleteValue("Decchi");
-                }
             }
-            /*
-            else if (e.Property == DetectLocalFileProp)
-                globals.m_detectLocalFile = (bool)e.NewValue;
-            */
 
             else if (e.Property == WBDetailSearchProp)
                 globals.m_wbDetailSearch = (bool)e.NewValue;
 
-            else if (e.Property == TopMostProp)
-                if (MainWindow.Instance != null)
-                    MainWindow.Instance.Topmost = (bool)e.NewValue;
+            else if (e.Property == TopMostProp && MainWindow.Instance != null)
+                MainWindow.Instance.Topmost = (bool)e.NewValue;
 
-                else if (e.Property == WindowOpacityProp)
-                    if (MainWindow.Instance != null)
-                        MainWindow.Instance.Opacity = (double)e.NewValue;
+            else if (e.Property == WindowOpacityProp && MainWindow.Instance != null)
+                MainWindow.Instance.Opacity = (double)e.NewValue;
 
             else if (e.Property == SkipFullscreenProp)
                 globals.m_skipFullscreen = (bool)e.NewValue;
@@ -286,17 +276,6 @@ namespace Decchi
             get { return (bool)this.GetValue(WinStartupProp); }
             set { this.SetValue(WinStartupProp, value); }
         }
-
-        /*
-        private static readonly DependencyProperty DetectLocalFileProp = DependencyProperty.Register("DetectLocalFile", typeof(bool), typeof(Globals), new FrameworkPropertyMetadata(false, Globals.PropertyChangedCallback));
-        private bool m_detectLocalFile = false;
-        [PropAttr]
-        public bool DetectLocalFile
-        {
-            get { return this.m_detectLocalFile; }
-            set { this.SetValue(DetectLocalFileProp, value); this.m_detectLocalFile = value; }
-        }
-        */
 
         private static readonly DependencyProperty WBDetailSearchProp = DependencyProperty.Register("WBDetailSearch", typeof(bool), typeof(Globals), new FrameworkPropertyMetadata(true, Globals.PropertyChangedCallback));
         private bool m_wbDetailSearch = true;
