@@ -16,7 +16,7 @@ namespace Decchi.Core
     /// </summary>
     public static class DecchiCore
     {
-        private static GlobalKeyboardHook manager;
+        private readonly static GlobalKeyboardHook manager;
 
         static DecchiCore()
         {

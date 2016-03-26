@@ -4,6 +4,7 @@ using System;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Windows;
+using Decchi.Core;
 
 namespace Decchi.Utilities
 {
@@ -43,8 +44,6 @@ namespace Decchi.Utilities
         private NativeMethods.WndProc m_proc;
         private IntPtr  m_customHwnd;
         private Mutex   m_mutex;
-
-        public Window MainWindow { get; set; }
 
         public bool Check()
         {
@@ -94,11 +93,11 @@ namespace Decchi.Utilities
 
         private IntPtr CustomProc(IntPtr hWnd, uint msg, IntPtr wParam, IntPtr lParam)
         {
-            if (msg == CustomMsg && this.MainWindow != null)
+            if (msg == CustomMsg && App.Current.MainWindow != null)
             {
                 try
                 {
-                    this.MainWindow.Dispatcher.Invoke<bool>(this.MainWindow.Activate);
+                    App.Current.Dispatcher.Invoke<bool>(App.Current.MainWindow.Activate);
                 }
                 catch
                 {

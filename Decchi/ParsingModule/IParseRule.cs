@@ -61,7 +61,7 @@ namespace Decchi.ParsingModule
         public string PluginUrl { get; set; }
         /// <summary>파이프 통신할 파이프 이름입니다.</summary>
         public string PipeName { get; set; }
-        /// <summary>Decchi/ParsingModule/Rules/Icons/ 에 위치한 클라이언트 이름입니다. 이 png 파일은 반드시 컴파일 옵션을 Resource 으로 지정하영 압니다</summary>
+        /// <summary>Decchi/ParsingModule/Rules/Icons/ 에 위치한 클라이언트 이름입니다. 이 png 파일은 반드시 컴파일 옵션을 Resource 으로 지정하여야 합니다</summary>
         public string ClientIcon { get; set; }
     }
 
@@ -148,7 +148,7 @@ namespace Decchi.ParsingModule
         public bool         WndClassTop { get; private set; }
         public string       PluginUrl   { get; private set; }
         public string       PipeName    { get; private set; }
-        public BitmapImage ClientIcon { get; private set; }
+        public BitmapImage  ClientIcon  { get; private set; }
 
         public IntPtr GetWindowHandle()
         {
