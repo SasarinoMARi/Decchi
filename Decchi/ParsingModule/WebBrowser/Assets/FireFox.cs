@@ -7,6 +7,7 @@ namespace Decchi.ParsingModule.WebBrowser
     internal sealed class FireFox : WBParser
     {
         protected override string WndClassName { get { return "MozillaWindowClass"; } }
+        protected override string ClientTitle { get { return "- FireFox"; } }
 
         protected override void GetByUIAutomation(IntPtr handle, IList<WBResult> lst)
         {
@@ -26,7 +27,7 @@ namespace Decchi.ParsingModule.WebBrowser
 
                 foreach (AutomationElement tabitem in tabitems)
                 {
-                    title = base.DeleteEndString(tabitem.Current.Name, "- FireFox");
+                    title = base.DeleteEndString(tabitem.Current.Name, ClientTitle);
                     if (string.IsNullOrWhiteSpace(title)) continue;
 
                     // 0x200000 : 선택 가능

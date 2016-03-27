@@ -25,7 +25,8 @@ namespace Decchi.ParsingModule.WebBrowser
             return lst;
         }
 
-        protected virtual string WndClassName { get { return null; } } 
+        protected virtual string WndClassName { get { return null; } }
+        protected virtual string ClientTitle { get { return null; } }
 
         private void ParsePriv(bool detail, IList<WBResult> lst)
         {
@@ -40,7 +41,7 @@ namespace Decchi.ParsingModule.WebBrowser
                 {
                     try
                     {
-                        this.GetByUIAutomation(hwnd, lst);
+                        this.GetByUIAutomation(hwnd, lst);                        
                         continue;
                     }
                     catch (Exception ex)
@@ -52,7 +53,11 @@ namespace Decchi.ParsingModule.WebBrowser
                 title = NativeMethods.GetWindowTitle(hwnd);
                 if (string.IsNullOrWhiteSpace(title)) continue;
 
-                lst.Add(new WBResult { Handle = hwnd, Title = title, MainTab = true });
+                title = this.DeleteEndString(title, ClientTitle);
+                if (string.IsNullOrWhiteSpace(title)) continue;
+
+                lock (lst)
+                    lst.Add(new WBResult { Handle = hwnd, Title = title, MainTab = true });
             }
         }
 

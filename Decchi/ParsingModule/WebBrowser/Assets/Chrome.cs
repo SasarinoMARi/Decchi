@@ -7,6 +7,7 @@ namespace Decchi.ParsingModule.WebBrowser
     internal sealed class Chrome : WBParser
     {
         protected override string WndClassName { get { return "Chrome_WidgetWin_1"; } }
+        protected override string ClientTitle { get { return "- Chrome"; } }
 
         protected override void GetByUIAutomation(IntPtr handle, IList<WBResult> lst)
         {
@@ -37,7 +38,7 @@ namespace Decchi.ParsingModule.WebBrowser
             {
                 foreach (AutomationElement tabitem in tabitems)
                 {
-                    title = base.DeleteEndString(tabitem.Current.Name, "- Chrome");
+                    title = base.DeleteEndString(tabitem.Current.Name, ClientTitle);
                     if (string.IsNullOrWhiteSpace(title)) continue;
 
                     currentTab = (bool)tabitem.GetCurrentPropertyValue(AutomationElementIdentifiers.IsLegacyIAccessiblePatternAvailableProperty) &&
