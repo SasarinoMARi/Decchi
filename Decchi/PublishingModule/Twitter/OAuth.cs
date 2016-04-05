@@ -1,4 +1,7 @@
-﻿using System;
+﻿// By RyuaNerin
+// 트위터 라이브러리 만들던것에서 빼옴
+
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Net;

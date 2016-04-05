@@ -78,13 +78,13 @@ namespace Decchi.ParsingModule.Rules
             catch
             { }
 
+            Marshal.FinalReleaseComObject(this.m_itunes);
+            GC.Collect();
             this.m_itunes = null;
-            System.GC.Collect();
 
             if (this.m_ad)
             {
-                this.m_timer.Change(Timeout.Infinite, Timeout.Infinite);
-                this.m_timerDetect.Change(IParseRule.RefreshTimeSpan, IParseRule.RefreshTimeSpan);
+                this.DisableAD();
             }
         }
 
@@ -204,6 +204,7 @@ namespace Decchi.ParsingModule.Rules
                 if (this.m_itunes.PlayerState == ITPlayerState.ITPlayerStatePlaying)
                 {
                     iTunes_SongChanged(this.m_itunes.CurrentTrack);
+                    this.m_timer.Change(IParseRule.RefreshTimeSpan, System.Threading.Timeout.Infinite);
                 }
             }
         }
@@ -212,7 +213,7 @@ namespace Decchi.ParsingModule.Rules
         {
             if (this.Init())
             {
-                this.m_timer.Change(IParseRule.RefreshTimeSpan, IParseRule.RefreshTimeSpan);
+                this.m_timer.Change(Timeout.Infinite, Timeout.Infinite);
                 this.m_timerDetect.Change(Timeout.Infinite, Timeout.Infinite);
             }
         }
