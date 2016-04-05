@@ -57,9 +57,9 @@ namespace Decchi.PublishingModule.Twitter
                 OAuth.AddDictionary(dic, data);
 
             if (!string.IsNullOrWhiteSpace(this.User.Token))
-                dic.Add("oauth_token", Uri.EscapeDataString(this.User.Token));
+                dic.Add("oauth_token", UrlEncode(this.User.Token));
 
-            dic.Add("oauth_consumer_key", Uri.EscapeDataString(this.App.Token));
+            dic.Add("oauth_consumer_key", UrlEncode(this.App.Token));
             dic.Add("oauth_nonce", OAuth.GetNonce());
             dic.Add("oauth_timestamp", OAuth.GetTimeStamp());
             dic.Add("oauth_signature_method", "HMAC-SHA1");
@@ -67,16 +67,16 @@ namespace Decchi.PublishingModule.Twitter
 
             var hashKey = string.Format(
                 "{0}&{1}",
-                Uri.EscapeDataString(this.App.Secret),
-                this.User.Secret == null ? null : Uri.EscapeDataString(this.User.Secret));
+                UrlEncode(this.App.Secret),
+                this.User.Secret == null ? null : UrlEncode(this.User.Secret));
             var hashData = string.Format(
                     "{0}&{1}&{2}",
                     method.ToUpper(),
-                    Uri.EscapeDataString(string.Format("{0}{1}{2}{3}", uri.Scheme, Uri.SchemeDelimiter, uri.Host, uri.AbsolutePath)),
-                    Uri.EscapeDataString(OAuth.ToString(dic)));
+                    UrlEncode(string.Format("{0}{1}{2}{3}", uri.Scheme, Uri.SchemeDelimiter, uri.Host, uri.AbsolutePath)),
+                    UrlEncode(OAuth.ToString(dic)));
 
             using (var hash = new HMACSHA1(Encoding.UTF8.GetBytes(hashKey)))
-                dic.Add("oauth_signature", Uri.EscapeDataString(Convert.ToBase64String(hash.ComputeHash(Encoding.UTF8.GetBytes(hashData)))));
+                dic.Add("oauth_signature", UrlEncode(Convert.ToBase64String(hash.ComputeHash(Encoding.UTF8.GetBytes(hashData)))));
 
             var sbData = new StringBuilder();
             sbData.Append("OAuth ");
@@ -110,8 +110,32 @@ namespace Decchi.PublishingModule.Twitter
             return Convert.ToInt64((DateTime.UtcNow - GenerateTimeStampDateTime).TotalSeconds).ToString();
         }
 
+        private const string unreservedChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_.~";
+        private static string UrlEncode(string str)
+        {
+            var uriData = Uri.EscapeDataString(str);
+            var sb = new StringBuilder(uriData.Length);
+
+            for (int i = 0; i < str.Length; ++i)
+            {
+                switch (str[i])
+                {
+                case '!': sb.Append("%21"); break;
+                case '*': sb.Append("%2A"); break;
+                case '\'': sb.Append("%5C"); break;
+                case '(': sb.Append("%28"); break;
+                case ')': sb.Append("%29"); break;
+                default: sb.Append(str[i]); break;
+                }
+            }
+
+            return sb.ToString();
+        }
+
         private static string ToString(IDictionary<string, object> dic)
         {
+            if (dic == null) return null;
+
             var sb = new StringBuilder();
 
             if (dic.Count > 0)
@@ -131,6 +155,8 @@ namespace Decchi.PublishingModule.Twitter
 
         public static string ToString(object values)
         {
+            if (values == null) return null;
+
             var sb = new StringBuilder();
 
             string name;
@@ -146,7 +172,7 @@ namespace Decchi.PublishingModule.Twitter
                 if (value is bool)
                     sb.AppendFormat("{0}={1}&", name, (bool)value ? "true" : "false");
                 else
-                    sb.AppendFormat("{0}={1}&", name, Uri.EscapeDataString(Convert.ToString(value)));
+                    sb.AppendFormat("{0}={1}&", name, UrlEncode(Convert.ToString(value)));
             }
 
             if (sb.Length > 0)
@@ -207,7 +233,7 @@ namespace Decchi.PublishingModule.Twitter
                 if (value is bool)
                     dic[p.Name] = (bool)value ? "true" : "false";
                 else
-                    dic[p.Name] = Uri.EscapeDataString(Convert.ToString(value));
+                    dic[p.Name] = UrlEncode(Convert.ToString(value));
 
 
             }
