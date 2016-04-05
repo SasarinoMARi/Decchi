@@ -116,16 +116,16 @@ namespace Decchi.PublishingModule.Twitter
             var uriData = Uri.EscapeDataString(str);
             var sb = new StringBuilder(uriData.Length);
 
-            for (int i = 0; i < str.Length; ++i)
+            for (int i = 0; i < uriData.Length; ++i)
             {
-                switch (str[i])
+                switch (uriData[i])
                 {
-                case '!': sb.Append("%21"); break;
-                case '*': sb.Append("%2A"); break;
+                case '!':  sb.Append("%21"); break;
+                case '*':  sb.Append("%2A"); break;
                 case '\'': sb.Append("%5C"); break;
-                case '(': sb.Append("%28"); break;
-                case ')': sb.Append("%29"); break;
-                default: sb.Append(str[i]); break;
+                case '(':  sb.Append("%28"); break;
+                case ')':  sb.Append("%29"); break;
+                default:   sb.Append(uriData[i]); break;
                 }
             }
 
