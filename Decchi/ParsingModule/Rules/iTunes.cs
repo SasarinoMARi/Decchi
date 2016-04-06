@@ -84,7 +84,8 @@ namespace Decchi.ParsingModule.Rules
 
             if (this.m_ad)
             {
-                this.DisableAD();
+                this.m_timer.Change(Timeout.Infinite, Timeout.Infinite);
+                this.m_timerDetect.Change(IParseRule.RefreshTimeSpan, IParseRule.RefreshTimeSpan);
             }
         }
 
