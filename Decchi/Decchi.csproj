@@ -37,8 +37,7 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup>
-    <StartupObject>
-    </StartupObject>
+    <StartupObject>Decchi.Core.App</StartupObject>
   </PropertyGroup>
   <PropertyGroup>
     <ApplicationIcon>icon.ico</ApplicationIcon>
@@ -115,6 +114,7 @@
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
     <Compile Include="Core\DecchiCore.cs" />
+    <Compile Include="Core\QuickDecchi.cs" />
     <Compile Include="Core\Windows\Converter\Boolean2Int.cs" />
     <Compile Include="Core\Windows\Converter\InvertBoolean.cs" />
     <Compile Include="Core\Windows\Converter\GetClientIcon.cs" />
