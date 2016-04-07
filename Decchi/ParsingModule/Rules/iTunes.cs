@@ -78,7 +78,6 @@ namespace Decchi.ParsingModule.Rules
             catch
             { }
 
-            Marshal.FinalReleaseComObject(this.m_itunes);
             GC.Collect();
             this.m_itunes = null;
 
