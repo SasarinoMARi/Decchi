@@ -128,7 +128,8 @@
 |`Via`|뎃찌의 홍보문구에요 ㅇ.<|
 
 	- 확장 약속어 (일부 플레이어만 지원해요!)
-|약속어|치환|
+
+		|약속어|치환|
 |:-:|---|
 |`Track`|현재 트랙|
 |`TTrack`|전체 트랙|
@@ -147,8 +148,9 @@
 
 - 포맷팅 문자열 예시
 
-	- {`/Artist/` 의 }{{#`/Track/` }`/Title/`{ (`/Album/`)} 을 }듣고 있어요! {`/Via/`} - {`/Client/`}
- |Title|Artist|Album|Track|Client|Output|
+	- {`/Artist/` 의 }{{#`/Track/` }`/Title/`{ (`/Album/`)} 을 }듣고 있어요! {`/Via/`} - {`/Client/`}\
+
+	|Title|Artist|Album|Track|Client|Output|
 |:-:|:-:|:-:|:-:|:-:|:-:|
 |夜もすがら君想ふ|Chalili|-|-|곰오디오|`Chalili`의 `夜もすがら君想ふ` 을 듣고 있어요! `#뎃찌NP` - `곰오디오`|
 |Dreams|Imagine Dragons|Smoke + Mirrors|4|iTunes|`Imagine Dragons` 의 #`4` `Dreams` (`Smoke + Mirrors`) 을 듣고 있어요! `#뎃찌NP` - `iTunes`|
