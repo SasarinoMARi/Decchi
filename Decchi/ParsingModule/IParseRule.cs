@@ -285,17 +285,19 @@ namespace Decchi.ParsingModule
 
         private SongInfo GetFromPlayer(IList<SongInfo> result)
         {
-            SongInfo si = new SongInfo(this);
             IntPtr hwnd = IntPtr.Zero;
             hwnd = this.GetWindowHandle(hwnd);
             if (hwnd == IntPtr.Zero) return null;
+
+            SongInfo si = new SongInfo(this);
+            si.Handle = hwnd;
             
             // 파이프 : 성공시 return
             if ((this.ParseFlag & ParseFlags.Pipe) == ParseFlags.Pipe)
             {
                 App.Debug("Pipe Parse");
 
-                if (this.GetTagsFromPipe(si, hwnd))
+                if (this.GetTagsFromPipe(si))
                     if (IParseRule.AddToList(result, si))
                         return si;
                 
@@ -326,6 +328,7 @@ namespace Decchi.ParsingModule
                         IParseRule.AddToList(result, si);
 
                     si = new SongInfo(this);
+                    si.Handle = hwnd;
                 }
                 while ((hwnd = this.GetWindowHandle(hwnd)) != IntPtr.Zero);
             }
@@ -364,7 +367,7 @@ namespace Decchi.ParsingModule
             }
         }
         
-        private bool GetTagsFromPipe(SongInfo si, IntPtr hwnd, string data = null)
+        private bool GetTagsFromPipe(SongInfo si, string data = null)
         {
             App.Debug("Pipe");
             if (data == null)
@@ -373,8 +376,6 @@ namespace Decchi.ParsingModule
             if (data != null)
             {
                 App.Debug(data);
-
-                si.Handle = hwnd;
 
                 var split = data.Split(new string[] { "||" }, StringSplitOptions.RemoveEmptyEntries);
 
@@ -388,7 +389,7 @@ namespace Decchi.ParsingModule
                         key = split[read].Substring(0, sep).Trim();
                         val = split[read].Substring(sep + 1).Trim();
 
-                        if (string.IsNullOrWhiteSpace(key) || string.IsNullOrWhiteSpace(val))
+                        if (string.IsNullOrWhiteSpace(key) || string.IsNullOrWhiteSpace(val) || key == "?")
                             continue;
 
                         switch (key.ToLower())

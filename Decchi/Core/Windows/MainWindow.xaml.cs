@@ -245,7 +245,7 @@ namespace Decchi.Core.Windows
 
         private void ctlHomepage_Click(object sender, RoutedEventArgs e)
         {
-            Globals.OpenWebSite("http://usagination.github.io/Decchi/");
+            Globals.OpenWebSite("https://decchi.info/");
         }
 
         private void ctlPluginHelp_Click(object sender, RoutedEventArgs e)

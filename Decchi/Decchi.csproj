@@ -177,10 +177,7 @@
     <Compile Include="Utilities\OpenedWindow.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="ExternalLibraries\Hardcodet.NotifyIcon.Wpf\Hardcodet.Wpf.TaskbarNotification.dll.gz" />
     <None Include="ExternalLibraries\Interop.iTunesLib\Interop.iTunesLib.dll.gz" />
-    <None Include="ExternalLibraries\MahApps.Metro\MahApps.Metro.dll.gz" />
-    <None Include="ExternalLibraries\MahApps.Metro\System.Windows.Interactivity.dll.gz" />
     <None Include="ExternalLibraries\TagLib-Sharp\taglib-sharp.dll.gz" />
     <None Include="ExternalLibraries\UIAComWrapper\Interop.UIAutomationClient.dll.gz" />
     <None Include="ExternalLibraries\UIAComWrapper\UIAComWrapper.dll.gz" />

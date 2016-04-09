@@ -247,17 +247,17 @@ namespace Decchi.ParsingModule
 
                             if (checkFormat)
                             {
-                                b = str.IndexOf("/Title/")	>= 0 ||
-                                    str.IndexOf("/Artist/")	>= 0 ||
-                                    str.IndexOf("/Album/")	>= 0 || //
-                                    str.IndexOf("/Client/")	>= 0 ||
-                                    str.IndexOf("/Via/")	>= 0 || //
-                                    str.IndexOf("/Track/")	>= 0 ||
-                                    str.IndexOf("/TTrack/")	>= 0 ||
-                                    str.IndexOf("/Disc/")	>= 0 ||
-                                    str.IndexOf("/TDisc/")	>= 0 ||
-                                    str.IndexOf("/Year/")	>= 0 ||
-                                    str.IndexOf("/Genre/")	>= 0;
+                                b = str.IndexOf("/Title/",  StringComparison.CurrentCultureIgnoreCase)	>= 0 ||
+                                    str.IndexOf("/Artist/", StringComparison.CurrentCultureIgnoreCase)	>= 0 ||
+                                    str.IndexOf("/Album/",  StringComparison.CurrentCultureIgnoreCase)	>= 0 || //
+                                    str.IndexOf("/Client/", StringComparison.CurrentCultureIgnoreCase)	>= 0 ||
+                                    str.IndexOf("/Via/",    StringComparison.CurrentCultureIgnoreCase)	>= 0 || //
+                                    str.IndexOf("/Track/",  StringComparison.CurrentCultureIgnoreCase)	>= 0 ||
+                                    str.IndexOf("/TTrack/", StringComparison.CurrentCultureIgnoreCase)	>= 0 ||
+                                    str.IndexOf("/Disc/",   StringComparison.CurrentCultureIgnoreCase)	>= 0 ||
+                                    str.IndexOf("/TDisc/",  StringComparison.CurrentCultureIgnoreCase)	>= 0 ||
+                                    str.IndexOf("/Year/",   StringComparison.CurrentCultureIgnoreCase)	>= 0 ||
+                                    str.IndexOf("/Genre/",  StringComparison.CurrentCultureIgnoreCase)	>= 0;
 
                                 if (b)
                                 {
@@ -297,12 +297,12 @@ namespace Decchi.ParsingModule
                                 }
                                 else
                                 {
-                                    str = str.Replace("/Track",  null);
-                                    str = str.Replace("/TTrack", null);
-                                    str = str.Replace("/Disc",   null);
-                                    str = str.Replace("/TDisc",  null);
-                                    str = str.Replace("/Year",   null);
-                                    str = str.Replace("/Genre",  null);
+                                    str = ReplaceWithComparison(str, "/Track",  null);
+                                    str = ReplaceWithComparison(str, "/TTrack", null);
+                                    str = ReplaceWithComparison(str, "/Disc",   null);
+                                    str = ReplaceWithComparison(str, "/TDisc",  null);
+                                    str = ReplaceWithComparison(str, "/Year",   null);
+                                    str = ReplaceWithComparison(str, "/Genre",  null);
                                 }
 
                                 current = stack.Pop();
@@ -351,21 +351,21 @@ namespace Decchi.ParsingModule
 
         private static string Replace(string str, string find, string replace, ref bool b)
         {
-            if (str.IndexOf(find) >= 0)
+            if (str.IndexOf(find, StringComparison.CurrentCultureIgnoreCase) >= 0)
             {
                 b |= !string.IsNullOrWhiteSpace(replace);
-                return str.Replace(find, replace);
+                return ReplaceWithComparison(str, find, replace);
             }
             return str;
         }
         private static string Replace(string str, string find, string replace, int length, bool isTitle, ref bool b)
         {
             string newReplace = null;
-            if (str.IndexOf(find) >= 0)
+            if (str.IndexOf(find, StringComparison.CurrentCultureIgnoreCase) >= 0)
             {
                 if (isTitle)
                 {
-                    var ind = replace.IndexOf(ShortenUrlStr);
+                    var ind = replace.IndexOf(ShortenUrlStr, StringComparison.CurrentCultureIgnoreCase);
                     if (ind >= 0)
                     {
                         // "{etcPart} {ShortenUrlStr} "
@@ -388,7 +388,21 @@ namespace Decchi.ParsingModule
                     newReplace = replace.Substring(0, length - 3) + "...";
 
                 b |= !string.IsNullOrWhiteSpace(newReplace);
-                return str.Replace(find, newReplace);
+                return ReplaceWithComparison(str, find, newReplace);
+            }
+            return str;
+        }
+        public static string ReplaceWithComparison(string str, string oldValue, string newValue, StringComparison comparison = StringComparison.CurrentCultureIgnoreCase)
+        {
+            var replace = !string.IsNullOrEmpty(newValue);
+
+            int find;
+            while ((find = str.IndexOf(oldValue, 0, StringComparison.CurrentCultureIgnoreCase)) != -1)
+            {
+                str = str.Remove(find, oldValue.Length);
+                
+                if (replace)
+                    str = str.Insert(find, newValue);
             }
             return str;
         }

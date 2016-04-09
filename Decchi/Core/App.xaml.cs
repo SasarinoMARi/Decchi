@@ -96,17 +96,18 @@ namespace Decchi.Core
             {
                 if (m_resourceName[i].Contains(name))
                 {
-                    byte[] buff;
-
-                    using (var comp     = new MemoryStream((byte[])m_resourceMethod[i].GetValue(null)))
-                    using (var gzip     = new GZipStream(comp, CompressionMode.Decompress))
-                    using (var uncomp   = new MemoryStream(4096))
+                    byte[] buff = (byte[])m_resourceMethod[i].GetValue(null);
+                    if (m_resourceName[i].EndsWith(".dll", StringComparison.CurrentCultureIgnoreCase))
                     {
-                        gzip.CopyTo(uncomp);
-
-                        buff = uncomp.ToArray();
+                        using (var uncomp = new MemoryStream(204800))
+                        {
+                            using (var comp = new MemoryStream(buff))
+                            using (var gzip = new GZipStream(comp, CompressionMode.Decompress))
+                                gzip.CopyTo(uncomp);
+                            buff = uncomp.ToArray();
+                        }
                     }
-
+                    
                     return Assembly.Load(buff);
                 }
             }

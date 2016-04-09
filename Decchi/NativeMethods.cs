@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -164,22 +165,31 @@ namespace Decchi
 
         public static IntPtr GetTopMostWindow(IntPtr[] hwnds)
         {
-            var tHandle = IntPtr.Zero;
+            var hCur = IntPtr.Zero;
+            var zCur = 0;
 
-            if (hwnds != null && hwnds.Length > 0)
+            var hMax = IntPtr.Zero;
+            var zMax = int.MaxValue;
+
+            for (int i = 0; i < hwnds.Length; ++i)
             {
-                tHandle = hwnds[0];
-                var hwnd = hwnds[0];
-                while (hwnd != IntPtr.Zero)
+                hCur = hwnds[i];
+
+                zCur = 0;
+                while (hCur != IntPtr.Zero)
                 {
-                    if (hwnds.Contains(hwnd))
-                        tHandle = hwnd;
-                    
-                    hwnd = GetWindow(hwnd, GetWindowCommands.GW_HWNDPREV);
+                    zCur++;
+                    hCur = GetWindow(hCur, GetWindowCommands.GW_HWNDPREV);
+                };
+
+                if (zCur < zMax)
+                {
+                    hMax = hwnds[i];
+                    zMax = zCur;
                 }
             }
 
-            return tHandle;
+            return hMax;
         }
     }
 }

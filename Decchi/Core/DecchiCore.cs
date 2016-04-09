@@ -118,7 +118,7 @@ namespace Decchi.Core
                 var topHwnd = NativeMethods.GetTopMostWindow(infos.Select(e => e.Handle).ToArray());
                 App.Debug("topHwnd : " + topHwnd.ToString("X8"));
 
-                var top     = infos.Where(e => e.Handle == topHwnd).ToArray();
+                var top = infos.Where(e => e.Handle == topHwnd).ToArray();
                 App.Debug("topWindow Count : " + top.ToString());
 
                 if (top.Length == 1)
