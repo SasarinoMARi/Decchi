@@ -444,6 +444,7 @@ namespace Decchi.Core.Windows
             this.SetButtonState(true);
 
             DecchiCore.Sync();
+			if ( DecchiCore.IsRunOnBackground ) WindowState = WindowState.Minimized;
         }
 
         private Brush m_formatOK;

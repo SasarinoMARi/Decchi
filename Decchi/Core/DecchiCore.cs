@@ -17,6 +17,7 @@ namespace Decchi.Core
     public static class DecchiCore
     {
         private readonly static GlobalKeyboardHook manager;
+		public static bool IsRunOnBackground { get; private set; }
 
         static DecchiCore()
         {
@@ -67,7 +68,7 @@ namespace Decchi.Core
 
             if (Keyboard.Modifiers == Globals.Instance.Shortcut.Modifier)
             {
-                DecchiCore.Run();
+                DecchiCore.RunOnBackground();
             }
         }
 
@@ -81,13 +82,24 @@ namespace Decchi.Core
         
         private static object m_runSync = new object();
         public static int m_isRunning = 0;
-        /// <summary>
-        /// 뎃찌에서 실행중인 음악 리스트를 만들어 퍼블리싱 모듈에 전달합니다.
-        /// </summary>
-        public static void Run()
-        {
-            Task.Factory.StartNew(new Action(RunPriv));
+		/// <summary>
+		/// 뎃찌에서 실행중인 음악 리스트를 만들어 퍼블리싱 모듈에 전달합니다.
+		/// </summary>
+		public static void RunBase( )
+		{
+			Task.Factory.StartNew( new Action( RunPriv ) );
+		}
+		public static void Run( )
+		{
+			IsRunOnBackground = false;
+			RunBase( );
         }
+		public static void RunOnBackground()
+		{
+			IsRunOnBackground = true;
+			RunBase( );
+		}
+
         private static void RunPriv()
         {
             App.Debug("Run");
