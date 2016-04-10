@@ -40,6 +40,7 @@ namespace Decchi.ParsingModule.Rules
                     {
                         this.m_itunes = new iTunesAppClass();
                         this.m_itunes.OnQuittingEvent += new _IiTunesEvents_OnQuittingEventEventHandler(this.m_itunes_OnQuittingEvent);
+                        this.m_itunes.OnAboutToPromptUserToQuitEvent += new _IiTunesEvents_OnAboutToPromptUserToQuitEventEventHandler(this.m_itunes_OnAboutToPromptUserToQuitEvent);
                         this.m_itunes.OnPlayerPlayEvent += new _IiTunesEvents_OnPlayerPlayEventEventHandler(this.iTunes_SongChanged);
                         this.m_itunes.OnPlayerPlayingTrackChangedEvent += new _IiTunesEvents_OnPlayerPlayingTrackChangedEventEventHandler(this.iTunes_SongChanged);
                         return true;
@@ -65,6 +66,7 @@ namespace Decchi.ParsingModule.Rules
             try
             {
                 this.m_itunes.OnQuittingEvent -= this.m_itunes_OnQuittingEvent;
+                this.m_itunes.OnAboutToPromptUserToQuitEvent -= this.m_itunes_OnAboutToPromptUserToQuitEvent;
                 this.m_itunes.OnPlayerPlayEvent -= this.iTunes_SongChanged;
                 this.m_itunes.OnPlayerPlayingTrackChangedEvent -= this.iTunes_SongChanged;
             }
@@ -83,6 +85,7 @@ namespace Decchi.ParsingModule.Rules
 
             if (this.m_ad)
             {
+                this.m_adTrack = null;
                 this.m_timer.Change(Timeout.Infinite, Timeout.Infinite);
                 this.m_timerDetect.Change(IParseRule.RefreshTimeSpan, IParseRule.RefreshTimeSpan);
             }
@@ -215,6 +218,12 @@ namespace Decchi.ParsingModule.Rules
             {
                 this.m_timer.Change(Timeout.Infinite, Timeout.Infinite);
                 this.m_timerDetect.Change(Timeout.Infinite, Timeout.Infinite);
+                // 실행중인 아이튠즈를 찾았는데 이미 재생중인 경우 바로 트윗할 수 있도록
+                if (this.m_adTrack == null && this.m_itunes.PlayerState == ITPlayerState.ITPlayerStatePlaying)
+                {
+                    iTunes_SongChanged(this.m_itunes.CurrentTrack);
+                    this.m_timer.Change(IParseRule.RefreshTimeSpan, System.Threading.Timeout.Infinite);
+                }
             }
         }
 
@@ -222,6 +231,12 @@ namespace Decchi.ParsingModule.Rules
         {
             // 종료시에 항상 호출된다고 보장할 수 없음. 타이머 초기화는 DeleteITunes에서 하는게 안전함
             this.DeleteITunes();
+        }
+
+        private void m_itunes_OnAboutToPromptUserToQuitEvent()
+        {
+            // 이 이벤트 받으면 유저가 가만히 두면 20초 종료 누르면 바로 iTunes 종료됨... 취소 누르면 안 닫힘
+            this.m_timerDetect.Change(IParseRule.RefreshTimeSpan, IParseRule.RefreshTimeSpan);
         }
 
         private void iTunes_SongChanged(object iTrack)
