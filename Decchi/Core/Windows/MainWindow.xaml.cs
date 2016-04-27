@@ -251,7 +251,7 @@ namespace Decchi.Core.Windows
         private void ctlPluginHelp_Click(object sender, RoutedEventArgs e)
         {
             this.ctlPluginFlyout.IsOpen = false;
-            Globals.OpenWebSite("https://github.com/Usagination/Decchi/blob/master/README.md#뎃찌ext");
+            Globals.OpenWebSite("https://decchi.info/#뎃찌ext");
         }
 
         private void ctlTrayVisible_IsCheckedChanged(object sender, EventArgs e)
@@ -348,7 +348,7 @@ namespace Decchi.Core.Windows
 
                 Globals.OpenWebSite("https://api.twitter.com/oauth/authorize?oauth_token=" + requestToken.Token);
 
-                var key = (string)await MainWindow.Instance.ShowBaseMetroDialog(new VerifierDialog(this));
+                var key = await MainWindow.Instance.ShowBaseMetroDialog(new VerifierDialog(this)) as string;
 
                 if (string.IsNullOrWhiteSpace(key))
                 {

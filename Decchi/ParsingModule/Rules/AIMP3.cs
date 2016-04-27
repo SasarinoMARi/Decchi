@@ -8,6 +8,7 @@
                 Client      = "AIMP3",
                 ParseFlag   = ParseFlags.Default,// | ParseFlags.Pipe,
                 Regex       = "^((?<artist>.+) - )?(?<title>.+)$",
+                Ignore      = "^AIMP$",
                 WndClass    = "TAIMPMainForm",
                 WndClassTop = true,
                 ClientIcon  = "aimp3",

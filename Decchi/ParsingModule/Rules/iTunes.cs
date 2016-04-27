@@ -26,7 +26,6 @@ namespace Decchi.ParsingModule.Rules
 
         private bool m_ad;
         private Timer m_timerDetect;
-        private Timer m_timer;
         private IITTrack m_adTrack;
 
         private bool Init()

@@ -44,6 +44,8 @@ namespace Decchi.ParsingModule
         public ParseFlags ParseFlag { get; set; }
         /// <summary>윈도우 타이틀을 인식할 정규식입니다. (웹 브라우저 포함)</summary>
         public string Regex { get; set; }
+        /// <summary>무시할 윈도우 타이틀입니다</summary>
+        public string Ignore { get; set; }
         /// <summary>
         /// ParseFlags.WebBrowser 전용
         /// 인식된 Url 과 정규식을 비교하여 일치하였을 때 재생 정보에 주소를 포함합니다
@@ -68,7 +70,11 @@ namespace Decchi.ParsingModule
     [DebuggerDisplay("{Client}")]
     public class IParseRule : IDisposable, INotifyPropertyChanged
     {
+#if DEBUG
+        protected const int RefreshTimeSpan = 10 * 1000;
+#else
         protected const int RefreshTimeSpan = 30 * 1000;
+#endif
 
         public readonly static IParseRule[]  Rules;
         public readonly static IParseRule[]  RulesPipe;
@@ -113,6 +119,7 @@ namespace Decchi.ParsingModule
             this.Client         = option.Client;
             this.ParseFlag      = option.ParseFlag;
             this.Regex          = option.Regex    == null ? null : new Regex(option.Regex,    RegexOptions.Compiled | RegexOptions.Singleline | RegexOptions.IgnoreCase);
+            this.Ignore         = option.Ignore   == null ? null : new Regex(option.Ignore,   RegexOptions.Compiled | RegexOptions.Singleline | RegexOptions.IgnoreCase);
             this.UrlRegex       = option.UrlRegex == null ? null : new Regex(option.UrlRegex, RegexOptions.Compiled | RegexOptions.Singleline | RegexOptions.IgnoreCase);
             this.WndClass       = option.WndClass;
             this.WndClassTop    = option.WndClassTop;
@@ -143,6 +150,7 @@ namespace Decchi.ParsingModule
         public string       Client      { get; private set; }
         public ParseFlags   ParseFlag   { get; private set; }
         public Regex        Regex       { get; private set; }
+        public Regex        Ignore { get; private set; }
         public Regex        UrlRegex    { get; private set; }
         public string       WndClass    { get; private set; }
         public bool         WndClassTop { get; private set; }
@@ -198,7 +206,7 @@ namespace Decchi.ParsingModule
         }
         */
 
-        private Timer m_timer;
+        protected Timer m_timer;
         /// <summary>
         /// 자동 인식 기능을 활성화합니다.
         /// </summary>
@@ -206,7 +214,7 @@ namespace Decchi.ParsingModule
         {
             if (this.m_timer != null) return;
 
-            this.m_timer = new Timer(IParseRule.DefaultADCallback, this, 0, IParseRule.RefreshTimeSpan);
+            this.m_timer = new Timer(IParseRule.DefaultADCallback, this, IParseRule.RefreshTimeSpan, Timeout.Infinite);
         }
         /// <summary>
         /// 자동 인식 기능을 끕니다.
@@ -226,16 +234,16 @@ namespace Decchi.ParsingModule
             var rule = (IParseRule)args;
 
             var si = rule.GetFromPlayer(null);
-            if (si == null) return;
-
-            if (IParseRule.m_befTitle != null)
+            if (si != null)
             {
                 // 같은 곡이 아님
                 if (IParseRule.m_befTitle != si.Title)
                     DecchiCore.Run(si);
+
+                IParseRule.m_befTitle = si.Title;
             }
 
-            IParseRule.m_befTitle = si.Title;
+            rule.m_timer.Change(IParseRule.RefreshTimeSpan, 0);
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -318,22 +326,27 @@ namespace Decchi.ParsingModule
             // 핸들 체크 (윈도우가 여러개 감지되면 각각 따로 작업합니다)
             if ((this.ParseFlag & ParseFlags.Title) == ParseFlags.Title)
             {
+                bool first = true;
                 do
-                {
-                
+                {                
                     App.Debug("Handle : {0} : 0x{1:X8}", this.WndClass, hwnd);
+
+                    if (!first)
+                    {
+                        si = new SongInfo(this);
+                        si.Handle = hwnd;
+                    }
+                    first = false;
 
                     // 타이틀 파싱 : 성공하면 Return
                     if (this.GetTagsFromTitle(si, hwnd))
                         IParseRule.AddToList(result, si);
 
-                    si = new SongInfo(this);
-                    si.Handle = hwnd;
                 }
                 while ((hwnd = this.GetWindowHandle(hwnd)) != IntPtr.Zero);
             }
 
-            return result == null ? si : (result.Count > 0 ? result[0] : null);
+            return si;
         }
         
         private void GetFromWebBrowser(IList<SongInfo> result, IList<WBResult> webPages)
@@ -440,7 +453,7 @@ namespace Decchi.ParsingModule
         {
             if (title == null)
                 title = NativeMethods.GetWindowTitle(hwnd);
-            if (string.IsNullOrWhiteSpace(title)) return false;
+            if (string.IsNullOrWhiteSpace(title) || this.Ignore.IsMatch(title)) return false;
             App.Debug("Title");
             App.Debug(title);
                         
