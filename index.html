@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+	<meta charset="UTF-8">
+
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+
+	<link rel="publisher" href="https://decchi.info/">
+
+	<title>뎃찌</title>
+
+	<!--[if IE]>
+	<link rel="shortcut icon" href="/resources/favicon/favicon.ico">	
+	<![endif]-->
+	<link rel="icon" type="image/png" href="resources/favicon/favicon-16x16.png" sizes="16x16">
+	<link rel="icon" type="image/png" href="resources/favicon/favicon-32x32.png" sizes="32x32">
+	<link rel="icon" type="image/png" href="resources/favicon/favicon-96x96.png" sizes="96x96">
+	<link rel="icon" type="image/png" href="resources/favicon/android-chrome-192x192.png" sizes="192x192">
+	<link rel="apple-touch-icon" href="resources/favicon/apple-touch-icon-57x57.png"   sizes="57x57">
+	<link rel="apple-touch-icon" href="resources/favicon/apple-touch-icon-60x60.png"   sizes="60x60">
+	<link rel="apple-touch-icon" href="resources/favicon/apple-touch-icon-72x72.png"   sizes="72x72">
+	<link rel="apple-touch-icon" href="resources/favicon/apple-touch-icon-76x76.png"   sizes="76x76">
+	<link rel="apple-touch-icon" href="resources/favicon/apple-touch-icon-114x114.png" sizes="114x114">
+	<link rel="apple-touch-icon" href="resources/favicon/apple-touch-icon-120x120.png" sizes="120x120">
+	<link rel="apple-touch-icon" href="resources/favicon/apple-touch-icon-144x144.png" sizes="144x144">
+	<link rel="apple-touch-icon" href="resources/favicon/apple-touch-icon-152x152.png" sizes="152x152">
+	<link rel="apple-touch-icon" href="resources/favicon/apple-touch-icon-180x180.png" sizes="180x180">
+	<link rel="manifest"  href="resources/favicon/manifest.json">
+	<link rel="mask-icon" href="resources/favicon/safari-pinned-tab.svg" color="#5bbad5">
+	<meta name="apple-mobile-web-app-title" content="DECCHI">
+	<meta name="application-name" content="DECCHI">
+	<meta name="msapplication-TileColor" content="#6dc3e8">
+	<meta name="msapplication-TileImage" content="resources/favicon/mstile-144x144.png">
+	<meta name="theme-color" content="#6dc3e8">
+
+	<meta name="description" content="뎃찌와 함께 #NowPlaying 을 게시해요!" />
+
+	<meta name="author" content="Decchi" />
+	<meta name="robots" content="noarchive" />
+
+	<meta name="twitter:card"        content="summary_large_image" />
+	<meta name="twitter:title"       content="DECCHI" />
+	<meta name="twitter:creator"     content="@DecchiSupport" />
+	<meta name="twitter:site"        content="https://decchi.info/" />
+	<meta name="twitter:image"       content="https://decchi.info/resources/img/twitter.png" />
+	<meta name="twitter:description" content="뎃찌와 함께 데스크탑에서 #NowPlaying 을 게시해요" />
+
+	<meta property="og:type"         content="website" />
+	<meta property="og:title"        content="DECCHI" />
+	<meta property="og:site_name"    content="DECCHI" />
+	<meta property="og:url"          content="https://decchi.info/" />
+	<meta property="og:image"        content="https://decchi.info/resources/img/decchi.png" />
+	<meta property="og:description"  content="뎃찌와 함께 데스크탑에서 #NowPlaying 을 게시해요" />
+
+	<link rel="stylesheet" type="text/css" href="resources/libs/bootstrap/3.3.6/css/bootstrap.min.css">
+	<link rel="stylesheet" type="text/css" href="resources/css/main.css">
+
+</head>
+<body id="decchi">
+	<nav class="navbar navbar-default navbar-fixed-top" id="main-nav">
+		<div class="container-fluid">
+			<div class="navbar-header">
+				<button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#nav">
+					<span class="icon-bar"></span>
+					<span class="icon-bar"></span>
+					<span class="icon-bar"></span>
+				</button>
+				<a class="navbar-brand page-scroll" href="#decchi">DECCHI</a>
+			</div>
+
+			<div class="collapse navbar-collapse" id="nav">
+				<ul class="nav navbar-nav navbar-right">
+					<li><a class="page-scroll" href="#스크린샷">스크린샷</a></li>
+					<li><a class="page-scroll" href="#다운로드">다운로드</a></li>
+					<li class="dropdown">
+						<a class="dropdown-toggle" data-toggle="dropdown" aria-expanded="true" href="#">톺아보기<span class="caret"></span></a>
+						<ul class="dropdown-menu">
+							<li><a class="page-scroll" href="#플레이어지원">플레이어 지원</a></li>
+							<li><a class="page-scroll" href="#뎃찌ext">뎃찌EXT</a></li>
+							<li><a class="page-scroll" href="#웹페이지지원">웹 페이지 지원</a></li>
+							<li><a class="page-scroll" href="#클라이언트자동선택">클라이언트 자동 선택</a></li>
+							<li><a class="page-scroll" href="#빠른뎃찌">빠른 뎃찌</a></li>
+							<li><a class="page-scroll" href="#작은뎃찌">작은 뎃찌</a></li>
+							<li><a class="page-scroll" href="#포메팅">포메팅</a></li>
+						</ul>
+					</li>
+					<li><a class="page-scroll" href="#만든사람들">만든 사람들</a></li>
+				</ul>
+			</div>
+		</div>
+	</nav>
+	
+	<header>
+		<div class="header-content">
+			<div class="header-content-inner">
+				<div class="lazy size-256" data-original="resources/img/decchi.png"></div>
+				<h1 id="header0">DECCHI</h1>
+				<hr>
+				<h3 id="header1">뎃찌와 함께 데스크탑에서 #NowPlaying 을 게시해요</h3>
+				<h4 id="header2">우리는 이 놀라운 기능을 <strong>뎃찌!!</strong> 라고 이름붙였답니다</h4>
+			</div>
+		</div>
+	</header>
+
+	<section id="스크린샷" class="back0">
+		<div class="container">
+			<div class="row">
+				<div class="col-md-12 text-center">
+					<h2 class="section-head">스크린샷</h2>
+					<hr class="primary">
+				</div>
+				<div class="col-md-10 col-md-offset-1">
+					<div class="row screenshot">
+						<div class="col-lg-3 col-sm-6 col-xs-12 text-center">
+							<img class="lazy" data-original="resources/img/screenshot/0.png" width="240" height="400" alt="">
+						</div>
+						<div class="col-lg-3 col-sm-6 col-xs-12 text-center">
+							<img class="lazy" data-original="resources/img/screenshot/1.png" width="240" height="400" alt="">
+						</div>
+						<div class="col-lg-3 col-sm-6 col-xs-12 text-center">
+							<img class="lazy" data-original="resources/img/screenshot/2.png" width="240" height="400" alt="">
+						</div>
+						<div class="col-lg-3 col-sm-6 col-xs-12 text-center">
+							<img class="lazy" data-original="resources/img/screenshot/3.png" width="240" height="400" alt="">
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</section>
+
+	<section id="다운로드" class="back1">
+		<div class="container">
+			<div class="row">
+				<div class="col-md-12 text-center">
+					<h2 class="section-head">다운로드</h2>
+					<hr>
+				</div>
+				<div class="col-md-10 col-md-offset-1 text-center">
+					<p><a href="http://www.microsoft.com/ko-kr/download/details.aspx?id=30653" target="_blank"><strong>.Net Framework 4.5</strong></a> 이상이 필요해요</p>
+					<p>별도의 과정 없이 다운로드 하고 실행하기만 하면 돼요!</p>
+					<a id="download" class="btn btn-primary btn-lg btn-download" disabled>정보 불러오는중!</a>
+					<hr class="small">
+					<p><strong>뎃찌</strong> 는 소스코드가 공개되어 있어요</p>
+					<p><a href="https://github.com/Usagination/Decchi" target="_blank">여기서</a> 받아볼 수 있답니다</p>
+					<hr class="small">
+					<a href="https://twitter.com/DecchiSupport" target="_blank">
+						<img class="lazy img-circle size-96" data-original="resources/img/twitter.jpg">
+						<br>
+						<strong>공식 트위터 계정</strong>
+					</a>
+				</div>
+			</div>
+		</div>
+	</section>
+
+	<section id="section2" class="back0">
+		<div class="container">
+			<div class="row">
+				<div class="col-md-12 text-center">
+					<h2 class="section-head">톺아보기</h2>
+					<hr>
+				</div>
+				<div class="col-md-10 col-md-offset-1 text-center">
+					<section id="플레이어지원">
+						<h3 class="section-head">플레이어 지원</h3>
+						<hr class="small">
+						<div class="row manual">
+							<div class="col-sm-8 col-sm-offset-2">
+								<ul>
+									<li>뎃찌는 플레이어의 기본 설정에서 지원해요</li>
+									<li><strong>굵은 플레이어</strong>는 <a href="#뎃찌ext">뎃찌EXT</a> 를 사용할때의 지원이에요</li>
+									<div class="table-responsive">
+										<table class="table table-striped table-bordered medium-table">
+											<thead>
+												<tr>
+													<th>플레이어</th>
+													<th>이름</th>
+													<th>가수</th>
+													<th>앨범</th>
+													<th>앨범아트</th>
+													<th>확장 태그</th>
+												</tr>
+											</thead>
+											<tbody>
+												<tr>
+													<td>iTunes</td>
+													<td class="text-center">O</td>
+													<td class="text-center">O</td>
+													<td class="text-center">O</td>
+													<td class="text-center">O</td>
+													<td class="text-center">O</td>
+												</tr>
+												<tr>
+													<td><strong>Foobar 2000</strong></td>
+													<td class="text-center">O</td>
+													<td class="text-center">O</td>
+													<td class="text-center">O</td>
+													<td class="text-center">O</td>
+													<td class="text-center">O</td>
+												</tr>
+												<tr>
+													<td>Foobar 2000</td>
+													<td class="text-center">O</td>
+													<td class="text-center">O</td>
+													<td class="text-center">O</td>
+													<td class="text-center"></td>
+													<td class="text-center"></td>
+												</tr>
+												<tr>
+													<td>곰오디오</td>
+													<td class="text-center">O</td>
+													<td class="text-center">O</td>
+													<td class="text-center"></td>
+													<td class="text-center"></td>
+													<td class="text-center"></td>
+												</tr>
+												<tr>
+													<td>알송</td>
+													<td class="text-center">O</td>
+													<td class="text-center">O</td>
+													<td class="text-center"></td>
+													<td class="text-center"></td>
+													<td class="text-center"></td>
+												</tr>
+												<tr>
+													<td>멜론</td>
+													<td class="text-center">O</td>
+													<td class="text-center">O</td>
+													<td class="text-center"></td>
+													<td class="text-center"></td>
+													<td class="text-center"></td>
+												</tr>
+												<tr>
+													<td>AIMP3</td>
+													<td class="text-center">O</td>
+													<td class="text-center">O</td>
+													<td class="text-center"></td>
+													<td class="text-center"></td>
+													<td class="text-center"></td>
+												</tr>
+												<tr>
+													<td>Winamp</td>
+													<td class="text-center">O</td>
+													<td class="text-center">O</td>
+													<td class="text-center"></td>
+													<td class="text-center"></td>
+													<td class="text-center"></td>
+												</tr>
+											</tbody>
+										</table>
+									</div>
+								</ul>
+							</div>
+						</div>
+					</section>
+				</div>
+				<div class="col-md-10 col-md-offset-1 text-center">
+					<section id="뎃찌ext">
+						<h3 class="section-head">뎃찌EXT</h3>
+						<hr class="small">
+						<div class="row manual">
+							<div class="col-sm-8 col-sm-offset-2">
+								<ul>
+									<li>플레이어에 <strong>뎃찌</strong>와 연동되는 확장 기능을 설치해서 더 많은 정보를 얻어올 수 있어요!</li>
+									<li>확장 기능을 지원하는 플레이어에서만 사용할 수 있답니다</li>
+									<li>
+										<strong>현재 지원하는 플레이어</strong>
+										<ul>
+											<li><a href="https://github.com/Usagination/Decchi/blob/master/Decchi-Plugins/foo_decchi/README.md" target="_blank">Foobar 2000</a></li>
+										</ul>
+									</li>
+								</ul>
+							</div>
+						</div>
+					</section>
+				</div>
+				<div class="col-md-10 col-md-offset-1 text-center">
+					<section id="웹페이지지원">
+						<h3 class="section-head">웹 페이지 지원</h3>
+						<hr class="small">
+						<div class="row manual">
+							<div class="col-sm-8 col-sm-offset-2">
+								<ul>
+									<li>
+										<strong>지원하는 웹 페이지</strong>
+										<ul>
+											<li>Youtube</li>
+											<li>ニコニコ動画</li>
+										</ul>
+									</li>
+									<li>
+										<strong>지원하는 웹 브라우저</strong>
+										<ul>
+											<li>Chrome</li>
+											<li>FireFox</li>
+										</ul>
+									</li>
+									<li>
+										<strong>설정 - 기능 - 심화 웹 브라우저 인식</strong>
+										<ul>
+											<li>현재 <strong>선택된 탭은 주소도 같이 뎃찌!!</strong> 한답니다!</li>
+											<li>현재 선택된 탭이 아닌 <strong>다른 탭 을 인식 할 수 있어요!</strong></li>
+											<li><strong>Chrome 의 경우에는 기술상의 문제로 최소화를 하면 다른 탭을 인식하지 못해요 . _.)</strong></li>
+										</ul>
+									</li>
+								</ul>
+							</div>
+						</div>
+					</section>
+				</div>
+				<div class="col-md-10 col-md-offset-1 text-center">
+					<section id="클라이언트자동선택">
+						<h3 class="section-head">클라이언트 자동 선택</h3>
+						<hr class="small">
+						<div class="row manual">
+							<div class="col-sm-8 col-sm-offset-2">
+								<ul>
+									<li><strong>뎃찌</strong>는 여러개의 플레이어가 감지되면 어떤것을 트윗할지 물어본답니다!</li>
+									<li>하지만 귀찮은 여러분들을 위해서 <kbd>설정 - 기능 - 플레이어 자동 선택</kbd> 을 준비했어요!</li>
+								</ul>
+							</div>
+						</div>
+					</section>
+				</div>
+				<div class="col-md-10 col-md-offset-1 text-center">
+					<section id="빠른뎃찌">
+						<h3 class="section-head">빠른 뎃찌!!</h3>
+						<hr class="small">
+						<div class="row manual">
+							<div class="col-sm-8 col-sm-offset-2">
+								<ul>
+									<li><code>Ctrl + Q</code> 를 눌러 다른 작업 중에도 뎃찌할 수 있어요. (기본 설정)</li>
+									<li>
+										<kbd>설정 - 기능 - 단축키 사용</kbd> 에서 원하는 키 조합으로 바꿀 수 있어요.
+										<ul>
+											<li>단축키 설정 상자를 클릭한 후 원하는 키 조합을 입력하면 된답니다.</li>
+										</ul>
+									</li>
+								</ul>
+							</div>
+						</div>
+					</section>
+				</div>
+				<div class="col-md-10 col-md-offset-1 text-center">
+					<section id="작은뎃찌">
+						<h3 class="section-head">작은 뎃찌</h3>
+						<hr class="small">
+						<div class="row manual">
+							<div class="col-sm-8 col-sm-offset-2">
+								<ul>
+									<li><kbd>설정 - 모양 - 작은 뎃찌로 변경</kbd> 을 누르면 뎃찌가 작아져요!</li>
+								</ul>
+							</div>
+						</div>
+					</section>
+				</div>
+				<div class="col-md-10 col-md-offset-1 text-center">
+					<section id="포메팅">
+						<h3 class="section-head">포멧팅</h3>
+						<hr class="small">
+						<div class="row manual">
+							<div class="col-sm-8 col-sm-offset-2">
+								<ul>
+									<li>뎃찌는 (자칭)강력한 포맷팅 기능을 지원해요.</li>
+									<li>포맷팅이란 곡의 제목, 아티스트 이름 등을 이용해 게시를 위한 완전한 문자열을 만드는 작업입니다.</li>
+									<li>뎃찌와 약속한 몇 개의 문자열들을 사용해 손쉽게 포맷팅을 정의해보세요!</li>
+									<li>아래는 뎃찌의 약속어 목록이에요. <strong>(굵은 글자는 확장 태그에요)</strong></li>
+									<ul>
+										<table class="table table-striped table-bordered small-table">
+											<thead>
+												<tr>
+													<th>약속어</th>
+													<th>치환</th>
+												</tr>
+											</thead>
+											<tbody>
+												<tr>
+													<td class="text-center"><code>Title</code></td>
+													<td>곡의 제목</td>
+												</tr>
+												<tr>
+													<td class="text-center"><code>Artist</code></td>
+													<td>아티스트 이름</td>
+												</tr>
+												<tr>
+													<td class="text-center"><code>Album</code></td>
+													<td>앨범 이름</td>
+												</tr>
+												<tr>
+													<td class="text-center"><code>Track</code></td>
+													<td>트랙 정보</td>
+												</tr>
+												<tr>
+													<td class="text-center"><code>Client</code></td>
+													<td>재생중인 클라이언트</td>
+												</tr>
+												<tr>
+													<td class="text-center"><code>Via</code></td>
+													<td>뎃찌의 홍보문구에요 ㅇ.&lt;</td>
+												</tr>
+												<tr>
+													<td class="text-center"><strong><em><code>Track</code></em></strong></td>
+													<td>현재 트랙</td>
+												</tr>
+												<tr>
+													<td class="text-center"><strong><em><code>TTrack</code></em></strong></td>
+													<td>전체 트랙</td>
+												</tr>
+												<tr>
+													<td class="text-center"><strong><em><code>Disc</code></em></strong></td>
+													<td>현재 디스크</td>
+												</tr>
+												<tr>
+													<td class="text-center"><strong><em><code>TDisc</code></em></strong></td>
+													<td>전체 디스크</td>
+												</tr>
+												<tr>
+													<td class="text-center"><strong><em><code>Ganre</code></em></strong></td>
+													<td>장르</td>
+												</tr>
+												<tr>
+													<td class="text-center"><strong><em><code>Year</code></em></strong></td>
+													<td>앨범 제작년도</td>
+												</tr>
+											</tbody>
+										</table>
+										<li>약속어는 <code>{</code>와 <code>}</code> 안에 <code>/</code> 로 감싸서 써주셔야 해요.</li>
+										<li>중괄호 안, 약속어 앞 뒤에 쓰인 문자열은 치환 값이 비어있을 경우 포맷팅에서 제외되니 유용하게 사용할 수 있어요.</li>
+										<li>만약 <code>{</code> 이나 <code>}</code> 을 쓰고싶으면 <code>\{</code> 이나 <code>\}</code> 으로 적으면 돼요!</li>
+										<li><code>\n</code> 을 적어서 줄바꿈을 할 수도 있어요!</li>
+									</ul>
+									<li>
+										포맷팅 문자열 예시
+										<ul>
+											<li>{<code>/Artist/</code> 의 }{<code>/Title/</code>{ (<code>/Album/</code>)} 을 }듣고 있어요! {<code>/Via/</code>} - {<code>/Client/</code>}</li>
+											<li><code>Chalili</code>의 <code>夜もすがら君想ふ</code> 을 듣고 있어요! <code>#뎃찌NP</code> - <code>곰오디오</code></li>
+											<li><code>Imagine Dragons</code> 의 <code>Dreams</code> (<code>Smoke + Mirrors</code>) 을 듣고 있어요! <code>#뎃찌NP</code> - <code>iTunes</code></li>
+											<li><code>Shanhai Alice in 1884 feat.nomico</code> 을 듣고 있어요! <code>#뎃찌NP</code> - <code>알송</code></li>
+										</ul>
+									</ul>
+								</ul>
+							</div>
+						</div>
+					</section>
+				</div>
+			</div>
+		</div>
+	</section>
+
+	<section id="만든사람들" class="back1">
+		<div class="container">
+			<div class="row">
+				<div class="col-md-10 col-md-offset-1 text-center">
+					<h2 class="section-head">만든 사람들</h2>
+					<hr class="primary">
+					<a href="http://usagination.com" target="_blank">
+						<img class="lazy img-circle size-96" data-original="resources/img/sasarinomari.jpg" alt="">
+						<p><strong>Sasarino MARi</strong></p>
+					</a>
+					<a href="https://ryuanerin.kr" target="_blank">
+						<img class="lazy img-circle size-96" data-original="resources/img/ryuanerin.jpg" alt="">
+						<p><strong>RyuaNerin</strong></p>
+					</a>
+				</div>
+			</div>
+		</div>
+	</section>
+
+	<footer class="back0">
+		<div class="container">
+			<div class="row">
+				<div class="col-md-10 col-md-offset-1 text-center">
+					<strong>Designed by <a href="https://ryuanerin.kr/" target="_blank">RyuaNerin</a></strong>
+				</div>
+			</div>
+		</div>
+	</footer>
+	
+	<!--[if lt IE 9]>
+	<script src="resources/libs/html5shiv/3.7.3/html5shiv.js"></script>
+	<script src="resources/libs/respond.js/1.4.2/respond.min.js"></script>
+	<![endif]-->
+
+	<!-- jQuery -->
+	<script src="resources/libs/jquery/1.11.3/jquery.min.js"></script>
+
+	<!-- Bootstrap Core JavaScript -->
+	<script src="resources/libs/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+
+	<script src="resources/libs/jquery.lazyload.min.js"></script>
+	<script src="resources/libs/jquery.easing.min.js"></script>
+
+	<!-- Main JavaScript -->
+	<script src="resources/js/ie10-viewport-bug-workaround.js"></script>
+	<script src="resources/js/main.js"></script>
+</body>
+</html>

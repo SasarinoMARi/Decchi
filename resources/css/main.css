@@ -1,0 +1,245 @@
+@charset "utf-8";
+
+html, body {
+	height: 100%;
+	width: 100%;
+}
+body,
+code,
+kbd,
+pre,
+samp {
+	font-family: "Apple SD 산돌고딕 Neo","Apple SD Gothic Neo","나눔 고딕","맑은 고딕","Malgun Gothic","돋움",dotum,sans-serif;
+	-webkit-tap-highlight-color: #222;
+}
+::-moz-selection {
+	color: white;
+	text-shadow: none;
+	background: #222;
+}
+::selection {
+	color: white;
+	text-shadow: none;
+	background: #222;
+}
+img::selection {
+	color: white;
+	background: transparent;
+}
+img::-moz-selection {
+	color: white;
+	background: transparent;
+}
+
+
+/**************************************************/
+/* 모양 */
+section {
+	padding: 50px 0;
+}
+div > section {
+	padding: 10px 0;
+}
+.section-head {
+	margin-top: 0;
+}
+hr {
+	border-color: #0B3446;
+	border-width: 3px;
+	max-width: 200px;
+	margin-top: 5px;
+	margin-bottom: 20px;
+}
+hr.small {
+	border-color: #165e74;
+	border-width: 1px;
+	max-width: 100px;
+	margin-top: 20px;
+	margin-bottom: 20px;
+}
+.back0 {
+	background-color: #fafcff;
+	animation-name: bounceInRight;
+}
+.back1 {
+	background-color: #dbf0f9;
+	animation-name: bounceInLeft;
+}
+ul,
+li {
+	line-height: 2;
+}
+.size-256 {
+	margin-left: auto;
+	margin-right: auto;
+	width:  256px;
+	height: 256px;
+	
+}
+.size-96 {
+	margin-left: auto;
+	margin-right: auto;
+	width:  96px;
+	height: 96px;
+}
+img {
+	z-index: 1;
+}
+
+/**************************************************/
+/* 문자 */
+strong {
+	font-weight: 700;
+}
+p {
+	font-size: 1.0em;
+	line-height: 1.5;
+}
+a {
+	-webkit-transition: all 0.35s;
+	-moz-transition: all 0.35s;
+	transition: all 0.35s;
+	text-decoration: none !important;
+	color: #1b7aa0;
+}
+a:hover, a:focus {
+	color: #229bcc;
+}
+
+/**************************************************/
+/* 네비게이션 */
+.navbar-default .nav > ul,
+.navbar-default .nav > li {
+	margin-top: 0px;
+}
+.navbar-default .navbar-toggle .icon-bar{
+	background-color: rgba(255, 255, 255, 0.9);
+}
+.navbar-default {
+	background-color: #0F4860;
+	border-color: rgba(255, 255, 255, 0.7);
+	-webkit-transition: all 0.35s;
+	-moz-transition: all 0.35s;
+	transition: all 0.35s;
+	font-weight: 700;
+}
+.navbar-default .navbar-header .navbar-brand {
+	color: rgba(255, 255, 255, 0.8);
+	font-size: 1.75em;
+}
+.navbar-default .nav > li > a,
+.navbar-default .nav > li > a:focus {
+	color: rgba(255, 255, 255, 0.8);
+	font-size: 1.25em;
+}
+.navbar-default .navbar-nav .open .dropdown-menu > li > a,
+.navbar-default .navbar-nav .open .dropdown-menu > li > a:focus {
+	font-size: 1.10em;
+}
+@media (max-width: 767px) {
+	.navbar-default .navbar-nav .open .dropdown-menu > li > a,
+	.navbar-default .navbar-nav .open .dropdown-menu > li > a:focus {
+		color: rgba(255, 255, 255, 0.8);
+	}
+}
+.navbar-default .navbar-header .navbar-brand:hover,
+.navbar-default .navbar-header .navbar-brand:focus,
+.navbar-default .nav > li > a:hover,
+.navbar-default .nav > li > a:focus:hover,
+.navbar-default .navbar-nav .open .dropdown-menu > li > a:hover,
+.navbar-default .navbar-nav .open .dropdown-menu > li > a:focus:hover {
+	color: white;
+}
+
+/**************************************************/
+/* 헤더 영역 */
+header {
+	background-color: #6dc3e8;
+	color: white;
+	position: relative;
+	width: 100%;
+	min-height: 100%;
+	text-align: center;
+}
+@media (max-height: 600px) {
+	header {
+		min-height: 600px;
+	}
+}
+header .header-content {
+	position: relative;
+	text-align: center;
+	padding: 100px 15px 100px;
+	width: 100%;
+}
+header .header-content .header-content-inner hr {
+	margin-top: 10px;
+	margin-bottom: 20px;
+}
+header .header-content {
+	position: absolute;
+	top: 50%;
+	-webkit-transform: translateY(-50%);
+	-ms-transform: translateY(-50%);
+	transform: translateY(-50%);
+}
+header .header-content .header-content-inner h1,
+header .header-content .header-content-inner h2,
+header .header-content .header-content-inner h3 {
+	font-weight: 700;
+	margin-top: 0;
+	margin-bottom: 5px;
+}
+header .header-content .header-content-inner h1 {
+	font-size: 4.00em;
+}
+
+/**************************************************/
+/* 스크린샷 */
+.screenshot > div {
+	padding: 2px;
+}
+
+/**************************************************/
+/* 다운로드 */
+.btn-download {
+	width: 100%;
+	max-width: 300px;
+	margin-top: 20px;
+	font-weight: 700;
+}
+.twitter-img {
+	width: 96px;
+	height: 96px;
+}
+
+/**************************************************/
+/* 메뉴얼 */
+.manual {
+	margin-top: 10px;
+	text-align: left;
+}
+table {
+	margin-top: 5px;
+	margin-bottom: 10px;
+}
+.small-table {
+	width: auto;
+}
+@media (min-width: 768px) {
+	.medium-table {
+		max-width: 600px;
+	}
+}
+.large-table {
+	width: 800px;
+}
+
+thead > tr > th {
+	text-align: center;
+}
+
+footer {
+	margin-top: 10px;
+	margin-bottom: 10px;
+}
