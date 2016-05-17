@@ -231,10 +231,10 @@ namespace Decchi.Core.Windows
             sb.AppendFormat("del \"{0}\"\r\n", App.ExePath);
             sb.AppendFormat("if exist \"{0}\" goto del\r\n", App.ExePath);
             sb.AppendFormat("move \"{0}\" \"{1}\"\r\n", newFile, App.ExePath);
-            sb.AppendFormat("start /D \"{0}\" --updated\r\n", App.ExePath);
-            sb.AppendFormat(":del\r\n");
+            sb.AppendFormat("start /D \"{0} --updated\"\r\n", App.ExePath);
+            sb.AppendFormat(":delupdater\r\n");
             sb.AppendFormat("del \"{0}\"\r\n", batchPath);
-            sb.AppendFormat("if exist \"{0}\" goto del\r\n", batchPath);
+            sb.AppendFormat("if exist \"{0}\" goto delupdater\r\n", batchPath);
             File.WriteAllText(batchPath, sb.ToString());
 
             await this.ShowMessageAsync(": )", "업데이트를 위해서 재시작할게요");
