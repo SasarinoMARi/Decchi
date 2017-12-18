@@ -1,4 +1,4 @@
-# [뎃찌](https://decchi.info/) (Decchi)
+# [뎃찌](http://usagination.github.io/Decchi/) (Decchi)
 
 ## **뎃찌** 와 함께 데스크탑에서 #NowPlaying 을 게시해요
 
