@@ -3,6 +3,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Net;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -227,9 +228,9 @@ namespace Decchi.Core.Windows
             var batchPath = Path.Combine("Decchi.bat");
             var sb = new StringBuilder();
             sb.AppendFormat("@echo off\r\n");
-            sb.AppendFormat(":del\r\n");
+            sb.AppendFormat(":delfile\r\n");
             sb.AppendFormat("del \"{0}\"\r\n", App.ExePath);
-            sb.AppendFormat("if exist \"{0}\" goto del\r\n", App.ExePath);
+            sb.AppendFormat("if exist \"{0}\" goto delfile\r\n", App.ExePath);
             sb.AppendFormat("move \"{0}\" \"{1}\"\r\n", newFile, App.ExePath);
             sb.AppendFormat("start /D \"{0} --updated\"\r\n", App.ExePath);
             sb.AppendFormat(":delupdater\r\n");
@@ -336,9 +337,13 @@ namespace Decchi.Core.Windows
             if (!Globals.Instance.MiniMode)
                 this.ShowMessageAsync("X(", "뎃찌!! 하지 못했어요\n\n" + TwitterCommunicator.Instance.GetLastError());
         }
-        
+
+        private bool m_loaded = false;
         private async void MetroWindow_Loaded(object sender, RoutedEventArgs e)
         {
+            if (this.m_loaded) return;
+            this.m_loaded = true;
+
             // 왜인지 몰라도 Login 함수에 async 시켜서 실행하면 씹고 다음라인 실행하더라
             if (!DecchiCore.Login())
             {
@@ -347,8 +352,8 @@ namespace Decchi.Core.Windows
                 var requestToken = await Task.Factory.StartNew<OAuth.TokenPair>(TwitterCommunicator.Instance.OAuth.RequestToken);
 
                 Globals.OpenWebSite("https://api.twitter.com/oauth/authorize?oauth_token=" + requestToken.Token);
-
-                var key = await MainWindow.Instance.ShowBaseMetroDialog(new VerifierDialog(this)) as string;
+                
+                var key = await ShowDialog<VerifierDialog>(this) as string;
 
                 if (string.IsNullOrWhiteSpace(key))
                 {
@@ -435,8 +440,8 @@ namespace Decchi.Core.Windows
         public async void ShowSelectWindow()
         {
             this.ShowWindow();
-
-            var songinfo = (SongInfo)(await this.ShowBaseMetroDialog(new ClientSelectionDialog(this)));
+            
+            var songinfo = await this.ShowDialog<ClientSelectionDialog>() as SongInfo;
             if (songinfo != null && !await Task.Factory.StartNew<bool>(new Func<bool>(() => TwitterCommunicator.Instance.Publish(songinfo))))
                 MainWindow.Instance.PublishError();
 
@@ -541,8 +546,10 @@ namespace Decchi.Core.Windows
             if (this.ctlAutoDecchi.IsChecked.HasValue && this.ctlAutoDecchi.IsChecked.Value)
             {
                 ctlSettingFlyout.IsPinned = true;
-                var rule = (IParseRule)(await this.ShowBaseMetroDialog(new ADSelectionDialog(this)));
-                ctlSettingFlyout.IsPinned = false;
+                
+                var rule = await this.ShowDialog<ADSelectionDialog>() as IParseRule;
+
+                this.ctlSettingFlyout.IsPinned = false;                
 
                 if (rule != null)
                 {
@@ -567,6 +574,27 @@ namespace Decchi.Core.Windows
         private async void ctlPluginFlyout_IsOpenChanged(object sender, RoutedEventArgs e)
         {
             await Task.Factory.StartNew(new Action(IParseRule.CheckPipe));
+        }
+
+        private async Task<object> ShowDialog<T>(params object[] args)
+            where T: DecchiDialog
+        {
+            var dlg = new CustomDialog();
+            var dlgSetting = new DecchiDialogSetting((i, r) => this.HideMetroDialogAsync(dlg));
+
+            var newArgs = new object[args.Length + 1];
+            newArgs[0] = dlgSetting;
+            Array.Copy(args, 0, newArgs, 1, args.Length);
+
+            var dialogContent = (T)Activator.CreateInstance(typeof(T), BindingFlags.NonPublic | BindingFlags.Instance, null, newArgs, null);
+            dlg.Content = dialogContent;
+            dlg.DataContext = dlgSetting;
+
+            await this.ShowMetroDialogAsync(dlg);
+
+            await dlg.WaitUntilUnloadedAsync();
+
+            return dlgSetting.Result;
         }
     }
 }

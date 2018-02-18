@@ -14,11 +14,13 @@
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <TargetFrameworkProfile>
     </TargetFrameworkProfile>
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
+    <DebugType>pdbonly</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\Debug\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
@@ -28,7 +30,7 @@
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
-    <DebugType>pdbonly</DebugType>
+    <DebugType>none</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
@@ -47,7 +49,7 @@
     <RunPostBuildEvent>OnBuildSuccess</RunPostBuildEvent>
   </PropertyGroup>
   <PropertyGroup>
-    <SignAssembly>true</SignAssembly>
+    <SignAssembly>false</SignAssembly>
   </PropertyGroup>
   <PropertyGroup>
     <AssemblyOriginatorKeyFile>Uncommit\decchi.snk</AssemblyOriginatorKeyFile>
@@ -64,9 +66,16 @@
   <PropertyGroup />
   <ItemGroup>
     <Reference Include="Accessibility" />
-    <Reference Include="Hardcodet.Wpf.TaskbarNotification">
-      <HintPath>ExternalLibraries\Hardcodet.NotifyIcon.Wpf\Hardcodet.Wpf.TaskbarNotification.dll</HintPath>
+    <Reference Include="ControlzEx, Version=3.0.2.4, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\ControlzEx.3.0.2.4\lib\net45\ControlzEx.dll</HintPath>
+    </Reference>
+    <Reference Include="Costura, Version=1.6.2.0, Culture=neutral, PublicKeyToken=9919ef960d84173d, processorArchitecture=MSIL">
+      <HintPath>..\packages\Costura.Fody.1.6.2\lib\dotnet\Costura.dll</HintPath>
       <Private>False</Private>
+    </Reference>
+    <Reference Include="Hardcodet.Wpf.TaskbarNotification, Version=1.0.5.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Hardcodet.NotifyIcon.Wpf.1.0.8\lib\net45\Hardcodet.Wpf.TaskbarNotification.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="Interop.iTunesLib">
       <HintPath>ExternalLibraries\Interop.iTunesLib\Interop.iTunesLib.dll</HintPath>
@@ -74,15 +83,15 @@
       <Private>False</Private>
     </Reference>
     <Reference Include="Interop.UIAutomationClient, Version=12.0.20617.1, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
       <EmbedInteropTypes>False</EmbedInteropTypes>
-      <HintPath>ExternalLibraries\UIAComWrapper\Interop.UIAutomationClient.dll</HintPath>
-      <Private>False</Private>
+      <HintPath>..\packages\UIAComWrapper.1.1.0.14\lib\net40\Interop.UIAutomationClient.dll</HintPath>
+      <Private>True</Private>
     </Reference>
-    <Reference Include="MahApps.Metro, Version=1.2.0.0, Culture=neutral, PublicKeyToken=df6e08c7cdc2292f, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>ExternalLibraries\MahApps.Metro\MahApps.Metro.dll</HintPath>
-      <Private>False</Private>
+    <Reference Include="MahApps.Metro, Version=1.6.0.362, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\MahApps.Metro.1.6.0\lib\net45\MahApps.Metro.dll</HintPath>
+    </Reference>
+    <Reference Include="policy.2.0.taglib-sharp, Version=0.0.0.0, Culture=neutral, PublicKeyToken=db62eba44689b5b0, processorArchitecture=MSIL">
+      <HintPath>..\packages\taglib.2.1.0.0\lib\policy.2.0.taglib-sharp.dll</HintPath>
     </Reference>
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
@@ -92,21 +101,17 @@
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Windows.Interactivity, Version=4.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>ExternalLibraries\MahApps.Metro\System.Windows.Interactivity.dll</HintPath>
-      <Private>False</Private>
+      <HintPath>..\packages\ControlzEx.3.0.2.4\lib\net45\System.Windows.Interactivity.dll</HintPath>
     </Reference>
     <Reference Include="System.Xaml" />
     <Reference Include="System.XML" />
     <Reference Include="taglib-sharp, Version=2.1.0.0, Culture=neutral, PublicKeyToken=db62eba44689b5b0, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>ExternalLibraries\TagLib-Sharp\taglib-sharp.dll</HintPath>
-      <Private>False</Private>
+      <HintPath>..\packages\taglib.2.1.0.0\lib\taglib-sharp.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="UIAComWrapper, Version=1.1.0.14, Culture=neutral, PublicKeyToken=78cbcf77433a85e5, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>ExternalLibraries\UIAComWrapper\UIAComWrapper.dll</HintPath>
-      <Private>False</Private>
+      <HintPath>..\packages\UIAComWrapper.1.1.0.14\lib\net40\UIAComWrapper.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="WindowsBase" />
   </ItemGroup>
@@ -128,6 +133,8 @@
     <Compile Include="Core\Windows\Dialogs\ADSelectionDialog.xaml.cs">
       <DependentUpon>ADSelectionDialog.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Core\Windows\Dialogs\DecchiDialog.cs" />
+    <Compile Include="Core\Windows\Dialogs\DecchiDialogSetting.cs" />
     <Compile Include="Core\Windows\Dialogs\ClientSelectionDialog.xaml.cs">
       <DependentUpon>ClientSelectionDialog.xaml</DependentUpon>
     </Compile>
@@ -178,9 +185,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="ExternalLibraries\Interop.iTunesLib\Interop.iTunesLib.dll.gz" />
-    <None Include="ExternalLibraries\TagLib-Sharp\taglib-sharp.dll.gz" />
-    <None Include="ExternalLibraries\UIAComWrapper\Interop.UIAutomationClient.dll.gz" />
-    <None Include="ExternalLibraries\UIAComWrapper\UIAComWrapper.dll.gz" />
+    <None Include="packages.config" />
     <None Include="Uncommit\decchi.snk" />
   </ItemGroup>
   <ItemGroup>
@@ -239,20 +244,9 @@
   <ItemGroup>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="ExternalLibraries\Hardcodet.NotifyIcon.Wpf\Hardcodet.Wpf.TaskbarNotification.dll" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="ExternalLibraries\MahApps.Metro\MahApps.Metro.dll" />
-    <None Include="ExternalLibraries\MahApps.Metro\System.Windows.Interactivity.dll" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="ExternalLibraries\UIAComWrapper\Interop.UIAutomationClient.dll" />
-    <None Include="ExternalLibraries\UIAComWrapper\UIAComWrapper.dll" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ExternalLibraries\Interop.iTunesLib\Interop.iTunesLib.dll" />
@@ -270,16 +264,25 @@
     <Resource Include="ParsingModule\Rules\Icons\youtube.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="ExternalLibraries\TagLib-Sharp\taglib-sharp.dll" />
+    <Resource Include="ParsingModule\Rules\Icons\navermusic.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="ParsingModule\Rules\Icons\navermusic.png" />
+    <None Include="FodyWeavers.xml" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>
     </PostBuildEvent>
   </PropertyGroup>
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>이 프로젝트는 이 컴퓨터에 없는 NuGet 패키지를 참조합니다. 해당 패키지를 다운로드하려면 NuGet 패키지 복원을 사용하십시오. 자세한 내용은 http://go.microsoft.com/fwlink/?LinkID=322105를 참조하십시오. 누락된 파일은 {0}입니다.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\packages\Costura.Fody.1.6.2\build\dotnet\Costura.Fody.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Costura.Fody.1.6.2\build\dotnet\Costura.Fody.targets'))" />
+    <Error Condition="!Exists('..\packages\Fody.2.4.1\build\Fody.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Fody.2.4.1\build\Fody.targets'))" />
+  </Target>
+  <Import Project="..\packages\Costura.Fody.1.6.2\build\dotnet\Costura.Fody.targets" Condition="Exists('..\packages\Costura.Fody.1.6.2\build\dotnet\Costura.Fody.targets')" />
+  <Import Project="..\packages\Fody.2.4.1\build\Fody.targets" Condition="Exists('..\packages\Fody.2.4.1\build\Fody.targets')" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

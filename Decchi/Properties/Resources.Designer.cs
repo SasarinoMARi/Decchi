@@ -19,7 +19,7 @@ namespace Decchi.Properties {
     // 클래스에서 자동으로 생성되었습니다.
     // 멤버를 추가하거나 제거하려면 .ResX 파일을 편집한 다음 /str 옵션을 사용하여 ResGen을
     // 다시 실행하거나 VS 프로젝트를 다시 빌드하십시오.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "4.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "15.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     internal class Resources {
@@ -63,69 +63,9 @@ namespace Decchi.Properties {
         /// <summary>
         ///   System.Byte[] 형식의 지역화된 리소스를 찾습니다.
         /// </summary>
-        internal static byte[] Hardcodet_Wpf_TaskbarNotification {
-            get {
-                object obj = ResourceManager.GetObject("Hardcodet_Wpf_TaskbarNotification", resourceCulture);
-                return ((byte[])(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   System.Byte[] 형식의 지역화된 리소스를 찾습니다.
-        /// </summary>
         internal static byte[] Interop_iTunesLib_dll {
             get {
                 object obj = ResourceManager.GetObject("Interop_iTunesLib_dll", resourceCulture);
-                return ((byte[])(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   System.Byte[] 형식의 지역화된 리소스를 찾습니다.
-        /// </summary>
-        internal static byte[] Interop_UIAutomationClient_dll {
-            get {
-                object obj = ResourceManager.GetObject("Interop_UIAutomationClient_dll", resourceCulture);
-                return ((byte[])(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   System.Byte[] 형식의 지역화된 리소스를 찾습니다.
-        /// </summary>
-        internal static byte[] MahApps_Metro {
-            get {
-                object obj = ResourceManager.GetObject("MahApps_Metro", resourceCulture);
-                return ((byte[])(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   System.Byte[] 형식의 지역화된 리소스를 찾습니다.
-        /// </summary>
-        internal static byte[] System_Windows_Interactivity {
-            get {
-                object obj = ResourceManager.GetObject("System_Windows_Interactivity", resourceCulture);
-                return ((byte[])(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   System.Byte[] 형식의 지역화된 리소스를 찾습니다.
-        /// </summary>
-        internal static byte[] taglib_sharp_dll {
-            get {
-                object obj = ResourceManager.GetObject("taglib_sharp_dll", resourceCulture);
-                return ((byte[])(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   System.Byte[] 형식의 지역화된 리소스를 찾습니다.
-        /// </summary>
-        internal static byte[] UIAComWrapper_dll {
-            get {
-                object obj = ResourceManager.GetObject("UIAComWrapper_dll", resourceCulture);
                 return ((byte[])(obj));
             }
         }

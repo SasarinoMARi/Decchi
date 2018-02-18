@@ -1,10 +1,9 @@
-﻿<MahApps.Metro.Controls.Dialogs:BaseMetroDialog xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-                                                xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                                                xmlns:MahApps.Metro.Controls.Dialogs="clr-namespace:MahApps.Metro.Controls.Dialogs;assembly=MahApps.Metro"
-                                                xmlns:MahApps.Metro.Controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
-                                                xmlns:Decchi.Core.Windows.Dialogs="clr-namespace:Decchi.Core.Windows.Dialogs"
-                                                x:Class="Decchi.Core.Windows.Dialogs.VerifierDialog"
-                                                KeyDown="BaseMetroDialog_KeyDown">
+<Decchi.Core.Windows.Dialogs:DecchiDialog xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                                          xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                                          xmlns:Decchi.Core.Windows.Dialogs="clr-namespace:Decchi.Core.Windows.Dialogs"
+                                          xmlns:MahApps.Metro.Controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
+                                          x:Class="Decchi.Core.Windows.Dialogs.VerifierDialog"
+                                          KeyDown="BaseMetroDialog_KeyDown">
     <Grid Margin="0 10 0 0">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"
@@ -15,24 +14,22 @@
         
         <TextBlock Grid.Row="0"
                    Margin="0 5 0 0"
-                   FontSize="{DynamicResource DialogMessageFontSize}"
                    Text="핀코드를 입력하세요"
                    TextWrapping="Wrap"
-                   HorizontalAlignment="Center"
-                   Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Decchi.Core.Windows.Dialogs:VerifierDialog, Mode=FindAncestor}, UpdateSourceTrigger=PropertyChanged}" />
+                   HorizontalAlignment="Center" />
         
         <TextBox Grid.Row="1"
                  Margin="0 5 0 0"
-                 FontSize="{DynamicResource DialogMessageFontSize}"
                  MahApps.Metro.Controls:ControlsHelper.FocusBorderBrush="{DynamicResource AccentColorBrush}"
                  MahApps.Metro.Controls:TextBoxHelper.SelectAllOnFocus="True"
                  x:Name="ctlText"
                  MaxLength="7"
-                 Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Decchi.Core.Windows.Dialogs:VerifierDialog, Mode=FindAncestor}, UpdateSourceTrigger=PropertyChanged}"
                  TextAlignment="Center"
                  KeyDown="ctlText_KeyDown"
                  PreviewTextInput="ctlText_PreviewTextInput"
-                 DataObject.Pasting="ctlText_DataObject_Pasting"/>
+                 DataObject.Pasting="ctlText_DataObject_Pasting"
+                 TextChanged="ctlText_TextChanged"
+                 Text="{Binding Result, Mode=TwoWay}" />
 
         <StackPanel Grid.Row="2"
                     Orientation="Horizontal"
@@ -42,17 +39,18 @@
                     Height="35"
                     MinWidth="80"
                     Style="{DynamicResource AccentedDialogSquareButton}"
+                    IsEnabled="False"
                     Content="확인"
                     Margin="0 0 5 0"
-                    Click="ctlOK_Click"
-                    KeyDown="ctlOK_KeyDown"/>
+                    KeyDown="ctlOK_KeyDown"
+                    Command="{Binding CommandOk}" />
             
             <Button x:Name="ctlCancel"
                     Height="35"
                     MinWidth="80"
                     Content="취소"
-                    Click="ctlCancel_Click"
-                    KeyDown="ctlCancel_KeyDown"/>
+                    KeyDown="ctlCancel_KeyDown"
+                    Command="{Binding CommandCancel}" />
         </StackPanel>
     </Grid>
-</MahApps.Metro.Controls.Dialogs:BaseMetroDialog>
+</Decchi.Core.Windows.Dialogs:DecchiDialog>
