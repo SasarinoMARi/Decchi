@@ -80,7 +80,7 @@
     <Reference Include="Interop.iTunesLib">
       <HintPath>ExternalLibraries\Interop.iTunesLib\Interop.iTunesLib.dll</HintPath>
       <EmbedInteropTypes>False</EmbedInteropTypes>
-      <Private>False</Private>
+      <Private>True</Private>
     </Reference>
     <Reference Include="Interop.UIAutomationClient, Version=12.0.20617.1, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <EmbedInteropTypes>False</EmbedInteropTypes>
@@ -176,7 +176,6 @@
     <Compile Include="Utilities\Abstraction.cs" />
     <Compile Include="Utilities\ClipboardMonitor.cs" />
     <Compile Include="Utilities\InstanceHelper.cs" />
-    <Compile Include="Utilities\InteropServices\UnmanagedMemory.cs" />
     <Compile Include="Utilities\GlobalKeyboardHook.cs" />
     <Compile Include="Uncommit\TwitterToken.cs" />
     <Compile Include="Utilities\ImageResize.cs" />
@@ -184,7 +183,6 @@
     <Compile Include="Utilities\OpenedWindow.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="ExternalLibraries\Interop.iTunesLib\Interop.iTunesLib.dll.gz" />
     <None Include="packages.config" />
     <None Include="Uncommit\decchi.snk" />
   </ItemGroup>
