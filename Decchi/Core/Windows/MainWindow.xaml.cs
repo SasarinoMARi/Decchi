@@ -246,13 +246,13 @@ namespace Decchi.Core.Windows
 
         private void ctlHomepage_Click(object sender, RoutedEventArgs e)
         {
-            Globals.OpenWebSite("https://usagination.github.io/Decchi/");
+            Globals.OpenWebSite("https://sasarinomari.github.io/Decchi/");
         }
 
         private void ctlPluginHelp_Click(object sender, RoutedEventArgs e)
         {
             this.ctlPluginFlyout.IsOpen = false;
-            Globals.OpenWebSite("https://usagination.github.io/Decchi/#뎃찌ext");
+            Globals.OpenWebSite("https://sasarinomari.github.io/Decchi/#뎃찌ext");
         }
 
         private void ctlTrayVisible_IsCheckedChanged(object sender, EventArgs e)
