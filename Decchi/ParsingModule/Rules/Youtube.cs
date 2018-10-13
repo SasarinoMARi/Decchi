@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.IO;
 using System.Net;
 using System.Text.RegularExpressions;
@@ -63,9 +63,35 @@ namespace Decchi.ParsingModule.Rules
                     {
                         si.Url = "https://youtu.be/" + v;
                     }
+
+                    SetThumbnail(si, v);
                 }
                 catch
                 { }
+            }
+        }
+
+        private void SetThumbnail(SongInfo si, string videoId)
+        {
+            var ms = new MemoryStream(64 * 1024);
+
+            try
+            {
+                var req = WebRequest.Create(string.Format("http://img.youtube.com/vi/{0}/sddefault.jpg", videoId));
+                var res = req.GetResponse();
+
+                var resStream = res.GetResponseStream();
+
+                var buff = new byte[4096];
+                int read;
+                while ((read = resStream.Read(buff, 0, 4096)) >= 0)
+                    ms.Write(buff, 0, read);
+
+                si.Cover = ms;
+            }
+            catch
+            {
+                ms.Dispose();
             }
         }
     }
