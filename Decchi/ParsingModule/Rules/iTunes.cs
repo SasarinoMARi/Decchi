@@ -154,27 +154,40 @@ namespace Decchi.ParsingModule.Rules
 
             if (track.Artwork.Count > 0)
             {
-                var artwork = track.Artwork[1];
-                var temp    = Path.GetTempFileName();
+                IITArtwork artwork = null;
 
                 try
                 {
-                    artwork.SaveArtworkToFile(temp);
+                    artwork = track.Artwork[1];
+                    var temp = Path.GetTempFileName();
 
-                    si.Cover = new MemoryStream(64 * 1024); // 64 KiB
-                    using (var image = Image.FromFile(temp))
-                        image.Save(si.Cover, ImageFormat.Png);
-                    si.Cover.Seek(0, SeekOrigin.Begin);
-                }
-                catch
-                {
-                    if (si.Cover != null)
-                        si.Cover.Dispose();
+                    try
+                    {
+                        artwork.SaveArtworkToFile(temp);
+
+                        si.Cover = new MemoryStream(64 * 1024); // 64 KiB
+                        using (var image = Image.FromFile(temp))
+                            image.Save(si.Cover, ImageFormat.Png);
+                        si.Cover.Seek(0, SeekOrigin.Begin);
+                    }
+                    catch
+                    {
+                        if (si.Cover != null)
+                            si.Cover.Dispose();
+                    }
+                    finally
+                    {
+                        if (!string.IsNullOrWhiteSpace(temp) && File.Exists(temp))
+                            File.Delete(temp);
+                    }
                 }
                 finally
                 {
-                    if (!string.IsNullOrWhiteSpace(temp) && File.Exists(temp))
-                        File.Delete(temp);
+                    if (artwork == null)
+                    {
+                        Marshal.FinalReleaseComObject(artwork);
+                        artwork = null;
+                    }
                 }
             }
 
