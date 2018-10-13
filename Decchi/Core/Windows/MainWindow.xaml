@@ -74,7 +74,7 @@
 
             <Style x:Key="TweetButtonStyle"
                    TargetType="{x:Type Button}"
-                   BasedOn="{StaticResource MetroButton}">
+                   BasedOn="{StaticResource {x:Type Button}}">
                 <EventSetter Event="Click" Handler="ctlTweet_Click"/>
                 <Setter Property="Focusable" Value="False"/>
                 <Setter Property="ToolTip" Value="뎃찌!! 와 함께 #NowPlaying 을 게시해요"/>
@@ -103,7 +103,8 @@
                 </Setter>
             </Style>
             
-            <Style TargetType="{x:Type controls:Flyout}">
+            <Style TargetType="{x:Type controls:Flyout}"
+                   BasedOn="{StaticResource {x:Type controls:Flyout}}">
                 <Setter Property="Position" Value="Right"/>
                 <Setter Property="Theme" Value="Adapt"/>
                 <Setter Property="AnimateOpacity" Value="True"/>
@@ -168,161 +169,154 @@
                              Width="167"
                              TitleVisibility="Collapsed"
                              IsOpenChanged="ctlSettingFlyout_IsOpenChanged">
-                <Grid Margin="0 0 0 5">
-                    <Grid.RowDefinitions>
-                        <RowDefinition/>
-                        <RowDefinition Height="auto"/>
-                    </Grid.RowDefinitions>
+                <TabControl Margin="0">
+                    <TabItem Header="모양">
+                        <ScrollViewer>
+                            <StackPanel>
+                                <Button HorizontalAlignment="Stretch"
+                                        Content="작은 뎃찌로 변경"
+                                        Focusable="False"
+                                        Style="{StaticResource MetroAccentButton}"
+                                        Height="40"
+                                        Margin="3 0 3 3"
+                                        Click="ctlToMiniMode_Click"/>
+                                <GroupBox Header="뎃찌 자동 실행"
+                                          ToolTip="켬퓨터를 키자마자 뎃찌를 실행해요!">
+                                    <controls:ToggleSwitch IsChecked="{Binding Source={x:Static Decchi:Globals.Instance}, Path=WinStartup, Mode=TwoWay}"/>
+                                </GroupBox>
+                                <GroupBox Header="최소화로 시작"
+                                          ToolTip="뎃찌를 키면 바로 최소화해요!">
+                                    <controls:ToggleSwitch IsChecked="{Binding Source={x:Static Decchi:Globals.Instance}, Path=TrayStart, Mode=TwoWay}"/>
+                                </GroupBox>
+                                <GroupBox Header="뎃찌를 항상 위로"
+                                          ToolTip="뎃찌가 모든 창 위에 떠요!">
+                                    <controls:ToggleSwitch IsChecked="{Binding Source={x:Static Decchi:Globals.Instance}, Path=TopMost, Mode=TwoWay}"/>
+                                </GroupBox>
+                                <GroupBox Header="자석 뎃찌"
+                                          ToolTip="뎃찌를 이동할 때 화면 끝에 달라붙어요!">
+                                    <StackPanel>
+                                        <controls:ToggleSwitch IsChecked="{Binding Source={x:Static Decchi:Globals.Instance}, Path=UseMagneticWindow, Mode=TwoWay}"/>
+                                        <GroupBox Header="민감도"
+                                                  ToolTip="민감도가 높을 수록 더 잘 달라붙어요"
+                                                  IsEnabled="{Binding Source={x:Static Decchi:Globals.Instance}, Path=UseMagneticWindow, Mode=OneWay}"
+                                                  Margin="0">
+                                            <Grid>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="30" />
+                                                    <ColumnDefinition/>
+                                                </Grid.ColumnDefinitions>
 
-                    <TabControl Margin="0">
-                        <TabItem Header="모양">
-                            <ScrollViewer>
-                                <StackPanel>
-                                    <Button HorizontalAlignment="Stretch"
-                                            Content="작은 뎃찌로 변경"
-                                            Focusable="False"
-                                            Style="{StaticResource MetroAccentButton}"
-                                            Height="40"
-                                            Margin="3 0 3 3"
-                                            Click="ctlToMiniMode_Click"/>
-                                    <GroupBox Header="뎃찌 자동 실행"
-                                              ToolTip="켬퓨터를 키자마자 뎃찌를 실행해요!">
-                                        <controls:ToggleSwitch IsChecked="{Binding Source={x:Static Decchi:Globals.Instance}, Path=WinStartup, Mode=TwoWay}"/>
-                                    </GroupBox>
-                                    <GroupBox Header="최소화로 시작"
-                                              ToolTip="뎃찌를 키면 바로 최소화해요!">
-                                        <controls:ToggleSwitch IsChecked="{Binding Source={x:Static Decchi:Globals.Instance}, Path=TrayStart, Mode=TwoWay}"/>
-                                    </GroupBox>
-                                    <GroupBox Header="뎃찌를 항상 위로"
-                                              ToolTip="뎃찌가 모든 창 위에 떠요!">
-                                        <controls:ToggleSwitch IsChecked="{Binding Source={x:Static Decchi:Globals.Instance}, Path=TopMost, Mode=TwoWay}"/>
-                                    </GroupBox>
-                                    <GroupBox Header="자석 뎃찌"
-                                              ToolTip="뎃찌를 이동할 때 화면 끝에 달라붙어요!">
-                                        <StackPanel>
-                                            <controls:ToggleSwitch IsChecked="{Binding Source={x:Static Decchi:Globals.Instance}, Path=UseMagneticWindow, Mode=TwoWay}"/>
-                                            <GroupBox Header="민감도"
-                                                      ToolTip="민감도가 높을 수록 더 잘 달라붙어요"
-                                                      IsEnabled="{Binding Source={x:Static Decchi:Globals.Instance}, Path=UseMagneticWindow, Mode=OneWay}"
-                                                      Margin="0">
-                                                <Grid>
-                                                    <Grid.ColumnDefinitions>
-                                                        <ColumnDefinition Width="30" />
-                                                        <ColumnDefinition/>
-                                                    </Grid.ColumnDefinitions>
+                                                <TextBlock Text="{Binding Source={x:Static Decchi:Globals.Instance}, Path=MagneticWindowGap, Mode=OneWay, StringFormat={}{0}}"
+                                                           HorizontalAlignment="Stretch"
+                                                           VerticalAlignment="Center"
+                                                           TextAlignment="Center"/>
 
-                                                    <TextBlock Text="{Binding Source={x:Static Decchi:Globals.Instance}, Path=MagneticWindowGap, Mode=OneWay, StringFormat={}{0}}"
-                                                               HorizontalAlignment="Stretch"
-                                                               VerticalAlignment="Center"
-                                                               TextAlignment="Center"/>
+                                                <Slider Grid.Column="1"
+                                                        Value="{Binding Source={x:Static Decchi:Globals.Instance}, Path=MagneticWindowGap, Mode=TwoWay, Converter={StaticResource Int2Double}}"
+                                                        Minimum="10"
+                                                        Maximum="30"
+                                                        LargeChange="5"
+                                                        HorizontalAlignment="Stretch"/>
+                                            </Grid>
+                                        </GroupBox>
+                                    </StackPanel>
+                                </GroupBox>
+                                <GroupBox Header="투명 뎃찌"
+                                          ToolTip="뎃찌를 투명하게 만들어요">
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="40" />
+                                            <ColumnDefinition/>
+                                        </Grid.ColumnDefinitions>
 
-                                                    <Slider Grid.Column="1"
-                                                            Value="{Binding Source={x:Static Decchi:Globals.Instance}, Path=MagneticWindowGap, Mode=TwoWay, Converter={StaticResource Int2Double}}"
-                                                            Minimum="10"
-                                                            Maximum="30"
-                                                            LargeChange="5"
-                                                            HorizontalAlignment="Stretch"/>
-                                                </Grid>
-                                            </GroupBox>
-                                        </StackPanel>
-                                    </GroupBox>
-                                    <GroupBox Header="투명 뎃찌"
-                                              ToolTip="뎃찌를 투명하게 만들어요">
-                                        <Grid>
-                                            <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="40" />
-                                                <ColumnDefinition/>
-                                            </Grid.ColumnDefinitions>
+                                        <TextBlock Text="{Binding Source={x:Static Decchi:Globals.Instance}, Path=WindowOpacity, Mode=OneWay, Converter={StaticResource PersentConverter}, StringFormat={}{0}%}"
+                                                   HorizontalAlignment="Stretch"
+                                                   VerticalAlignment="Center"
+                                                   TextAlignment="Center"/>
 
-                                            <TextBlock Text="{Binding Source={x:Static Decchi:Globals.Instance}, Path=WindowOpacity, Mode=OneWay, Converter={StaticResource PersentConverter}, StringFormat={}{0}%}"
-                                                       HorizontalAlignment="Stretch"
-                                                       VerticalAlignment="Center"
-                                                       TextAlignment="Center"/>
+                                        <Slider Grid.Column="1"
+                                                Value="{Binding Source={x:Static Decchi:Globals.Instance}, Path=WindowOpacity, Mode=TwoWay}"
+                                                Minimum="0.1"
+                                                Maximum="1.0"
+                                                LargeChange="0.1"
+                                                HorizontalAlignment="Stretch"/>
+                                    </Grid>
+                                </GroupBox>
+                                <GroupBox Header="트레이">
+                                    <StackPanel>
+                                        <GroupBox Header="항상 표시"
+                                                  ToolTip="트레이를 항상 표시해요"
+                                                  Margin="0">
+                                            <controls:ToggleSwitch IsChecked="{Binding Source={x:Static Decchi:Globals.Instance}, Path=TrayVisible, Mode=TwoWay}"
+                                                                   IsCheckedChanged="ctlTrayVisible_IsCheckedChanged"/>
+                                        </GroupBox>
+                                        <GroupBox Header="접을때"
+                                                  ToolTip="뎃찌를 최소화하면 트레이로 이동해요"
+                                                  Margin="0 5 0 5">
+                                            <controls:ToggleSwitch IsChecked="{Binding Source={x:Static Decchi:Globals.Instance}, Path=TrayWhenMinimize, Mode=TwoWay}"/>
+                                        </GroupBox>
+                                        <GroupBox Header="닫을때"
+                                                  ToolTip="뎃찌를 닫으면 트레이로 이동해요"
+                                                  Margin="0">
+                                            <controls:ToggleSwitch IsChecked="{Binding Source={x:Static Decchi:Globals.Instance}, Path=TrayWhenClose, Mode=TwoWay}"/>
+                                        </GroupBox>
+                                    </StackPanel>
+                                </GroupBox>
+                            </StackPanel>
+                        </ScrollViewer>
+                    </TabItem>
 
-                                            <Slider Grid.Column="1"
-                                                    Value="{Binding Source={x:Static Decchi:Globals.Instance}, Path=WindowOpacity, Mode=TwoWay}"
-                                                    Minimum="0.1"
-                                                    Maximum="1.0"
-                                                    LargeChange="0.1"
-                                                    HorizontalAlignment="Stretch"/>
-                                        </Grid>
-                                    </GroupBox>
-                                    <GroupBox Header="트레이">
-                                        <StackPanel>
-                                            <GroupBox Header="항상 표시"
-                                                      ToolTip="트레이를 항상 표시해요"
-                                                      Margin="0">
-                                                <controls:ToggleSwitch IsChecked="{Binding Source={x:Static Decchi:Globals.Instance}, Path=TrayVisible, Mode=TwoWay}"
-                                                                       IsCheckedChanged="ctlTrayVisible_IsCheckedChanged"/>
-                                            </GroupBox>
-                                            <GroupBox Header="접을때"
-                                                      ToolTip="뎃찌를 최소화하면 트레이로 이동해요"
-                                                      Margin="0 5 0 5">
-                                                <controls:ToggleSwitch IsChecked="{Binding Source={x:Static Decchi:Globals.Instance}, Path=TrayWhenMinimize, Mode=TwoWay}"/>
-                                            </GroupBox>
-                                            <GroupBox Header="닫을때"
-                                                      ToolTip="뎃찌를 닫으면 트레이로 이동해요"
-                                                      Margin="0">
-                                                <controls:ToggleSwitch IsChecked="{Binding Source={x:Static Decchi:Globals.Instance}, Path=TrayWhenClose, Mode=TwoWay}"/>
-                                            </GroupBox>
-                                        </StackPanel>
-                                    </GroupBox>
-                                </StackPanel>
-                            </ScrollViewer>
-                        </TabItem>
+                    <TabItem Header="기능">
+                        <ScrollViewer>
+                            <StackPanel>
+                                <GroupBox Header="자동 뎃찌"
+                                          ToolTip="특정 클라이언트를 선택해서 노래가 변경되면 자동으로 뎃찌!! 해요">
+                                    <controls:ToggleSwitch x:Name="ctlAutoDecchi"
+                                                           IsChecked="{Binding Source={x:Static Decchi:Globals.Instance}, Path=AutoDecchi, Converter={StaticResource Null2False}, Mode=OneWay}"
+                                                           IsCheckedChanged="ctlAutoDecchi_IsCheckedChanged"/>
+                                </GroupBox>
+                                <GroupBox Header="단축키 사용"
+                                          ToolTip="어디서든 키보드 입력 한번으로 뎃찌!! 할 수 있어요!">
+                                    <StackPanel>
+                                        <controls:ToggleSwitch x:Name="ctlUseShortcut"
+                                                               IsChecked="{Binding Source={x:Static Decchi:Globals.Instance}, Path=UseShortcut, Mode=TwoWay}"/>
+                                        <TextBox x:Name="ctlShortcut"
+                                                 Grid.Row="1"
+                                                 Text="{Binding Source={x:Static Decchi:Globals.Instance}, Path=Shortcut, Mode=OneWay}"
+                                                 IsEnabled="{Binding ElementName=ctlUseShortcut, Path=IsChecked, Mode=OneWay}"
+                                                 IsReadOnly="True"
+                                                 TextAlignment="Center"
+                                                 UndoLimit="0"
+                                                 PreviewKeyUp="ctlShortcut_PreviewKeyUp"
+                                                 GotFocus="ctlShortcut_GotFocus"
+                                                 LostFocus="ctlShortcut_LostFocus"/>
 
-                        <TabItem Header="기능">
-                            <ScrollViewer>
-                                <StackPanel>
-                                    <GroupBox Header="자동 뎃찌"
-                                              ToolTip="특정 클라이언트를 선택해서 노래가 변경되면 자동으로 뎃찌!! 해요">
-                                        <controls:ToggleSwitch x:Name="ctlAutoDecchi"
-                                                               IsChecked="{Binding Source={x:Static Decchi:Globals.Instance}, Path=AutoDecchi, Converter={StaticResource Null2False}, Mode=OneWay}"
-                                                               IsCheckedChanged="ctlAutoDecchi_IsCheckedChanged"/>
-                                    </GroupBox>
-                                    <GroupBox Header="단축키 사용"
-                                              ToolTip="어디서든 키보드 입력 한번으로 뎃찌!! 할 수 있어요!">
-                                        <StackPanel>
-                                            <controls:ToggleSwitch x:Name="ctlUseShortcut"
-                                                                   IsChecked="{Binding Source={x:Static Decchi:Globals.Instance}, Path=UseShortcut, Mode=TwoWay}"/>
-                                            <TextBox x:Name="ctlShortcut"
-                                                     Grid.Row="1"
-                                                     Text="{Binding Source={x:Static Decchi:Globals.Instance}, Path=Shortcut, Mode=OneWay}"
-                                                     IsEnabled="{Binding ElementName=ctlUseShortcut, Path=IsChecked, Mode=OneWay}"
-                                                     IsReadOnly="True"
-                                                     TextAlignment="Center"
-                                                     UndoLimit="0"
-                                                     PreviewKeyUp="ctlShortcut_PreviewKeyUp"
-                                                     GotFocus="ctlShortcut_GotFocus"
-                                                     LostFocus="ctlShortcut_LostFocus"/>
-
-                                            <GroupBox Header="전제화면 아닐때만"
-                                                      ToolTip="전체화면일때 단축키로 뎃찌!! 하지 않아요"
-                                                      IsEnabled="{Binding ElementName=ctlUseShortcut, Path=IsChecked, Mode=OneWay}"
-                                                      Margin="0 5 0 0">
-                                                <controls:ToggleSwitch IsChecked="{Binding Source={x:Static Decchi:Globals.Instance}, Path=SkipFullscreen, Mode=TwoWay}"/>
-                                            </GroupBox>
-                                        </StackPanel>
-                                    </GroupBox>
-                                    <!--
-                                    <GroupBox Header="로컬 파일 인식"
-                                              ToolTip="로컬 파일을 인식해서 트윗해요! 아직 조금 불안정해요!">
-                                        <controls:ToggleSwitch IsChecked="{Binding Source={x:Static Decchi:Globals.Instance}, Path=DetectLocalFile, Mode=TwoWay}"/>
-                                    </GroupBox>
-                                    -->
-                                    <GroupBox Header="심화 웹 브라우저 인식"
-                                              ToolTip="현재 웹 브라우저의 모든 탭들을 인식해요!">
-                                        <controls:ToggleSwitch IsChecked="{Binding Source={x:Static Decchi:Globals.Instance}, Path=WBDetailSearch, Mode=TwoWay}"/>
-                                    </GroupBox>
-                                    <GroupBox Header="플레이어 자동 선택"
-                                              ToolTip="여러개의 뮤직 플레이어가 실행중이면, 가장 위에 있는 창으로 뎃찌!! 해요">
-                                        <controls:ToggleSwitch IsChecked="{Binding Source={x:Static Decchi:Globals.Instance}, Path=AutoSelect, Mode=TwoWay}"/>
-                                    </GroupBox>
-                                </StackPanel>
-                            </ScrollViewer>
-                        </TabItem>
-                    </TabControl>
-                </Grid>
+                                        <GroupBox Header="전제화면 아닐때만"
+                                                  ToolTip="전체화면일때 단축키로 뎃찌!! 하지 않아요"
+                                                  IsEnabled="{Binding ElementName=ctlUseShortcut, Path=IsChecked, Mode=OneWay}"
+                                                  Margin="0 5 0 0">
+                                            <controls:ToggleSwitch IsChecked="{Binding Source={x:Static Decchi:Globals.Instance}, Path=SkipFullscreen, Mode=TwoWay}"/>
+                                        </GroupBox>
+                                    </StackPanel>
+                                </GroupBox>
+                                <!--
+                                        <GroupBox Header="로컬 파일 인식"
+                                                  ToolTip="로컬 파일을 인식해서 트윗해요! 아직 조금 불안정해요!">
+                                            <controls:ToggleSwitch IsChecked="{Binding Source={x:Static Decchi:Globals.Instance}, Path=DetectLocalFile, Mode=TwoWay}"/>
+                                        </GroupBox>
+                                        -->
+                                <GroupBox Header="심화 웹 브라우저 인식"
+                                          ToolTip="현재 웹 브라우저의 모든 탭들을 인식해요!">
+                                    <controls:ToggleSwitch IsChecked="{Binding Source={x:Static Decchi:Globals.Instance}, Path=WBDetailSearch, Mode=TwoWay}"/>
+                                </GroupBox>
+                                <GroupBox Header="플레이어 자동 선택"
+                                          ToolTip="여러개의 뮤직 플레이어가 실행중이면, 가장 위에 있는 창으로 뎃찌!! 해요">
+                                    <controls:ToggleSwitch IsChecked="{Binding Source={x:Static Decchi:Globals.Instance}, Path=AutoSelect, Mode=TwoWay}"/>
+                                </GroupBox>
+                            </StackPanel>
+                        </ScrollViewer>
+                    </TabItem>
+                </TabControl>
             </controls:Flyout>
             <controls:Flyout x:Name="ctlPluginFlyout"
                              Width="68"
